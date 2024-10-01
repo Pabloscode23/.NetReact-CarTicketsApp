@@ -1,4 +1,4 @@
-namespace SistemaMultas
+namespace API
 {
     public class WeatherForecast
     {

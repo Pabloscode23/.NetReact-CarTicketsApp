@@ -1,5 +1,5 @@
 
-namespace SistemaMultas
+namespace API
 {
     public class Program
     {
