@@ -1,3 +1,4 @@
+import { HomePublic } from "../../public/components/HomePublic"
 import { MainLayout } from "../layouts"
 import { AuthLayout } from "../layouts/AuthLayout"
 import { AdminRoutes } from "../modules/admin/routes/"
@@ -74,7 +75,9 @@ export const routesForAuthenticatedOnly = [
 export const routesForNonAuthenticatedOnly = [
     {
         path: "/",
-        element: <MainLayout><h1>HOME</h1></MainLayout>
+        element: <MainLayout>
+            <HomePublic />
+        </MainLayout>
     },
     {
         path: "/ingreso",
