@@ -1,5 +1,6 @@
 
 import './App.css'
+import './reset.css'
 import { AppRouter } from './router/AppRouter'
 import { AuthProvider } from './contexts'
 
