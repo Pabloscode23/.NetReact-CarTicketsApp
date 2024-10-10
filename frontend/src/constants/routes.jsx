@@ -1,4 +1,4 @@
-import { HomePublic } from "../../public/components/HomePublic"
+import { HomePublic } from "../modules/public/components/HomePublic"
 import { MainLayout } from "../layouts"
 import { AuthLayout } from "../layouts/AuthLayout"
 import { AdminRoutes } from "../modules/admin/routes/"
