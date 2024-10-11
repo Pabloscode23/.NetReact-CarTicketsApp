@@ -7,6 +7,7 @@ import { TicketsRoutes } from "../modules/tickets/routes/"
 import { Dashboard, NotFound } from "../pages"
 import { ProtectedRoutes } from "../router"
 import { RegistFinalUser } from "../modules/public/pages/RegistFinalUserPage"
+import { TwoFactorPage } from "../modules/auth/pages/TwoFactorPage"
 
 
 
@@ -83,5 +84,8 @@ export const routesForNonAuthenticatedOnly = [
     {
         path: "/ingreso",
         element: <AuthLayout><LoginPage /></AuthLayout>
+    }, {
+        path: "/two-factor",
+        element: <AuthLayout><TwoFactorPage /></AuthLayout>
     },
 ]
