@@ -3,7 +3,7 @@ import { FormRegistFinalUser } from "../components/FormRegistFinalUser"
 
 export const RegistFinalUser = () => {
     return (
-        <div className="container">
+        <div>
             <FormRegistFinalUser />
         </div>
     )

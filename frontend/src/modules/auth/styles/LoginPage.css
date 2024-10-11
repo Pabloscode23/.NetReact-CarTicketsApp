@@ -1,9 +1,10 @@
-.container__form {
+.login-form {
     margin-top: 10vh;
     color: var(--color-grey-dark);
     box-shadow: 0 0 100px #DFF5FC;
     border-radius: 30px;
-    height: 78vh;
+    height: 70vh;
+    width: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11,8 +12,17 @@
     background-color: var(--color-blue-lighter);
 }
 
-.form {
+.login-form-inputs {
     display: flex;
+    flex-direction: column;
+    gap: 3vh;
+
+}
+
+
+.login-form__body {
+    display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     gap: 20px;
     max-width: 800px;
@@ -20,21 +30,21 @@
     align-items: center;
 }
 
-.form__group {
+.login-form__field {
     flex: 1 1 45%;
-    /* 45% width per group to create two columns, and responsive */
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 40vw;
 }
 
-.form__label {
+.login-form__label {
     font-size: 2vh;
     margin-bottom: 8px;
     font-weight: bold;
 }
 
-.form__input {
+.login-form__input {
     padding: 10px;
     border: none;
     border-radius: 5px;
@@ -42,13 +52,12 @@
     width: 85%;
 }
 
-
-.form__error {
+.login-form__error {
     color: red;
     margin-top: 5px;
 }
 
-.form__button {
+.login-form__button {
     padding: 10px 20px;
     background-color: var(--color-blue-dark);
     color: white;
@@ -61,13 +70,40 @@
     transition: all 200ms ease-in-out;
 }
 
-.form__button:hover {
+.login-form__button:hover {
     background-color: var(--color-purple-dark);
 }
 
-.form__button-wrapper {
+.login-form__actions {
     width: 100%;
     display: flex;
     justify-content: center;
     margin-top: 20px;
+}
+
+.login-form-indications {
+    font-size: 1.8vh;
+}
+
+.form-line {
+    border: 1px solid rgba(164, 164, 164, 0.315);
+    width: 30vw;
+    margin: 2vh 0;
+}
+
+.login-form-text {
+    font-weight: bold;
+    color: var(--color-purple-dark);
+}
+
+.login-link {
+    color: var(--color-grey-medium);
+    font-weight: bold;
+    text-decoration: none;
+    transition: 300ms ease-in-out;
+}
+
+.login-link:hover {
+    color: var(--color-blue-dark);
+    transform: scale(1.1);
 }

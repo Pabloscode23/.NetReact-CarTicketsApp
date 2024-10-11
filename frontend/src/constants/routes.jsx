@@ -2,7 +2,7 @@ import { HomePublic } from "../modules/public/pages/HomePublicPage"
 import { MainLayout } from "../layouts"
 import { AuthLayout } from "../layouts/AuthLayout"
 import { AdminRoutes } from "../modules/admin/routes/"
-import { Login } from "../modules/auth/pages"
+import { LoginPage } from "../modules/auth/pages"
 import { TicketsRoutes } from "../modules/tickets/routes/"
 import { Dashboard, NotFound } from "../pages"
 import { ProtectedRoutes } from "../router"
@@ -82,6 +82,6 @@ export const routesForNonAuthenticatedOnly = [
     },
     {
         path: "/ingreso",
-        element: <AuthLayout><Login /></AuthLayout>
+        element: <AuthLayout><LoginPage /></AuthLayout>
     },
 ]
