@@ -1,11 +1,13 @@
-import { HomePublic } from "../modules/public/components/HomePublic"
+import { HomePublic } from "../modules/public/pages/HomePublicPage"
 import { MainLayout } from "../layouts"
 import { AuthLayout } from "../layouts/AuthLayout"
 import { AdminRoutes } from "../modules/admin/routes/"
-import { Login } from "../modules/auth/pages"
+import { LoginPage } from "../modules/auth/pages"
 import { TicketsRoutes } from "../modules/tickets/routes/"
 import { Dashboard, NotFound } from "../pages"
 import { ProtectedRoutes } from "../router"
+import { RegistFinalUser } from "../modules/public/pages/RegistFinalUserPage"
+import { TwoFactorPage } from "../modules/auth/pages/TwoFactorPage"
 
 
 
@@ -13,7 +15,7 @@ import { ProtectedRoutes } from "../router"
 export const routesForPublic = [
     {
         path: "/registro",
-        element: <AuthLayout><h1>REGISTER</h1></AuthLayout>
+        element: <AuthLayout><RegistFinalUser /></AuthLayout>
     },
     {
         path: "/mapa-de-calor",
@@ -80,7 +82,10 @@ export const routesForNonAuthenticatedOnly = [
         </MainLayout>
     },
     {
-        path: "/ingreso",
-        element: <AuthLayout><Login /></AuthLayout>
+        path: "/login",
+        element: <AuthLayout><LoginPage /></AuthLayout>
+    }, {
+        path: "/two-factor",
+        element: <AuthLayout><TwoFactorPage /></AuthLayout>
     },
 ]
