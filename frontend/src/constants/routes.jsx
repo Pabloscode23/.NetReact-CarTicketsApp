@@ -82,7 +82,7 @@ export const routesForNonAuthenticatedOnly = [
         </MainLayout>
     },
     {
-        path: "/ingreso",
+        path: "/login",
         element: <AuthLayout><LoginPage /></AuthLayout>
     }, {
         path: "/two-factor",
