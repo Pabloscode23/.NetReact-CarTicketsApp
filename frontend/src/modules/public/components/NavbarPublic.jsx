@@ -1,13 +1,34 @@
 import '../styles/NavbarPublic.css'
 import { Link } from 'react-router-dom'
-
-
+import ByteDevLogo from '../../../assets/img/ByteDevLogo.png'
+const navPublicLinks = [
+    {
+        name: 'Inicio',
+        route: '/'
+    },
+    {
+        name: 'Registrarse',
+        route: '/registro'
+    },
+    {
+        name: 'Iniciar sesión',
+        route: '/ingreso'
+    },
+    {
+        name: 'Consulta pública',
+        route: '/*'
+    },
+    {
+        name: 'Mapa de calor',
+        route: '/mapa-de-calor'
+    }
+]
 export const NavbarPublic = () => {
-    const ByteDevLogo = "/frontend/src/assets/ByteDevLogo.png"
+
     return (
         <nav className="navbar">
             <div className="navbar__logo-container">
-                {/*TODO: Imagen no sirve */}
+
                 <img className="navbar__logo" src={ByteDevLogo} />
             </div>
             <div>

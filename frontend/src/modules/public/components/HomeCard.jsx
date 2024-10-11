@@ -8,7 +8,7 @@ export const HomeCard = ({ icon, title, description, link }) => {
         <Link to={link}>
             <div className="card">
                 <div className='card__icon-container'>
-                    <FontAwesomeIcon icon={icon} size="2x" color='var(--color-celeste-oscuro)' />
+                    <FontAwesomeIcon icon={icon} size="2x" color='var(--color-blue-dark)' />
                 </div>
                 <h3 className="card__title">{title}</h3>
 

@@ -1,4 +1,4 @@
-import { HomePublic } from "../modules/public/components/HomePublic"
+import { HomePublic } from "../modules/public/pages/HomePublicPage"
 import { MainLayout } from "../layouts"
 import { AuthLayout } from "../layouts/AuthLayout"
 import { AdminRoutes } from "../modules/admin/routes/"
@@ -6,6 +6,7 @@ import { Login } from "../modules/auth/pages"
 import { TicketsRoutes } from "../modules/tickets/routes/"
 import { Dashboard, NotFound } from "../pages"
 import { ProtectedRoutes } from "../router"
+import { RegistFinalUser } from "../modules/public/pages/RegistFinalUserPage"
 
 
 
@@ -13,7 +14,7 @@ import { ProtectedRoutes } from "../router"
 export const routesForPublic = [
     {
         path: "/registro",
-        element: <AuthLayout><h1>REGISTER</h1></AuthLayout>
+        element: <AuthLayout><RegistFinalUser /></AuthLayout>
     },
     {
         path: "/mapa-de-calor",
