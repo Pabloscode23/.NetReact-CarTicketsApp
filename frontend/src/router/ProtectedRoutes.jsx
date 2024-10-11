@@ -8,7 +8,7 @@ export const ProtectedRoutes = () => {
 
     // Si no hay token, redirige a la página de login *esta comentado porque no se ha hecho el backend*
     if (!token) {
-        return <Navigate to={'/ingreso'} />
+        return <Navigate to={'/login'} />
     }
 
     // Si hay token, muestra las rutas protegidas

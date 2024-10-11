@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import '../styles/LoginPage.css';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../hooks";
 
 export const LoginPage = () => {
     const {
@@ -14,10 +15,16 @@ export const LoginPage = () => {
             password: "",
         },
     });
+    // Se usa el custom hook para obtener la función setToken que asigna el token de autenticación
+    const { setToken } = useAuth();
 
+    // Se usa el hook de navegación para redirigir a la página principal
+    const navigate = useNavigate();
     const onSubmit = handleSubmit((data) => {
         console.log(data);
         reset();
+        setToken('token de prueba');
+        navigate('/', { replace: true });
     });
 
     return (

@@ -12,7 +12,7 @@ const navPublicLinks = [
     },
     {
         name: 'Iniciar sesión',
-        route: '/ingreso'
+        route: '/login'
     },
     {
         name: 'Consulta pública',
@@ -24,7 +24,7 @@ const navPublicLinks = [
     }
 ]
 export const NavbarPublic = () => {
-    const userRol = 'officer';
+    const userRol = '';
     return (
         <nav className="navbar">
             <div className="navbar__logo-container">
