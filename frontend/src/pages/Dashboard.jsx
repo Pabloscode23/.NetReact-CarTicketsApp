@@ -5,12 +5,13 @@ import { HomeCard } from "../modules/public/components/HomeCard";
 
 export const Dashboard = () => {
     // Para pruebas / maquetacion -> Se usa el custom hook para obtener la función setToken que asigna el token de autenticación
-    const { setToken } = useAuth();
+    const { setToken, setUser } = useAuth();
     const navigate = useNavigate();
 
     // Funcion para cerrar sesion durante pruebas y maquetacion
     const handleLogout = () => {
         setToken();
+        setUser();
         navigate('/login', { replace: true });
     }
 
@@ -24,6 +25,7 @@ export const Dashboard = () => {
                 ))}
             </div>
             <button onClick={handleLogout}>Cerrar sesión</button>
+
         </div>
     )
 }
