@@ -15,6 +15,7 @@ export const LoginPage = () => {
             password: "",
         },
     });
+
     // Se usa el custom hook para obtener la función setToken que asigna el token de autenticación
     const { setToken, setUser } = useAuth();
 
@@ -25,7 +26,7 @@ export const LoginPage = () => {
         reset();
         setToken('token de prueba');
 
-        setUser({ name: data.name, role: { name: 'admin', permissions: ["Ver Multas", "Ver Reclamos", "Ver Perfil"] } });
+        setUser({ name: data.email, role: { name: 'admin', permissions: ["Ver multas", "Ver reclamos", "Ver perfil"] } });
         navigate('/', { replace: true });
     });
 
