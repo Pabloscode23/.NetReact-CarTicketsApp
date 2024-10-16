@@ -27,6 +27,7 @@ export const AuthProvider = memo(({ children }) => {
             delete axios.defaults.headers.common["Authorization"];
             localStorage.removeItem('token')
         }
+        setUser({ name: "Santiago", role: { name: 'admin', permissions: ["Ver pagos", "Ver multas", "Ver perfil"] } })
     }, [token]);
 
     // Valor memoizado del contexto de autenticación
@@ -45,3 +46,11 @@ export const AuthProvider = memo(({ children }) => {
         <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
     );
 });
+
+/* {
+    name: "Santiago",
+        role: {
+            name: 'admin',
+                permissions: ["Ver pagos", "Ver multas", "Ver perfil"]
+    }
+} */

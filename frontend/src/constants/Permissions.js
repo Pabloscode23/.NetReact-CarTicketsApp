@@ -22,4 +22,4 @@ export const Permissions = {
     "create_reports": "Crear informes",
     "view_profile": "Ver perfil",
     "edit_profile": "Editar perfil",
-} 
+}
