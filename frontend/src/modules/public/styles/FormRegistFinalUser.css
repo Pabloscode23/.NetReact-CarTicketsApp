@@ -71,3 +71,18 @@
     justify-content: center;
     margin-top: 20px;
 }
+
+.form__regist-login {
+    margin: 0 auto;
+}
+
+.form__link-login {
+    color: var(--color-blue-dark);
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 200ms ease-in-out;
+}
+
+.form__link-login:hover {
+    color: var(--color-purple-dark);
+}

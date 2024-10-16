@@ -1,10 +1,8 @@
 import { useAuth } from "../../../hooks";
 
 export const RequirePermission = ({ permission, children }) => {
-    const { user } = useAuth();
+    const { permissions } = useAuth(); // Get permissions from context
 
-    if (!user) return null;
-    const permissions = user.role.permissions || [];
-
+    // Return children if permission exists in permissions state, otherwise return null
     return permissions.includes(permission) ? children : null;
-}
+};

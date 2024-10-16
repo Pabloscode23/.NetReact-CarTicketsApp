@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import '../styles/FormRegistFinalUser.css';
+import { Link } from "react-router-dom";
 
 export const FormRegistFinalUser = () => {
     const {
@@ -160,6 +161,10 @@ export const FormRegistFinalUser = () => {
                 <div className="form__button-wrapper">
                     <button className="form__button" type="submit">Registrarme</button>
                 </div>
+                <div className="form__regist-login">
+                    <p>Si ya tiene cuenta,
+                        <Link to="/login" className="form__link-login"> inicia sesión</Link>
+                    </p></div>
             </form></div>
     );
 };

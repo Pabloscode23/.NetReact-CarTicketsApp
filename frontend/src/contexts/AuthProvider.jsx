@@ -1,56 +1,66 @@
 import axios from "axios";
 import { memo, useEffect, useMemo, useState } from "react";
 import { AuthContext } from "./AuthContext";
+import { RolePermissions } from "../constants/RolePermissions"; // Import role permissions
 
-
-// Se crea el proveedor de autenticación
+// Create the authentication provider
+// eslint-disable-next-line react/display-name
 export const AuthProvider = memo(({ children }) => {
-    // Se obtiene el token de autenticación del local storage
+    // Get the authentication token from local storage
     const [token, setToken_] = useState(localStorage.getItem("token"));
-    const [user, setUser_] = useState();
+    const [user, setUser_] = useState(null); // Initialize user as null
 
-    // Función para actualizar el token de autenticación
+    // Function to update the authentication token
     const setToken = (newToken) => {
         setToken_(newToken);
     };
 
+    // Function to update the user and assign permissions based on role or specific permissions
     const setUser = (newUser) => {
-        setUser_(newUser);
-    }
+        // Check if the user has a role and assign permissions accordingly
+        const permissions = newUser?.role
+            ? RolePermissions[newUser.role.name] || []  // Assign permissions based on role
+            : newUser?.permissions || [];                // Assign directly if no role is present
+        setUser_({ ...newUser, permissions });
+    };
 
-    // Se actualiza el token de autenticación en las cabeceras de axios
+    // Update the authentication token in axios headers
     useEffect(() => {
         if (token) {
             axios.defaults.headers.common["Authorization"] = "Bearer " + token;
             localStorage.setItem('token', token);
         } else {
             delete axios.defaults.headers.common["Authorization"];
-            localStorage.removeItem('token')
+            localStorage.removeItem('token');
+            setUser(null); // Reset user when not logged in
         }
-        setUser({ name: "Santiago", role: { name: 'admin', permissions: ["Ver pagos", "Ver multas", "Ver perfil"] } })
+
+        // Simulate setting the user (replace with actual user fetch logic)
+        const exampleUser = { name: "Santiago", role: { name: 'oficial' } }; // Example user data
+        setUser(exampleUser); // This will set the user and assign permissions based on the role
     }, [token]);
 
-    // Valor memoizado del contexto de autenticación
+    // Define default permissions for unauthenticated users
+    const defaultPermissions = ["view_tickets", "edit_profile"]; // Adjust this list as needed
+
+    // If no user is logged in, assign default permissions
+    const userWithPermissions = user
+        ? user
+        : { name: "Guest", permissions: defaultPermissions }; // Default user structure for unauthenticated users
+
+    // Memoized context value
     const contextValue = useMemo(
         () => ({
             token,
             setToken,
-            user,
+            user: userWithPermissions, // Always provide user with permissions
             setUser
         }),
-        [token, user]
+        [token, userWithPermissions]
     );
 
-    // Provee el contexto de autenticación a los componentes hijos
+    // Provide the authentication context to child components
     return (
         <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
     );
 });
-
-/* {
-    name: "Santiago",
-        role: {
-            name: 'admin',
-                permissions: ["Ver pagos", "Ver multas", "Ver perfil"]
-    }
-} */
