@@ -6,12 +6,12 @@ export const cardsAdminInfo = [
 
 
     {
-        Permissions.el que tenga: {
-            icon: faUsers,
-            title: 'Gestión de usuarios',
-            description: 'Administre usuarios, cree nuevos o edite los existentes.',
-            link: '/user-manage'
-        }
+
+        icon: faUsers,
+        title: 'Gestión de usuarios',
+        description: 'Administre usuarios, cree nuevos o edite los existentes.',
+        link: '/user-manage'
+
     },
     {
         icon: faFile,
