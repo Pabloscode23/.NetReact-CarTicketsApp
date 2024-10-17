@@ -1,4 +1,4 @@
-import { faCamera, faCircleExclamation, faCirclePlus, faClockRotateLeft, faFileLines, faFileSignature, faPenToSquare, faUserGear, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faCircleExclamation, faCirclePlus, faClockRotateLeft, faFileLines, faFileSignature, faMagnifyingGlass, faMapLocationDot, faPenToSquare, faRightToBracket, faUserGear, faUserPlus, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
 
 export const InfoPermissions = {
 
@@ -80,4 +80,33 @@ export const InfoPermissions = {
         link: '/reclamos'
     },
 
+    //generales
+    "regist": {
+        icon: faUserPlus,
+        title: 'Registrarse',
+        description: 'Crea una cuenta para acceder al sistema de gestión de multas.',
+        link: '/registro'
+    },
+    "login": {
+        icon: faRightToBracket,
+        title: 'Iniciar sesión',
+        description: 'Inicia sesión para acceder al sistema de gestión de multas.',
+        link: '/login'
+    },
+    "public-request": {
+        icon: faMagnifyingGlass,
+        title: 'Consulta pública',
+        description: 'Realice la consulta pública que necesite.',
+        link: '/*'
+    },
+    "heat-map": {
+        icon: faMapLocationDot,
+        title: 'Mapa de calor de multas',
+        description: 'Consulte el mapa de calor con las áreas con más infracciones de tránsito.',
+        link: '/mapa-de-calor'
+    },
+    "dashboard": {
+        title: 'Inicio',
+        link: '/'
+    }
 }

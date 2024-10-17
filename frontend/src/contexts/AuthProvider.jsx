@@ -6,61 +6,73 @@ import { RolePermissions } from "../constants/RolePermissions"; // Import role p
 // Create the authentication provider
 // eslint-disable-next-line react/display-name
 export const AuthProvider = memo(({ children }) => {
-    // Get the authentication token from local storage
+    // State to hold the token
     const [token, setToken_] = useState(localStorage.getItem("token"));
-    const [user, setUser_] = useState(null); // Initialize user as null
+    const [user, setUser_] = useState(null); // State for user data
 
     // Function to update the authentication token
     const setToken = (newToken) => {
-        setToken_(newToken);
+        if (newToken) {
+            setToken_(newToken);
+            localStorage.setItem('token', newToken);
+        } else {
+            setToken_(null);
+            localStorage.removeItem('token');
+        }
     };
 
-    // Function to update the user and assign permissions based on role or specific permissions
+    // Function to update the user state and assign permissions
     const setUser = (newUser) => {
-        // Check if the user has a role and assign permissions accordingly
-        const permissions = newUser?.role
-            ? RolePermissions[newUser.role.name] || []  // Assign permissions based on role
-            : newUser?.permissions || [];                // Assign directly if no role is present
-        setUser_({ ...newUser, permissions });
+        if (newUser) {
+            // Assign permissions based on role or specific permissions
+            const permissions = newUser.role
+                ? RolePermissions[newUser.role.name] || [] // Assign role-based permissions
+                : newUser.permissions || []; // Assign directly if no role
+            setUser_({ ...newUser, permissions });
+        } else {
+            setUser_(null); // Clear user when logged out
+        }
     };
 
-    // Update the authentication token in axios headers
+    // Update Axios authorization headers whenever the token changes
     useEffect(() => {
         if (token) {
-            axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-            localStorage.setItem('token', token);
+            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         } else {
             delete axios.defaults.headers.common["Authorization"];
-            localStorage.removeItem('token');
-            setUser(null); // Reset user when not logged in
+            setUser(null); // Clear user when no token is available
         }
 
-        // Simulate setting the user (replace with actual user fetch logic)
-        const exampleUser = { name: "Santiago", role: { name: 'oficial' } }; // Example user data
-        setUser(exampleUser); // This will set the user and assign permissions based on the role
+        // Simulate setting the user based on the current token
+        if (token) {
+            // Example user, replace with actual user fetch logic
+            const exampleUser = { name: "santiago", role: { name: 'oficial' } };
+            setUser(exampleUser);
+        }
     }, [token]);
 
-    // Define default permissions for unauthenticated users
-    const defaultPermissions = ["view_tickets", "edit_profile"]; // Adjust this list as needed
+    // Default permissions for guests (unauthenticated users)
+    const defaultPermissions = ["regist", "login", "public-request", "heat-map"]; // Adjust as needed
 
-    // If no user is logged in, assign default permissions
+    // If no user is logged in, assign default guest permissions
     const userWithPermissions = user
         ? user
-        : { name: "Guest", permissions: defaultPermissions }; // Default user structure for unauthenticated users
+        : { name: "Guest", permissions: defaultPermissions }; // Guest user with default permissions
 
-    // Memoized context value
+    // Memoize the context value to optimize performance
     const contextValue = useMemo(
         () => ({
             token,
             setToken,
-            user: userWithPermissions, // Always provide user with permissions
+            user: userWithPermissions, // Provide the user with permissions
             setUser
         }),
         [token, userWithPermissions]
     );
 
-    // Provide the authentication context to child components
     return (
-        <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={contextValue}>
+            {children}
+        </AuthContext.Provider>
     );
 });
