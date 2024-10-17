@@ -162,8 +162,8 @@ export const FormRegistFinalUser = () => {
                     <button className="form__button" type="submit">Registrarme</button>
                 </div>
                 <div className="form__regist-login">
-                    <p>Si ya tiene cuenta,
-                        <Link to="/login" className="form__link-login"> inicia sesión</Link>
+                    <p >Si ya tiene cuenta,
+                        <Link to="/login" className="form__link-login"> inicie sesión</Link>
                     </p></div>
             </form></div>
     );

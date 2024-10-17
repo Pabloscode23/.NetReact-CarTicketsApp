@@ -14,7 +14,8 @@ export const InfoPermissions = {
         title: 'Gestion catálogo de multas',
         description: 'Administra el catálogo de multas del sistema.',
         link: '/gestion/multas'
-    }, "view_roles": {
+    },
+    "view_roles": {
         icon: faUserTag,
         title: 'Gestion de roles y permisos',
         description: 'Administra los roles y permisos del sistema.',
