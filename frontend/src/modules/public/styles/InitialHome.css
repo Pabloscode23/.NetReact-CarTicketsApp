@@ -6,7 +6,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-
 }
 
 /* Main Title */
@@ -31,12 +30,14 @@
     gap: 20px;
     margin-top: 20px;
     width: 90vw;
+    box-sizing: border-box;
 }
 
 
 
 /* Individual Card Styles */
 .card {
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
