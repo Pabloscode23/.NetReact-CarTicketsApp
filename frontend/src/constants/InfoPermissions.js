@@ -1,29 +1,29 @@
-import { faCamera, faCircleExclamation, faCirclePlus, faClockRotateLeft, faFileLines, faFileSignature, faMagnifyingGlass, faMapLocationDot, faPenToSquare, faRightToBracket, faUserGear, faUserPlus, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faCircleExclamation, faCirclePlus, faClockRotateLeft, faFileLines, faFileSignature, faFolderOpen, faMagnifyingGlass, faMapLocationDot, faPenToSquare, faRightToBracket, faUserGear, faUserPlus, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
 
 export const InfoPermissions = {
 
     //Admin
     "create_users": {
         icon: faUsers,
-        title: 'Gestion de usuarios',
+        title: 'Gestión de usuarios',
         description: 'Administra los usuarios del sistema.',
         link: '/gestion/usuarios'
     },
     "view_tickets": {
         icon: faFileLines,
-        title: 'Gestion catálogo de multas',
+        title: 'Catálogo de multas',
         description: 'Administra el catálogo de multas del sistema.',
         link: '/gestion/multas'
     },
     "view_roles": {
         icon: faUserTag,
-        title: 'Gestion de roles y permisos',
+        title: 'Roles y permisos',
         description: 'Administra los roles y permisos del sistema.',
         link: '/gestion/roles'
     },
     "create_reports": {
         icon: faFileSignature,
-        title: 'Gestion de informes',
+        title: 'Gestión de informes',
         description: 'Genere informes sobre el estado y gestión de multas en el sistema.',
         link: '/gestion/informes'
     },
@@ -50,7 +50,7 @@ export const InfoPermissions = {
     "edit_profile": {
         icon: faUserGear,
         title: 'Gestionar perfil',
-        description: 'Aquí podrá gestionar su cuenta de usuario, como cambiar su contraseña.',
+        description: 'Aquí podrá gestionar su cuenta de usuario y realizar cambios en su perfil.',
         link: '/perfil'
     },
 
@@ -66,6 +66,12 @@ export const InfoPermissions = {
         title: 'Editar multa',
         description: 'Aquí podrá editar una multa en el sistema.',
         link: '/multas/editar/:id'
+    },
+    "history_tickets": {
+        icon: faFolderOpen,
+        title: 'Historial de multas',
+        description: 'Aquí podrá vel el historial de multas creadas.',
+        link: '/multas/historial'
     },
     "history_claims": {
         icon: faClockRotateLeft,
