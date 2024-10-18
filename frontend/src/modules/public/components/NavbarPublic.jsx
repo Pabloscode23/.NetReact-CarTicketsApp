@@ -24,6 +24,20 @@ export const NavbarPublic = () => {
     // Dashboard link
     const dashboard = "/";
 
+    const findNavItems = () => {
+        const items = [];
+        permissionsToDisplay.map((permission) => {
+            items.push(InfoPermissions[permission]);
+        });
+
+        return items;
+    };
+
+    const navItems = findNavItems();
+
+    console.log(navItems);
+
+
     return (
         <nav className="navbar">
             <div className="navbar__logo-container">
@@ -37,16 +51,31 @@ export const NavbarPublic = () => {
                     </Link>
 
                     {/* Map permissions and render links */}
-                    {permissionsToDisplay.map(permission => {
-                        const permissionInfo = InfoPermissions[permission];
+                    {navItems.slice(0, 2).map((item) => {
+
                         return (
-                            permissionInfo && (
-                                <Link to={permissionInfo.link} key={permission}>
-                                    <li className="navbar__menu-item">{permissionInfo.title}</li>
-                                </Link>
-                            )
+                            <Link to={item.link} key={item.title}><li className="navbar__menu-item">{item.title}</li></Link>
                         );
                     })}
+                    {
+                        navItems.length > 2 && (
+                            <li className="navbar__menu-item ">
+                                <div className="dropdown">
+                                    <li className='dropdown__listItem'>Más</li>
+
+
+                                    <div className="dropdown__content">
+                                        {navItems.slice(2).map((item) => {
+                                            return (
+                                                <Link className='dropdown__content-link' to={item.link} key={item.title}>{item.title}</Link>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </li>
+                        )
+
+                    }
 
                     {/* Show "Cerrar sesión" only if the user is logged in */}
                     {user && user.name !== "Guest" && (
