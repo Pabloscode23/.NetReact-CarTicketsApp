@@ -35,9 +35,6 @@ export const NavbarPublic = () => {
 
     const navItems = findNavItems();
 
-    console.log(navItems);
-
-
     return (
         <nav className="navbar">
             <div className="navbar__logo-container">
