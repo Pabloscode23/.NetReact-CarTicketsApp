@@ -8,6 +8,7 @@ import { Dashboard, NotFound } from "../pages"
 import { ProtectedRoutes } from "../router"
 import { RegistFinalUser } from "../modules/public/pages/RegistFinalUserPage"
 import { TwoFactorPage } from "../modules/auth/pages/TwoFactorPage"
+import { ForgotPasswordPage } from "../modules/auth/pages/ForgotPasswordPage"
 
 
 
@@ -27,7 +28,7 @@ export const routesForPublic = [
     },
     {
         path: "/olvide-contrasena",
-        element: <AuthLayout><h1>PASSWORD RECOVERY</h1></AuthLayout>
+        element: <AuthLayout><ForgotPasswordPage /></AuthLayout>
     },
     {
         path: "/cambiar-contrasena/:token",
