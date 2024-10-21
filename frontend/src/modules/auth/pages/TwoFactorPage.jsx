@@ -1,4 +1,8 @@
 import { useForm } from "react-hook-form";
+import '../styles/TwoFactorPage.css';
+import { useAuth } from "../../../hooks";
+import { useNavigate } from "react-router-dom";
+
 export const TwoFactorPage = () => {
     const {
         register,
@@ -10,21 +14,29 @@ export const TwoFactorPage = () => {
             code: "",
         },
     });
+    // Se usa el custom hook para obtener la función setToken que asigna el token de autenticación
+    const { setToken, setUser } = useAuth();
 
+    // Se usa el hook de navegación para redirigir a la página principal
+    const navigate = useNavigate();
     const onSubmit = handleSubmit((data) => {
         console.log(data);
         reset();
+        setToken('token de prueba');
+
+        setUser({ name: data.email, role: { name: 'admin', permissions: ["Ver multas", "Ver reclamos", "Ver perfil"] } });
+        navigate('/', { replace: true });
     });
 
     return (
-        <div className="login-form">
-            <h1>Confirmación de código</h1>
-            <form className="login-form__body" onSubmit={onSubmit}>
-                <div className="login-form-inputs">
-                    <div className="login-form__field">
-                        <label className="login-form__label">Código de verificación</label>
+        <div className="two-factor">
+            <h1 className="two-factor__title">Confirmación de código</h1>
+            <form className="two-factor__form" onSubmit={onSubmit}>
+                <div className="two-factor__inputs">
+                    <div className="two-factor__field">
+                        <label className="two-factor__label">Ingrese el código de verificación</label>
                         <input
-                            className="login-form__input"
+                            className="two-factor__input"
                             type="text"
                             name="code"
                             {...register("code", {
@@ -33,15 +45,15 @@ export const TwoFactorPage = () => {
                             })}
                         />
                         {errors.code && (
-                            <span className="login-form__error">{errors.code.message}</span>
+                            <span className="two-factor__error">{errors.code.message}</span>
                         )}
                     </div>
                 </div>
-                <div className="login-form__actions">
-                    <button className="login-form__button" type="submit">Verificar</button>
+                <div className="two-factor__actions">
+                    <button className="two-factor__button" type="submit">Verificar</button>
                 </div>
-
             </form>
         </div>
+
     );
 };
