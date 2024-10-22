@@ -8,6 +8,8 @@ import { Dashboard, NotFound } from "../pages"
 import { ProtectedRoutes } from "../router"
 import { RegistFinalUser } from "../modules/public/pages/RegistFinalUserPage"
 import { TwoFactorPage } from "../modules/auth/pages/TwoFactorPage"
+import { ForgotPasswordPage } from "../modules/auth/pages/ForgotPasswordPage"
+import { PublicResquestPage } from "../modules/public/pages/PublicRequestPage"
 
 
 
@@ -22,12 +24,12 @@ export const routesForPublic = [
         element: <MainLayout><h1>HEATMAP</h1></MainLayout>
     },
     {
-        path: "/consulta-placa",
-        element: <MainLayout><h1>PLATE SEARCH</h1></MainLayout>
+        path: "/consulta-publica",
+        element: <MainLayout><PublicResquestPage /></MainLayout>
     },
     {
         path: "/olvide-contrasena",
-        element: <AuthLayout><h1>PASSWORD RECOVERY</h1></AuthLayout>
+        element: <AuthLayout><ForgotPasswordPage /></AuthLayout>
     },
     {
         path: "/cambiar-contrasena/:token",
