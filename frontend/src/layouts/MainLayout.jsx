@@ -3,11 +3,11 @@ import { NavbarPublic } from "../modules/public/components/NavbarPublic"
 // Componente de Layout principal de la pagina
 export const MainLayout = ({ children }) => {
     return (
-        <div className="main">
+        <div >
             <NavbarPublic />
 
             {/* MAIN */}
-            <main>
+            <main className="container">
                 {children}
             </main>
 

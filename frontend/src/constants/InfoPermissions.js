@@ -104,7 +104,7 @@ export const InfoPermissions = {
         icon: faMagnifyingGlass,
         title: 'Consulta pública',
         description: 'Realice la consulta pública que necesite.',
-        link: '/*'
+        link: '/consulta-publica'
     },
     "heat-map": {
         icon: faMapLocationDot,

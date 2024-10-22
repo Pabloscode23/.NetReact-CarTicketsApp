@@ -16,7 +16,7 @@ export const cardsInfo = [
         icon: faMagnifyingGlass,
         title: 'Consulta pública',
         description: 'Realice la consulta pública que necesite.',
-        link: '/*'
+        link: '/consulta-publica'
     },
     {
         icon: faMapLocationDot,
