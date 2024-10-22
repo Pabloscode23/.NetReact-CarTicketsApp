@@ -10,6 +10,7 @@ import { RegistFinalUser } from "../modules/public/pages/RegistFinalUserPage"
 import { TwoFactorPage } from "../modules/auth/pages/TwoFactorPage"
 import { ForgotPasswordPage } from "../modules/auth/pages/ForgotPasswordPage"
 import { PublicResquestPage } from "../modules/public/pages/PublicRequestPage"
+import { AllUserTicketsPage } from "../modules/tickets/pages/AllUserTicketsPage"
 
 
 
@@ -70,6 +71,12 @@ export const routesForAuthenticatedOnly = [
             {
                 path: "/caja-de-pago",
                 element: <h1>Caja de pago</h1>
+            }, {
+                path: "/multas-usuario",
+                element: <AllUserTicketsPage />
+            }, {
+                path: "/reclamos-usuario",
+                element: <h1>Reclamos de usuario</h1>
             }
         ]
     }
