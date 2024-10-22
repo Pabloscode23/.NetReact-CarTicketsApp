@@ -1,31 +1,37 @@
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks";
-import { cardsAdminInfo } from "../modules/admin/components/AdminCardsInfo";
+import { InfoPermissions } from "../constants/InfoPermissions";
 import { HomeCard } from "../modules/public/components/HomeCard";
 
 export const Dashboard = () => {
-    // Para pruebas / maquetacion -> Se usa el custom hook para obtener la función setToken que asigna el token de autenticación
-    const { setToken, setUser } = useAuth();
-    const navigate = useNavigate();
+    const { user } = useAuth();
 
-    // Funcion para cerrar sesion durante pruebas y maquetacion
-    const handleLogout = () => {
-        setToken();
-        setUser();
-        navigate('/login', { replace: true });
-    }
+    // Default permissions for non-authenticated users
+    const defaultPermissions = ["regist", "login", "public-request", "heat-map"];
+
+    // Use user permissions if available, otherwise default to guest permissions
+    const permissionsToDisplay = user?.permissions || defaultPermissions;
 
     return (
         <div className="container">
             <h1 className="main-title">Bienvenido(a)</h1>
             <h2 className="subtitle">Por favor seleccione lo que desea hacer</h2>
-            <div className="cards">
-                {cardsAdminInfo.map((card, index) => (
-                    <HomeCard key={index} icon={card.icon} title={card.title} description={card.description} link={card.link} />
-                ))}
-            </div>
-            <button onClick={handleLogout}>Cerrar sesión</button>
 
+            <div className="cards">
+                {permissionsToDisplay
+                    .filter(permission => InfoPermissions[permission])  // Filter valid permissions
+                    .map(permission => {
+                        const permissionInfo = InfoPermissions[permission];
+                        return (
+                            <HomeCard
+                                key={permission}
+                                icon={permissionInfo.icon}
+                                title={permissionInfo.title}
+                                description={permissionInfo.description}
+                                link={permissionInfo.link}
+                            />
+                        );
+                    })}
+            </div>
         </div>
-    )
-}
+    );
+};

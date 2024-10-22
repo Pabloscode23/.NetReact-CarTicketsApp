@@ -1,107 +1,87 @@
-import '../styles/NavbarPublic.css'
-import { Link } from 'react-router-dom'
-import ByteDevLogo from '../../../assets/img/ByteDevLogo.png'
-const navPublicLinks = [
-    {
-        name: 'Inicio',
-        route: '/'
-    },
-    {
-        name: 'Registrarse',
-        route: '/registro'
-    },
-    {
-        name: 'Iniciar sesión',
-        route: '/login'
-    },
-    {
-        name: 'Consulta pública',
-        route: '/*'
-    },
-    {
-        name: 'Mapa de calor',
-        route: '/mapa-de-calor'
-    }
-]
+import '../styles/NavbarPublic.css';
+import { Link, useNavigate } from 'react-router-dom';
+import ByteDevLogo from '../../../assets/img/ByteDevLogo.png';
+import { useAuth } from '../../../../src/hooks';  // Make sure this is your correct useAuth hook import
+import { InfoPermissions } from '../../../constants/InfoPermissions';
+
 export const NavbarPublic = () => {
-    const userRol = '';
+    const { user, setToken, setUser } = useAuth();  // Get the token and user from useAuth hook
+    const navigate = useNavigate();
+
+    // Default permissions for non-authenticated users
+    const defaultPermissions = ["regist", "login", "public-request", "heat-map"];
+
+    // Use user permissions if available, otherwise default to guest permissions
+    const permissionsToDisplay = user?.permissions || defaultPermissions;
+
+    // Handle logout: clear token, clear user, and navigate to login
+    const handleLogout = () => {
+        setToken(null);  // Clear the token
+        setUser(null);   // Clear the user state
+        navigate('/');   // Redirect to home or login page
+    };
+
+    // Dashboard link
+    const dashboard = "/";
+
+    const findNavItems = () => {
+        const items = [];
+        permissionsToDisplay.map((permission) => {
+            items.push(InfoPermissions[permission]);
+        });
+
+        return items;
+    };
+
+    const navItems = findNavItems();
+
     return (
         <nav className="navbar">
             <div className="navbar__logo-container">
-
-                <img className="navbar__logo" src={ByteDevLogo} />
+                <img className="navbar__logo" src={ByteDevLogo} alt="Logo" />
             </div>
             <div>
                 <ul className="navbar__menu">
+                    {/* Home / Dashboard Link */}
+                    <Link to={dashboard}>
+                        <li className="navbar__menu-item">Inicio</li>
+                    </Link>
 
+                    {/* Map permissions and render links */}
+                    {navItems.slice(0, 2).map((item) => {
+
+                        return (
+                            <Link to={item.link} key={item.title}><li className="navbar__menu-item">{item.title}</li></Link>
+                        );
+                    })}
                     {
-                        userRol === 'admin' && (
-                            <>
+                        navItems.length > 2 && (
+                            <li className="navbar__menu-item ">
+                                <div className="dropdown">
+                                    <li className='dropdown__listItem'>Más</li>
 
-                                <Link to="/user-manage"><li className="navbar__menu-item">Gestión de usuario</li></Link>
-                                <Link to="/tickets"><li className="navbar__menu-item">Catálogo de multas</li></Link>
-                                <Link to="/rol-permission"><li className="navbar__menu-item">Roles y permisos</li></Link>
-                                <Link to="/reports"><li className="navbar__menu-item">Informes</li></Link>
-                                <Link to="/plate-image"><li className="navbar__menu-item">Carga de imágenes</li></Link>
-                                <Link to="/login"><li className="navbar__menu-item">Cerrar sesión</li></Link>
 
-                            </>
+                                    <div className="dropdown__content">
+                                        {navItems.slice(2).map((item) => {
+                                            return (
+                                                <Link className='dropdown__content-link' to={item.link} key={item.title}>{item.title}</Link>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </li>
                         )
+
                     }
 
-                    {
-                        userRol === 'judge' && (
-                            <>
-
-                                <Link to="/user-manage"><li className="navbar__menu-item">Juez</li></Link>
-                                <Link to="/tickets"><li className="navbar__menu-item">Juez</li></Link>
-                                <Link to="/rol-permission"><li className="navbar__menu-item">Juez</li></Link>
-                                <Link to="/reports"><li className="navbar__menu-item">Juez</li></Link>
-                                <Link to="/plate-image"><li className="navbar__menu-item">Juez</li></Link>
-                                <Link to="/login"><li className="navbar__menu-item">Cerrar sesión</li></Link>
-
-                            </>
-                        )
-                    }
-                    {
-                        userRol === 'officer' && (
-                            <>
-
-                                <Link to="/user-manage"><li className="navbar__menu-item">Oficial</li></Link>
-                                <Link to="/tickets"><li className="navbar__menu-item">Oficial</li></Link>
-                                <Link to="/rol-permission"><li className="navbar__menu-item">Oficial</li></Link>
-                                <Link to="/reports"><li className="navbar__menu-item">Oficial</li></Link>
-                                <Link to="/plate-image"><li className="navbar__menu-item">Oficial</li></Link>
-                                <Link to="/login"><li className="navbar__menu-item">Cerrar sesión</li></Link>
-
-                            </>
-                        )
-                    }
-                    {
-                        userRol === 'user' && (
-                            <>
-                                <Link to="/user-tickets"><li className="navbar__menu-item">Multas</li></Link>
-                                <Link to="/claims"><li className="navbar__menu-item">Reclamos</li></Link>
-                                <Link to="/userprofile-manage"><li className="navbar__menu-item">Gestionar cuenta</li></Link>
-                                <Link to="/login"><li className="navbar__menu-item">Cerrar sesión</li></Link>
-
-                            </>
-                        )
-                    }
-                    {
-                        userRol === '' && (
-                            <>
-                                <Link to="/"><li className="navbar__menu-item">Inicio</li></Link>
-                                <Link to="/registro"><li className="navbar__menu-item">Registrarse</li></Link>
-                                <Link to="/login"><li className="navbar__menu-item">Iniciar sesión</li></Link>
-                                <Link to="*"><li className="navbar__menu-item">Consulta pública</li></Link>
-                                <Link to="/mapa-de-calor"><li className="navbar__menu-item">Mapa de calor</li></Link>
-                            </>
-                        )
-                    }
-
-
-                </ul></div>
+                    {/* Show "Cerrar sesión" only if the user is logged in */}
+                    {user && user.name !== "Guest" && (
+                        <li className="navbar__menu-item" onClick={handleLogout} style={{ cursor: 'pointer' }}>
+                            Cerrar sesión
+                        </li>
+                    )}
+                </ul>
+            </div>
         </nav>
-    )
-}
+    );
+};

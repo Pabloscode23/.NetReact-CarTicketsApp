@@ -1,19 +1,26 @@
-.container__form {
+.two-factor {
     margin-top: 10vh;
     color: var(--color-grey-dark);
     box-shadow: 0 0 100px #DFF5FC;
     border-radius: 30px;
-    height: 78vh;
+    height: 50vh;
+    width: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
     background-color: var(--color-blue-lighter);
-    font-size: 2vh;
 }
 
-.form {
+.two-factor__inputs {
     display: flex;
+    flex-direction: column;
+    gap: 3vh;
+}
+
+.two-factor__form {
+    display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     gap: 20px;
     max-width: 800px;
@@ -21,21 +28,21 @@
     align-items: center;
 }
 
-.form__group {
+.two-factor__field {
     flex: 1 1 45%;
-    /* 45% width per group to create two columns, and responsive */
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 40vw;
 }
 
-.form__label {
+.two-factor__label {
     font-size: 2vh;
     margin-bottom: 8px;
     font-weight: bold;
 }
 
-.form__input {
+.two-factor__input {
     padding: 10px;
     border: none;
     border-radius: 5px;
@@ -43,49 +50,58 @@
     width: 85%;
 }
 
-
-.form__error {
+.two-factor__error {
     color: red;
     margin-top: 5px;
 }
 
-.form__button {
+.two-factor__button {
     padding: 10px 20px;
     background-color: var(--color-blue-dark);
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 2vh;
+    font-size: 16px;
     margin: 0 auto;
     margin-bottom: 1vh;
     transition: all 200ms ease-in-out;
 }
 
-.form__button:hover {
+.two-factor__button:hover {
     background-color: var(--color-purple-dark);
 }
 
-.form__button-wrapper {
+.two-factor__actions {
     width: 100%;
     display: flex;
     justify-content: center;
     margin-top: 20px;
 }
 
-.form__regist-login {
-    margin: 0 auto;
+.two-factor__indications {
     font-size: 1.8vh;
-    font-weight: bold;
 }
 
-.form__link-login {
-    color: var(--color-blue-dark);
+.two-factor__line {
+    border: 1px solid rgba(164, 164, 164, 0.315);
+    width: 30vw;
+    margin: 2vh 0;
+}
+
+.two-factor__text {
+    font-weight: bold;
+    color: var(--color-purple-dark);
+}
+
+.two-factor__link {
+    color: var(--color-grey-medium);
     font-weight: bold;
     text-decoration: none;
-    transition: all 200ms ease-in-out;
+    transition: 300ms ease-in-out;
 }
 
-.form__link-login:hover {
-    color: var(--color-purple-dark);
+.two-factor__link:hover {
+    color: var(--color-blue-dark);
+    transform: scale(1.1);
 }
