@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DTO;
-using DataAccess.EF;
+//using DataAccess.EF;
 
 namespace API.Controllers
 {
