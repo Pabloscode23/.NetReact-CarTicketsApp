@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DTO;
-using DataAccess.EF;
+using DataAccess.Models; 
+//using DataAccess.EF;
 
 namespace API.Controllers
 {
@@ -23,36 +22,35 @@ namespace API.Controllers
 
         // GET: api/UserDTO
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
         }
 
         // GET: api/UserDTO/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDTO>> GetUserDTO(string id)
+        public async Task<ActionResult<User>> GetUser(string id)
         {
-            var userDTO = await _context.Users.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
 
-            if (userDTO == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return userDTO;
+            return user;
         }
 
         // PUT: api/UserDTO/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserDTO(string id, UserDTO userDTO)
+        public async Task<IActionResult> PutUser(string id, User user)
         {
-            if (id != userDTO.UserId)
+            if (id != user.UserId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(userDTO).State = EntityState.Modified;
+            _context.Entry(user).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +58,7 @@ namespace API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserDTOExists(id))
+                if (!UserExists(id))
                 {
                     return NotFound();
                 }
@@ -74,18 +72,17 @@ namespace API.Controllers
         }
 
         // POST: api/UserDTO
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<UserDTO>> PostUserDTO(UserDTO userDTO)
+        public async Task<ActionResult<User>> PostUser(User user)
         {
-            _context.Users.Add(userDTO);
+            _context.Users.Add(user);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (UserDTOExists(userDTO.UserId))
+                if (UserExists(user.UserId))
                 {
                     return Conflict();
                 }
@@ -95,26 +92,26 @@ namespace API.Controllers
                 }
             }
 
-            return CreatedAtAction("GetUserDTO", new { id = userDTO.UserId }, userDTO);
+            return CreatedAtAction("GetUser", new { id = user.UserId }, user);
         }
 
         // DELETE: api/UserDTO/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUserDTO(string id)
+        public async Task<IActionResult> DeleteUser(string id)
         {
-            var userDTO = await _context.Users.FindAsync(id);
-            if (userDTO == null)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
 
-            _context.Users.Remove(userDTO);
+            _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool UserDTOExists(string id)
+        private bool UserExists(string id)
         {
             return _context.Users.Any(e => e.UserId == id);
         }
