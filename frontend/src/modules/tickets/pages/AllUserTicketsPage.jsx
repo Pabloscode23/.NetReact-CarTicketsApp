@@ -3,7 +3,7 @@ import { TicketUser } from '../components/TicketUser';
 import '../styles/AllUserTickets.css';
 
 export const AllUserTicketsPage = () => {
-
+    {/**Hacer un context y llamarlo aqui */ }
     const [tickets, setTickets] = useState([
         {
             id: 1,
@@ -36,13 +36,12 @@ export const AllUserTicketsPage = () => {
             amount: "6500",
             status: "Pendiente",
         }
-
     ]);
     //Debe de generarse un update en la base de datos
     const handleDispute = (id) => {
         setTickets((prevTickets) =>
             prevTickets.map((ticket) =>
-                ticket.id === id ? { ...ticket, status: "En Disputa" } : ticket
+                ticket.id === id ? { ...ticket, status: "Reclamada" } : ticket
             )
         );
     };

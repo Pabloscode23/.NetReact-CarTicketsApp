@@ -6,11 +6,11 @@ export const TicketUser = ({ id, date, reason, amount, status, onDispute }) => {
             <td>{id}</td>
             <td>{date}</td>
             <td>{reason}</td>
-            <td>{amount}</td>
+            <td>{"₡" + amount}</td>
             <td>{status}</td>
             <td className='table__buttons'>
                 <button>Pagar</button> {/* Debe de redirigir a la pagina de pago*/}
-                <button onClick={onDispute}>Disputar</button>
+                <button onClick={onDispute}>Reclamar</button>
             </td>
         </tr>
     )

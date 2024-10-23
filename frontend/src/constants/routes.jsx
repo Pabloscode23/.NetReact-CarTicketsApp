@@ -18,7 +18,7 @@ import { AllUserTicketsPage } from "../modules/tickets/pages/AllUserTicketsPage"
 export const routesForPublic = [
     {
         path: "/registro",
-        element: <AuthLayout><RegistFinalUser /></AuthLayout>
+        element: <MainLayout><RegistFinalUser /></MainLayout>
     },
     {
         path: "/mapa-de-calor",
@@ -30,7 +30,7 @@ export const routesForPublic = [
     },
     {
         path: "/olvide-contrasena",
-        element: <AuthLayout><ForgotPasswordPage /></AuthLayout>
+        element: <MainLayout><ForgotPasswordPage /></MainLayout>
     },
     {
         path: "/cambiar-contrasena/:token",
@@ -92,9 +92,9 @@ export const routesForNonAuthenticatedOnly = [
     },
     {
         path: "/login",
-        element: <AuthLayout><LoginPage /></AuthLayout>
+        element: <MainLayout><LoginPage /></MainLayout>
     }, {
         path: "/two-factor",
-        element: <AuthLayout><TwoFactorPage /></AuthLayout>
+        element: <MainLayout><TwoFactorPage /></MainLayout>
     },
 ]
