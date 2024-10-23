@@ -1,23 +1,20 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using DataAccess.Models;
 using DTO;
-namespace DataAccess.EF
+using Microsoft.EntityFrameworkCore;
+
+public class AppDbContext : DbContext
 {
+    public DbSet<User> Users { get; set; }
+    public DbSet<RoleDTO> Roles { get; set; }
+    public DbSet<DTO.Ticket> Tickets { get; set; }
 
-    public class AppDbContext : DbContext
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-        public DbSet<UserDTO> Users { get; set; }
-        public DbSet<RoleDTO> Roles { get; set; }
-        public DbSet<Ticket> Tickets { get; set; }
-
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-         
-        }
     }
-	
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<User>()
+            .HasKey(u => u.UserId);
+    }
 }
