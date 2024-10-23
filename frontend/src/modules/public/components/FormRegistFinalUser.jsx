@@ -1,7 +1,8 @@
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import '../styles/FormRegistFinalUser.css';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 export const FormRegistFinalUser = () => {
     const {
@@ -24,17 +25,42 @@ export const FormRegistFinalUser = () => {
         },
     });
 
+    const navigate = useNavigate();
+
     const password = useRef(null);
     password.current = watch("password", "");
 
-    const onSubmit = handleSubmit((data) => {
-        console.log(data);
-        reset();
-    });
+    const onSubmit = async (data) => {
+        try {
+            const formData = {
+                userId: data.idNumber, // or some generated ID if not provided
+                name: `${data.firstName} ${data.lastName}`,
+                idNumber: data.idNumber,
+                email: data.email,
+                password: data.password,
+                phoneNumber: data.phoneNumber,
+                role: "usuario", // You can adjust the role if needed
+                profilePicture: data.profilePicture, // Assuming it's just the file name, adjust as needed
+            };
+
+            const response = await axios.post('http://localhost:5039/api/UserDTO', formData); // Replace with your backend API URL
+
+            console.log("Usuario creado:", response.data);
+
+            // const navigate = useNavigate(); // Moved to top level
+            reset();
+            navigate('/login', { replace: true });
+            // Optionally, navigate to a different page or display success message
+        } catch (error) {
+            console.error("Error en la creacion del usuario:", error);
+        }
+    };
 
     return (
         <div className="container__form"><h1>Registrarse</h1>
-            <form className="form" onSubmit={onSubmit}>
+            <form className="form" onSubmit={handleSubmit(onSubmit)}>
+                {/* Form fields remain the same */}
+                {/*...*/}
                 <div className="form__group">
                     <label className="form__label">Nombre:</label>
                     <input
@@ -130,7 +156,6 @@ export const FormRegistFinalUser = () => {
                     />
                     {errors.password && <span className="form__error">{errors.password.message}</span>}
                 </div>
-
 
                 <div className="form__group">
                     <label className="form__label">Confirmación de contraseña:</label>

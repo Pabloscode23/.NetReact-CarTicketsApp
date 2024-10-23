@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DataAccess.Models; 
-//using DataAccess.EF;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using DataAccess.Models;
 
 namespace API.Controllers
 {
@@ -14,10 +15,12 @@ namespace API.Controllers
     public class UserDTOController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public UserDTOController(AppDbContext context)
+        public UserDTOController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         // GET: api/UserDTO
@@ -73,7 +76,7 @@ namespace API.Controllers
 
         // POST: api/UserDTO
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<object>> PostUser(User user)
         {
             _context.Users.Add(user);
             try
@@ -92,7 +95,25 @@ namespace API.Controllers
                 }
             }
 
-            return CreatedAtAction("GetUser", new { id = user.UserId }, user);
+            // Generate JWT for the registered user
+            var token = GenerateJwtToken(user);
+
+            // Return all user attributes and JWT token
+            return new
+            {
+                user = new
+                {
+                    user.UserId,
+                    user.Name,
+                    user.IdNumber,
+                    user.Email,
+                    user.Password,
+                    user.PhoneNumber,
+                    user.Role,
+                    user.ProfilePicture
+                },
+                token = token
+            };
         }
 
         // DELETE: api/UserDTO/5
@@ -114,6 +135,38 @@ namespace API.Controllers
         private bool UserExists(string id)
         {
             return _context.Users.Any(e => e.UserId == id);
+        }
+
+        private string GenerateJwtToken(User user)
+        {
+            // Retrieve JWT settings from configuration
+            var jwtSettings = _configuration.GetSection("JwtSettings");
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]));
+            var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+
+            // Add user-specific claims and a unique identifier (JTI)
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()), // User ID
+                new Claim("Name", user.Name), // Name
+                new Claim("IdNumber", user.IdNumber), // ID Number
+                new Claim(JwtRegisteredClaimNames.Email, user.Email), // Email
+                new Claim("PhoneNumber", user.PhoneNumber), // Phone Number
+                new Claim("Role", user.Role), // Role
+                new Claim("ProfilePicture", user.ProfilePicture), // Profile Picture
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Unique identifier (JTI)
+            };
+
+            // Create the JWT token
+            var token = new JwtSecurityToken(
+                issuer: jwtSettings["Issuer"],
+                audience: jwtSettings["Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(30), // Set token expiration
+                signingCredentials: credentials);
+
+            // Return the serialized token
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
