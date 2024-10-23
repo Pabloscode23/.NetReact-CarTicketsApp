@@ -11,6 +11,7 @@ import { TwoFactorPage } from "../modules/auth/pages/TwoFactorPage"
 import { ForgotPasswordPage } from "../modules/auth/pages/ForgotPasswordPage"
 import { PublicResquestPage } from "../modules/public/pages/PublicRequestPage"
 import { AllUserTicketsPage } from "../modules/tickets/pages/AllUserTicketsPage"
+import { UserClaimsPage } from "../modules/disputes/pages/UserClaimsPage"
 
 
 
@@ -76,7 +77,7 @@ export const routesForAuthenticatedOnly = [
                 element: <AllUserTicketsPage />
             }, {
                 path: "/reclamos-usuario",
-                element: <h1>Reclamos de usuario</h1>
+                element: <UserClaimsPage />
             }
         ]
     }

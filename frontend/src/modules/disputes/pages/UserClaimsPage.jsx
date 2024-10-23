@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react';
-import { TicketUser } from '../components/TicketUser';
-import '../styles/AllUserTickets.css';
-
+import { useEffect, useState } from "react";
+import { UserClaims } from "../components/UserClaims";
 
 const ApiExample = [
     {
@@ -9,7 +7,7 @@ const ApiExample = [
         date: "01/10/2024",
         reason: "Exceso de velocidad",
         amount: "13434",
-        status: "Pendiente",
+        status: "Reclamada",
     }, {
         id: 2,
         date: "01/10/2024",
@@ -21,7 +19,7 @@ const ApiExample = [
         date: "01/10/2024",
         reason: "Ebriedad",
         amount: "660",
-        status: "Pendiente",
+        status: "Aprobada",
     }, {
         id: 4,
         date: "01/10/2024",
@@ -38,28 +36,20 @@ const ApiExample = [
 ]
 
 
-export const AllUserTicketsPage = () => {
+export const UserClaimsPage = () => {
     {/**Hacer un context y llamarlo aqui */ }
-
-    const [tickets, setTickets] = useState([]);
+    const [claims, setClaims] = useState([]);
 
     useEffect(() => {
-        setTickets(ApiExample);
+        setClaims(ApiExample
+            .filter(ticket => ticket.status !== "Pendiente"));
     }, []);
-
     //Debe de generarse un update en la base de datos
-    const handleDispute = (id) => {
-        setTickets((prevTickets) =>
-            prevTickets.map((ticket) =>
-                ticket.id === id ? { ...ticket, status: "Reclamada" } : ticket
-            )
-        );
-    };
 
     return (
         <div className="container__tickets">
-            <h1 className="main__ticket-title">Multas</h1>
-            <h2 className="main__ticket-subtitle">Aquí encuentra las multas hechas a su persona y las acciones que puede tomar en cada una</h2>
+            <h1 className="main__ticket-title">Reclamos</h1>
+            <h2 className="main__ticket-subtitle">Aquí encuentra las multas que ha reclamado</h2>
 
             <table className="ticket-table">
                 <thead>
@@ -69,18 +59,18 @@ export const AllUserTicketsPage = () => {
                         <th>Razón de la multa</th>
                         <th>Monto de la multa</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
+
                     </tr>
                 </thead>
                 <tbody className='table__children'>
-                    {tickets.map((ticket) => (
-                        <TicketUser key={ticket.id}
+                    {claims.map((ticket) => (
+                        <UserClaims key={ticket.id}
                             id={ticket.id}
                             date={ticket.date}
                             reason={ticket.reason}
                             amount={ticket.amount}
                             status={ticket.status}
-                            onDispute={() => handleDispute(ticket.id)}
+
                         />
                     ))}
                 </tbody>
