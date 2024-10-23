@@ -18,7 +18,6 @@ export const TicketsRoutes = () => {
 
             {/* Ruta para ingresar datos en el lector de imagenes */}
             <Route path="/lector-imagenes" element={<h1>Reader</h1>} />
-
         </Routes>
     )
 }
