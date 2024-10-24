@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom"
+import { UsersPage } from "../pages"
 
 export const AdminRoutes = () => {
     return (
@@ -8,7 +9,7 @@ export const AdminRoutes = () => {
             <Route path="/roles" element={<h1>Roles</h1>} />
 
             {/* Ruta para CRUD de Usuarios */}
-            <Route path="/usuarios" element={<h1>Users</h1>} />
+            <Route path="/usuarios" element={<UsersPage />} />
 
             {/* Ruta para control de informes */}
             <Route path="/informes" element={<h1>Reports</h1>} />

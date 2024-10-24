@@ -46,18 +46,14 @@ export const AuthProvider = memo(({ children }) => {
         // Simulate setting the user based on the current token
         if (token) {
             // Example user, replace with actual user fetch logic
-            const exampleUser = { name: "santiago", role: { name: 'usuario' } };
+            const exampleUser = { name: "santiago", role: { name: 'admin' } };
             setUser(exampleUser);
         }
     }, [token]);
 
-    // Default permissions for guests (unauthenticated users)
-    const defaultPermissions = ["regist", "login", "public-request", "heat-map"]; // Adjust as needed
-
     // If no user is logged in, assign default guest permissions
     const userWithPermissions = user
-        ? user
-        : { name: "Guest", permissions: defaultPermissions }; // Guest user with default permissions
+        && user;
 
     // Memoize the context value to optimize performance
     const contextValue = useMemo(

@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom"
-
+import { CreateTicketsPage } from "../pages"
 export const TicketsRoutes = () => {
     return (
         // Rutas para el módulo de tickets
@@ -8,7 +8,7 @@ export const TicketsRoutes = () => {
             <Route path="/" element={<h1>Tickets</h1>} />
 
             {/* Ruta para ir a formulario de creacion de multa - RESPONSIVE */}
-            <Route path="/crear" element={<h1>Create</h1>} />
+            <Route path="/crear" element={<CreateTicketsPage />} />
 
             {/* Ruta para ir a formulario de edicion de multa - RESPONSIVE */}
             <Route path="/editar/:id" element={<h1>Edit</h1>} />
