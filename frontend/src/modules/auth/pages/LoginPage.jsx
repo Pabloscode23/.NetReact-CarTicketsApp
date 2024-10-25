@@ -1,8 +1,9 @@
 import { useForm } from "react-hook-form";
 import '../styles/LoginPage.css';
 import { Link, useNavigate } from "react-router-dom";
-
-
+import axios from 'axios';
+import { useState } from 'react';
+import { API_URL } from "../../../constants/Api";
 export const LoginPage = () => {
     const {
         register,
@@ -15,17 +16,38 @@ export const LoginPage = () => {
             password: "",
         },
     });
-    // Se usa el hook de navegación para redirigir a la página principal
+
+    const [loginError, setLoginError] = useState(null);
     const navigate = useNavigate();
-    const onSubmit = handleSubmit((data) => {
-        console.log(data);
-        reset();
-        navigate('/two-factor', { replace: true });
+
+    const onSubmit = handleSubmit(async (data) => {
+        try {
+            const response = await axios.post(`${API_URL}/UserDTO/login`, data);
+            localStorage.setItem('token', response.data.token);
+            console.log("Login successful:", response.data);
+            reset();
+            navigate('/two-factor', { replace: true });
+        } catch (error) {
+            if (error.response) {
+                console.error("Error details:", error.response);
+
+                if (error.response.status === 401) {
+                    setLoginError("Invalid email or password");
+                } else if (error.response.status === 500) {
+                    setLoginError("An internal server error occurred. Please try again later.");
+                }
+            } else {
+                setLoginError("Network error. Please check your connection.");
+            }
+            console.error("Login failed:", error.message);
+        }
     });
+
 
     return (
         <div className="login-form">
             <h1>Iniciar sesión</h1>
+            {loginError && <span className="login-form__error">{loginError}</span>}
             <form className="login-form__body" onSubmit={onSubmit}>
                 <div className="login-form-inputs">
                     <div className="login-form__field">
@@ -33,7 +55,6 @@ export const LoginPage = () => {
                         <input
                             className="login-form__input"
                             type="email"
-                            name="email"
                             {...register("email", {
                                 required: "Correo electrónico es requerido",
                                 pattern: {
@@ -42,9 +63,7 @@ export const LoginPage = () => {
                                 },
                             })}
                         />
-                        {errors.email && (
-                            <span className="login-form__error">{errors.email.message}</span>
-                        )}
+                        {errors.email && <span className="login-form__error">{errors.email.message}</span>}
                     </div>
 
                     <div className="login-form__field">
@@ -52,9 +71,8 @@ export const LoginPage = () => {
                         <input
                             className="login-form__input"
                             type="password"
-                            name="password"
                             {...register("password", {
-                                required: "Contrseña es requerida",
+                                required: "Contraseña es requerida",
                                 minLength: {
                                     value: 8,
                                     message: "Contraseña debe tener al menos 8 caracteres",
@@ -65,9 +83,7 @@ export const LoginPage = () => {
                                 },
                             })}
                         />
-                        {errors.password && (
-                            <span className="login-form__error">{errors.password.message}</span>
-                        )}
+                        {errors.password && <span className="login-form__error">{errors.password.message}</span>}
                     </div>
                 </div>
                 <div className="login-form__actions">
