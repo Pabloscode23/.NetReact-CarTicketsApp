@@ -14,7 +14,7 @@ const ApiExample = [
     },
     {
         id: 2,
-        date: "01/10/2024",
+        date: "02/08/2020",
         reason: "Parqueo mal",
         amount: "12340",
         status: "Pendiente",
