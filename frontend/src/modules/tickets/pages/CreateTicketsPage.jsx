@@ -1,12 +1,35 @@
+import axios from 'axios';
 import '../styles/TicketsModule.css';
 import { useForm } from 'react-hook-form';
+import { API_URL } from '../../../constants/Api';
+import { useNavigate } from 'react-router-dom';
 
 export const CreateTicketsPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const navigate = useNavigate();
 
-  const onSubmit = (data) => {
-    console.log(data);
-    // Aquí envías los datos al backend
+  const onSubmit = async (data) => {
+    // Generar un ID único para el ticket
+    const uniqueID = `ticket-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+    // Crear el objeto de ticket que se enviará al backend
+    const ticketData = {
+      id: uniqueID,
+      userId: data.cedula, // Usar el número de cédula como userId
+      date: new Date().toISOString(), // Fecha actual
+      latitude: 0, // Placeholder, ajusta según tu necesidad
+      longitude: 0, // Placeholder, ajusta según tu necesidad
+      description: data.multaPor, // Usar el motivo de la multa como descripción
+    };
+
+    try {
+      const response = await axios.post(`${API_URL}/TicketDTO`, ticketData);
+      console.log('Ticket creado:', response.data); // Acceder directamente a response.data
+      // Manejar la respuesta del servidor según sea necesario
+      navigate('/', { replace: true });
+    } catch (error) {
+      console.error('Error en la solicitud:', error);
+    }
   };
 
   return (
@@ -96,9 +119,9 @@ export const CreateTicketsPage = () => {
               {...register("multaPor", { required: "Por favor seleccione el motivo de la multa" })}
             >
               <option value="">Seleccione...</option>
-              <option value="1">Exceso de velocidad</option>
-              <option value="2">Estacionar en lugar prohibido</option>
-              <option value="3">Conducir en estado de ebriedad</option>
+              <option value="Exceso de velocidad">Exceso de velocidad</option>
+              <option value="Estacionar en lugar prohibido">Estacionar en lugar prohibido</option>
+              <option value="Conducir en estado de ebriedad">Conducir en estado de ebriedad</option>
             </select>
             {errors.multaPor && <p className="form__error">{errors.multaPor.message}</p>}
           </div>
