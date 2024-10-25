@@ -2,7 +2,8 @@
     color: var(--color-grey-dark);
     box-shadow: 0 0 100px #DFF5FC;
     border-radius: 30px;
-    height: 78vh;
+    height: auto;
+    padding: 4vh 0;
     display: flex;
     flex-direction: column;
     align-items: center;
