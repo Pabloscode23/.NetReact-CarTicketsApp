@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import '../styles/FormRegistFinalUser.css';
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { API_URL } from "../../../constants/Api";
 
 export const FormRegistFinalUser = () => {
     const {
@@ -43,7 +44,7 @@ export const FormRegistFinalUser = () => {
                 profilePicture: data.profilePicture, // Assuming it's just the file name, adjust as needed
             };
 
-            const response = await axios.post('http://localhost:5039/api/UserDTO', formData); // Replace with your backend API URL
+            const response = await axios.post(`${API_URL}/UserDTO`, formData); // Replace with your backend API URL
 
             console.log("Usuario creado:", response.data);
 
