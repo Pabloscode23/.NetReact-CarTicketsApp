@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import '../styles/FormRegistFinalUser.css';
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
-import { API_URL } from '../../../constants/Api'
+import { API_URL } from '../../../constants/Api';
 
 export const FormRegistFinalUser = () => {
     const {
@@ -27,41 +27,36 @@ export const FormRegistFinalUser = () => {
     });
 
     const navigate = useNavigate();
-
     const password = useRef(null);
     password.current = watch("password", "");
 
     const onSubmit = async (data) => {
         try {
             const formData = {
-                userId: data.idNumber, // or some generated ID if not provided
+                userId: data.idNumber,
                 name: `${data.firstName} ${data.lastName}`,
                 idNumber: data.idNumber,
                 email: data.email,
                 password: data.password,
                 phoneNumber: data.phoneNumber,
-                role: "usuario", // You can adjust the role if needed
-                profilePicture: data.profilePicture, // Assuming it's just the file name, adjust as needed
+                role: "usuario",
+                profilePicture: data.profilePicture,
             };
             console.log(formData);
-            const response = await axios.post(`${API_URL}/UserDTO`, formData); // Replace with your backend API URL
-            
-            console.log("Usuario creado:", response.data);
+            const response = await axios.post(`${API_URL}/UserDTO`, formData);
 
-            // const navigate = useNavigate(); // Moved to top level
+            console.log("Usuario creado:", response.data);
             reset();
             navigate('/login', { replace: true });
-            // Optionally, navigate to a different page or display success message
         } catch (error) {
             console.error("Error en la creacion del usuario:", error);
         }
     };
 
     return (
-        <div className="container__form"><h1>Registrarse</h1>
+        <div className="container__form">
+            <h1>Registrarse</h1>
             <form className="form" onSubmit={handleSubmit(onSubmit)}>
-                {/* Form fields remain the same */}
-                {/*...*/}
                 <div className="form__group">
                     <label className="form__label">Nombre:</label>
                     <input
@@ -72,7 +67,7 @@ export const FormRegistFinalUser = () => {
                             required: "Nombre es requerido",
                             maxLength: { value: 30, message: "Nombre tiene que ser menor a 30 caracteres" },
                             minLength: { value: 2, message: "Nombre tiene que tener al menos 2 caracteres" },
-                            pattern: { value: /^[a-zA-Z\s]+$/, message: "Nombre solo acepta letras" }
+                            pattern: { value: /^[a-zA-ZÀ-ÿ\s]+$/, message: "Nombre solo acepta letras y tildes" }
                         })}
                     />
                     {errors.firstName && <span className="form__error">{errors.firstName.message}</span>}
@@ -87,9 +82,8 @@ export const FormRegistFinalUser = () => {
                         {...register("lastName", {
                             required: "Apellidos son requeridos",
                             maxLength: { value: 50, message: "Apellidos tienen que ser menores a 30 caracteres" },
-                            minLength: {
-                                value: 2, message: "Apellidos tienen que ser al menos 2 caracteres"
-                            }, pattern: { value: /^[a-zA-Z\s]+$/, message: "Apellidos solo aceptan letras" }
+                            minLength: { value: 2, message: "Apellidos tienen que ser al menos 2 caracteres" },
+                            pattern: { value: /^[a-zA-ZÀ-ÿ\s]+$/, message: "Apellidos solo aceptan letras y tildes" }
                         })}
                     />
                     {errors.lastName && <span className="form__error">{errors.lastName.message}</span>}
@@ -188,9 +182,11 @@ export const FormRegistFinalUser = () => {
                     <button className="form__button" type="submit">Registrarme</button>
                 </div>
                 <div className="form__regist-login">
-                    <p >Si ya tiene cuenta,
+                    <p>Si ya tiene cuenta,
                         <Link to="/login" className="form__link-login"> inicie sesión</Link>
-                    </p></div>
-            </form></div>
+                    </p>
+                </div>
+            </form>
+        </div>
     );
 };
