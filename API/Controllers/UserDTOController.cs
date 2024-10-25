@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Linq;
 using DataAccess.Models;
-using System; // For JWT-related functionality
 
 namespace API.Controllers
 {
@@ -90,10 +89,7 @@ namespace API.Controllers
                 }
             }
 
-            // Generate JWT for the registered user
-            var token = GenerateJwtToken(user, "register");
-
-            // Return all user attributes and JWT token
+            // Return all user attributes without token
             return new
             {
                 user = new
@@ -106,8 +102,7 @@ namespace API.Controllers
                     user.PhoneNumber,
                     user.Role,
                     user.ProfilePicture
-                },
-                token = token
+                }
             };
         }
 
@@ -123,19 +118,17 @@ namespace API.Controllers
                 // Check if user exists and passwords match (plain-text comparison)
                 if (user == null || user.Password != loginDto.Password)
                 {
-                    return Unauthorized(new { message = "Invalid email or password" });
+                    return Unauthorized(new { message = "Correo electrónico o contraseña incorrectos" });
                 }
 
-                // Generate JWT for the authenticated user
-                var token = GenerateJwtToken(user, "login");
-
-                return Ok(new { token });
+                // Return a success message without token
+                return Ok(new { message = "Login exitoso" });
             }
             catch (Exception ex)
             {
                 // Log the exception
-                Console.WriteLine($"Error during login: {ex.Message}");
-                return StatusCode(500, "An error occurred during login. Please try again.");
+                Console.WriteLine($"Error en el login: {ex.Message}");
+                return StatusCode(500, "Un error inesperado ocurrió durante el login");
             }
         }
 
@@ -160,23 +153,11 @@ namespace API.Controllers
             return _context.Users.Any(e => e.UserId == id);
         }
 
-        // Updated GenerateJwtToken method to handle different contexts
+        // Define the GenerateJwtToken method without implementation for now
         private string GenerateJwtToken(User user, string context)
         {
-            // Example logic to differentiate tokens based on the context
-            if (context == "register")
-            {
-                // Generate a token for registration (custom claims, expiration, etc.)
-                return $"RegisterToken_{user.UserId}_{DateTime.Now.Ticks}";
-            }
-            else if (context == "login")
-            {
-                // Generate a different token for login (custom claims, expiration, etc.)
-                return $"LoginToken_{user.UserId}_{DateTime.Now.Ticks}";
-            }
-
-            // Fallback in case of unrecognized context
-            return $"DefaultToken_{user.UserId}_{DateTime.Now.Ticks}";
+            // JWT generation logic is defined but not implemented
+            return null;
         }
     }
 

@@ -24,7 +24,7 @@ export const LoginPage = () => {
         try {
             const response = await axios.post(`${API_URL}/UserDTO/login`, data);
             localStorage.setItem('token', response.data.token);
-            console.log("Login successful:", response.data);
+            console.log("Login exitoso:", response.data);
             reset();
             navigate('/two-factor', { replace: true });
         } catch (error) {
@@ -32,14 +32,14 @@ export const LoginPage = () => {
                 console.error("Error details:", error.response);
 
                 if (error.response.status === 401) {
-                    setLoginError("Invalid email or password");
+                    setLoginError("Correo electrónico o contraseña incorrectos. Por favor, inténtelo de nuevo.");
                 } else if (error.response.status === 500) {
-                    setLoginError("An internal server error occurred. Please try again later.");
+                    setLoginError("Un error inesperado ha ocurrido. Por favor, inténtelo de nuevo.");
                 }
             } else {
-                setLoginError("Network error. Please check your connection.");
+                setLoginError("Error de conexión. Por favor, inténtelo de nuevo.");
             }
-            console.error("Login failed:", error.message);
+            console.error("Login fallado:", error.message);
         }
     });
 
