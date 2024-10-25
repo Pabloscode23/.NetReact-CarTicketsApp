@@ -3,7 +3,7 @@ import '../styles/LoginPage.css';
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { useState } from 'react';
-
+import { API_URL } from "../../../constants/Api";
 export const LoginPage = () => {
     const {
         register,
@@ -22,7 +22,7 @@ export const LoginPage = () => {
 
     const onSubmit = handleSubmit(async (data) => {
         try {
-            const response = await axios.post('http://localhost:5039/api/UserDTO/login', data);
+            const response = await axios.post(`${API_URL}/UserDTO/login`, data);
             localStorage.setItem('token', response.data.token);
             console.log("Login successful:", response.data);
             reset();
