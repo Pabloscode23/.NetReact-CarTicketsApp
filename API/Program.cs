@@ -1,5 +1,6 @@
-//using DataAccess.EF;
+// using DataAccess.EF;
 using Microsoft.EntityFrameworkCore;
+using Notifications;
 
 namespace API
 {
@@ -13,12 +14,13 @@ namespace API
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
             // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Registro de la interfaz y su implementación antes de construir la app
+            builder.Services.AddScoped<INotification>(provider =>
+                NotificationFactory.CreateNotification("email"));
 
             var app = builder.Build();
 
@@ -30,12 +32,8 @@ namespace API
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }
