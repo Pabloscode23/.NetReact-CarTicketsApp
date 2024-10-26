@@ -1,4 +1,4 @@
-// using DataAccess.EF;
+//using DataAccess.EF;
 using Microsoft.EntityFrameworkCore;
 using Notifications;
 
@@ -30,7 +30,7 @@ namespace API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
