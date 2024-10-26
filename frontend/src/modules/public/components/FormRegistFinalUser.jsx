@@ -13,6 +13,7 @@ export const FormRegistFinalUser = () => {
         watch,
         setValue,
         reset,
+        setError,
     } = useForm({
         defaultValues: {
             firstName: "",
@@ -32,6 +33,32 @@ export const FormRegistFinalUser = () => {
 
     const onSubmit = async (data) => {
         try {
+            // Primero verifica si el ID o correo ya existen
+            const existingUsersResponse = await axios.get(`${API_URL}/UserDTO`);
+            const existingUsers = existingUsersResponse.data;
+
+            const userExists = existingUsers.some(user => user.idNumber === data.idNumber);
+            const emailExists = existingUsers.some(user => user.email === data.email);
+
+            if (userExists) {
+                // Si el usuario ya existe, establecer un error en el campo idNumber
+                setError("idNumber", {
+                    type: "manual",
+                    message: "El número de cédula ya está registrado"
+                });
+                return;
+            }
+
+            if (emailExists) {
+                // Si el correo ya existe, establecer un error en el campo email
+                setError("email", {
+                    type: "manual",
+                    message: "El correo electrónico ya está registrado"
+                });
+                return;
+            }
+
+            // Si no existe, proceder a crear el usuario
             const formData = {
                 userId: data.idNumber,
                 name: `${data.firstName} ${data.lastName}`,
@@ -49,7 +76,7 @@ export const FormRegistFinalUser = () => {
             reset();
             navigate('/login', { replace: true });
         } catch (error) {
-            console.error("Error en la creacion del usuario:", error);
+            console.error("Error en la creación del usuario:", error);
         }
     };
 
