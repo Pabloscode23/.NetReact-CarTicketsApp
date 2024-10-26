@@ -1,0 +1,108 @@
+
+.global-table {
+    width: 100%;
+    border-top: 1px solid var(--color-blue-dark);
+    padding-top: 3vh;
+}
+
+
+.table__head {
+    font-size: 2.5vh;
+    font-weight: bold;
+    color: var(--color-blue-dark);
+}
+
+.table__buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.table__buttons button {
+    padding: 5px 10px;
+    background-color: var(--color-blue-dark);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 200ms ease-in-out;
+}
+
+.table__buttons button:hover {
+    background-color: var(--color-purple-dark);
+}
+
+td {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.search__container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: var(--color-blue-lighter);
+    border: 2px solid var(--color-blue-dark);
+    border-radius: 15px;
+    margin-left: 55%;
+    color: var(--color-grey-dark);
+    /* Adjust space between search bar and table */
+}
+
+.search__icon {
+    display: block;
+
+    /* Adjust the spacing between the icon and the input */
+    font-size: 1.2rem;
+    /* Adjust icon size */
+    color: var(--color-grey-dark);
+    /* Adjust icon color */
+}
+
+.search__ticket {
+    all: unset;
+    padding: 5px 0;
+    font-size: 1rem;
+    width: 80%;
+    max-width: 250px;
+    /* Adjust the width of the input field */
+    border-radius: 15px;
+    border: none;
+    background-color: var(--color-blue-lighter);
+    color: var(--color-grey-dark);
+}
+
+.button-pagination {
+    background: transparent;
+    color: var(--color-blue-dark);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+}
+
+.button-pagination:hover {
+    background-color: var(--color-blue-lighter);
+}
+
+.button-pagination:disabled {
+    background-color: var(--color-grey-lighter);
+    color: var(--color-grey-light);
+}
+
+.pagination {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.pagination .active {
+    background-color: var(--color-blue-lighter);
+    color: var(--color-blue-dark);
+}

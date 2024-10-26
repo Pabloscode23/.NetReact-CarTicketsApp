@@ -9,7 +9,7 @@
     align-items: center;
     justify-content: space-evenly;
     font-size: 2vh;
-
+    gap: 20px;
 }
 
 .form {
