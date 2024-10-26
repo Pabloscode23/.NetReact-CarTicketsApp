@@ -23,7 +23,7 @@ export const GlobalModal = ({ children, open }) => {
                 </div>
                 {children}
             </div>
-            <div onClick={handleClickOutside} style={{ display: open ? "block" : "none", position: 'absolute', width: "100vw", height: "100vh", background: "transparent", top: "0", cursor: "pointer", zIndex: '900' }} >
+            <div onClick={handleClickOutside} style={{ display: open && "block" }} className='modal-bg' >
 
             </div>
         </>
