@@ -23,7 +23,7 @@ export const ForgotPasswordPage = () => {
 
     return (
         <div className="two-factor">
-            <h1 className="two-factor__title">Recuperar su contraseña</h1>
+            <h1 className="two-factor__title">Recuperar contraseña</h1>
             <form className="two-factor__form" onSubmit={onSubmit}>
                 <div className="two-factor__inputs">
                     <div className="login-form__field">
@@ -53,3 +53,4 @@ export const ForgotPasswordPage = () => {
 
     );
 };
+{/*Este comentario es de prueba*/ }

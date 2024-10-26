@@ -1,0 +1,134 @@
+.form__header-center {
+    text-align: center;
+}
+
+.form__content {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    min-width: 100%;
+    border: none;
+}
+
+.formCreate {
+    color: var(--color-grey-dark);
+    box-shadow: 0 0 100px #DFF5FC;
+    border-radius: 30px;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: var(--color-blue-lighter);
+    font-size: 2vh;
+    width: 100%;
+    font-weight: bold;
+    max-width: 800px;
+}
+
+.form__input-grey {
+    min-width: 100%;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    background: #fff;
+    border: none;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.input__container {
+    text-align: left;
+    width: 48%;
+}
+
+.text-left {
+    text-align: left;
+    align-self: flex-start;
+}
+
+.full-width {
+    width: 100%;
+}
+
+
+.p-40 {
+    padding: 40px;
+}
+
+
+.btn__container {
+    display: flex;
+    width: 100%;
+}
+
+.align-center {
+    text-align: center;
+    align-self: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+input {
+    border: none;
+}
+
+.btn-primary {
+    background: var(--color-blue-dark);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 200ms ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-purple-dark);
+}
+
+.main-title {
+    color: var(--color-grey-dark);
+}
+
+.form__error {
+    font-weight: normal;
+}
+
+@media (max-width: 621px) {
+    .border-grey {
+        border: none;
+    }
+
+    .input__container {
+        width: 100%;
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+}

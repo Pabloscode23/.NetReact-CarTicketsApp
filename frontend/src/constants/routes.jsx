@@ -10,6 +10,8 @@ import { RegistFinalUser } from "../modules/public/pages/RegistFinalUserPage"
 import { TwoFactorPage } from "../modules/auth/pages/TwoFactorPage"
 import { ForgotPasswordPage } from "../modules/auth/pages/ForgotPasswordPage"
 import { PublicResquestPage } from "../modules/public/pages/PublicRequestPage"
+import { AllUserTicketsPage } from "../modules/tickets/pages/AllUserTicketsPage"
+import { UserClaimsPage } from "../modules/disputes/pages/UserClaimsPage"
 
 
 
@@ -17,7 +19,7 @@ import { PublicResquestPage } from "../modules/public/pages/PublicRequestPage"
 export const routesForPublic = [
     {
         path: "/registro",
-        element: <AuthLayout><RegistFinalUser /></AuthLayout>
+        element: <MainLayout><RegistFinalUser /></MainLayout>
     },
     {
         path: "/mapa-de-calor",
@@ -29,7 +31,7 @@ export const routesForPublic = [
     },
     {
         path: "/olvide-contrasena",
-        element: <AuthLayout><ForgotPasswordPage /></AuthLayout>
+        element: <MainLayout><ForgotPasswordPage /></MainLayout>
     },
     {
         path: "/cambiar-contrasena/:token",
@@ -70,6 +72,12 @@ export const routesForAuthenticatedOnly = [
             {
                 path: "/caja-de-pago",
                 element: <h1>Caja de pago</h1>
+            }, {
+                path: "/multas-usuario",
+                element: <AllUserTicketsPage />
+            }, {
+                path: "/reclamos-usuario",
+                element: <UserClaimsPage />
             }
         ]
     }
@@ -85,9 +93,9 @@ export const routesForNonAuthenticatedOnly = [
     },
     {
         path: "/login",
-        element: <AuthLayout><LoginPage /></AuthLayout>
+        element: <MainLayout><LoginPage /></MainLayout>
     }, {
         path: "/two-factor",
-        element: <AuthLayout><TwoFactorPage /></AuthLayout>
+        element: <MainLayout><TwoFactorPage /></MainLayout>
     },
 ]

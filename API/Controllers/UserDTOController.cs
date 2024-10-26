@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DataAccess.Models; 
-//using DataAccess.EF;
+using System.Threading.Tasks;
+using System.Linq;
+using DataAccess.Models;
 
 namespace API.Controllers
 {
@@ -73,7 +70,7 @@ namespace API.Controllers
 
         // POST: api/UserDTO
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<object>> PostUser(User user)
         {
             _context.Users.Add(user);
             try
@@ -92,7 +89,47 @@ namespace API.Controllers
                 }
             }
 
-            return CreatedAtAction("GetUser", new { id = user.UserId }, user);
+            // Return all user attributes without token
+            return new
+            {
+                user = new
+                {
+                    user.UserId,
+                    user.Name,
+                    user.IdNumber,
+                    user.Email,
+                    user.Password, // Keep the plain text password here (not secure in production)
+                    user.PhoneNumber,
+                    user.Role,
+                    user.ProfilePicture
+                }
+            };
+        }
+
+        // POST: api/UserDTO/login
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+
+                // Check if user exists and passwords match (plain-text comparison)
+                if (user == null || user.Password != loginDto.Password)
+                {
+                    return Unauthorized(new { message = "Correo electrónico o contraseña incorrectos" });
+                }
+
+                // Return a success message without token
+                return Ok(new { message = "Login exitoso" });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine($"Error en el login: {ex.Message}");
+                return StatusCode(500, "Un error inesperado ocurrió durante el login");
+            }
         }
 
         // DELETE: api/UserDTO/5
@@ -115,5 +152,19 @@ namespace API.Controllers
         {
             return _context.Users.Any(e => e.UserId == id);
         }
+
+        // Define the GenerateJwtToken method without implementation for now
+        private string GenerateJwtToken(User user, string context)
+        {
+            // JWT generation logic is defined but not implemented
+            return null;
+        }
+    }
+
+    // Create a simple DTO for login requests
+    public class LoginDTO
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }

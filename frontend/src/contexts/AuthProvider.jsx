@@ -51,13 +51,9 @@ export const AuthProvider = memo(({ children }) => {
         }
     }, [token]);
 
-    // Default permissions for guests (unauthenticated users)
-    const defaultPermissions = ["regist", "login", "public-request", "heat-map"]; // Adjust as needed
-
     // If no user is logged in, assign default guest permissions
     const userWithPermissions = user
-        ? user
-        : { name: "Guest", permissions: defaultPermissions }; // Guest user with default permissions
+        && user;
 
     // Memoize the context value to optimize performance
     const contextValue = useMemo(

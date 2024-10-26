@@ -1,0 +1,27 @@
+import PropTypes from 'prop-types';
+import '../styles/Modal.css';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useModal } from '../hooks/useModal';
+
+export const GlobalModal = ({ children, open }) => {
+    const { closeModal } = useModal();
+
+    return (
+        <div
+            className={`modal ${open ? "modal-open" : ""}`}
+            role="dialog"
+            aria-modal="true"
+        >
+            <div onClick={() => closeModal()} className='container__button__modal'>
+                <FontAwesomeIcon icon={faXmark} size='2xl' className='icon' />
+            </div>
+            {children}
+        </div>
+    );
+};
+
+GlobalModal.propTypes = {
+    children: PropTypes.node.isRequired,
+    open: PropTypes.bool.isRequired,
+};
