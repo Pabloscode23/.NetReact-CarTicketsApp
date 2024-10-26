@@ -17,6 +17,7 @@ export const CreateUserForm = () => {
         formState: { errors },
         watch,
         handleSubmit,
+        setError, reset
     } = useForm({
         defaultValues: {
             firstName: "",
@@ -47,9 +48,32 @@ export const CreateUserForm = () => {
         };
 
         try {
+            const existingUsersResponse = await axios.get(`${API_URL}/UserDTO`);
+            const existingUsers = existingUsersResponse.data;
+
+            const userExists = existingUsers.some(user => user.idNumber === data.idNumber);
+            const emailExists = existingUsers.some(user => user.email === data.email);
+
+            if (userExists) {
+                // Si el usuario ya existe, establecer un error en el campo idNumber
+                setError("idNumber", {
+                    type: "manual",
+                    message: "El número de cédula ya está registrado"
+                });
+                return;
+            }
+
+            if (emailExists) {
+                // Si el correo ya existe, establecer un error en el campo email
+                setError("email", {
+                    type: "manual",
+                    message: "El correo electrónico ya está registrado"
+                });
+                return;
+            }
             const response = await axios.post(`${API_URL}/UserDTO`, userData); // Replace YOUR_API_ENDPOINT with your actual endpoint
             console.log("Usuario creado:", response.data);
-
+            reset();
             // Handle successful response (e.g., show a success message, redirect, etc.)
         } catch (error) {
             console.error("Error al crear usuario:", error);
