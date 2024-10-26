@@ -1,5 +1,4 @@
-.container__form {
-
+.container__form-two {
     color: var(--color-grey-dark);
     box-shadow: 0 0 100px #DFF5FC;
     border-radius: 30px;
@@ -10,6 +9,7 @@
     align-items: center;
     justify-content: space-evenly;
     font-size: 2vh;
+
 }
 
 .form {
@@ -88,4 +88,19 @@
 
 .form__link-login:hover {
     color: var(--color-purple-dark);
+}
+
+path {
+    cursor: pointer;
+
+}
+
+.svg-inline--fa {
+    cursor: pointer;
+}
+
+
+
+.container__button__modal path {
+    color: var(--color-grey-dark);
 }
