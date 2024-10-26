@@ -53,7 +53,7 @@ export const CreateTicketsPage = () => {
                 {...register("nombre", {
                   required: "Nombre es requerido",
                   pattern: {
-                    value: /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/,
+                    value: /^[a-zA-ZÀ-ÿ\s]+$/,
                     message: "Solo se permiten letras en el nombre"
                   }
                 })}
@@ -68,7 +68,7 @@ export const CreateTicketsPage = () => {
                 {...register("apellidos", {
                   required: "Apellidos son requeridos",
                   pattern: {
-                    value: /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/,
+                    value: /^[a-zA-ZÀ-ÿ\s]+$/,
                     message: "Solo se permiten letras en los apellidos"
                   }
                 })}

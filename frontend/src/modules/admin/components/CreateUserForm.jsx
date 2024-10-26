@@ -70,7 +70,7 @@ export const CreateUserForm = () => {
                             required: "Nombre es requerido",
                             maxLength: { value: 30, message: "Nombre tiene que ser menor a 30 caracteres" },
                             minLength: { value: 2, message: "Nombre tiene que tener al menos 2 caracteres" },
-                            pattern: { value: /^[a-zA-Z\s]+$/, message: "Nombre solo acepta letras" }
+                            pattern: { value: /^[a-zA-ZÀ-ÿ\s]+$/, message: "Nombre solo acepta letras" }
                         })}
                     />
                     {errors.firstName && <span className="form__error">{errors.firstName.message}</span>}
@@ -85,7 +85,7 @@ export const CreateUserForm = () => {
                             required: "Apellidos son requeridos",
                             maxLength: { value: 50, message: "Apellidos tienen que ser menores a 50 caracteres" },
                             minLength: { value: 2, message: "Apellidos tienen que ser al menos 2 caracteres" },
-                            pattern: { value: /^[a-zA-Z\s]+$/, message: "Apellidos solo aceptan letras" }
+                            pattern: { value: /^[a-zA-ZÀ-ÿ\s]+$/, message: "Apellidos solo aceptan letras" }
                         })}
                     />
                     {errors.lastName && <span className="form__error">{errors.lastName.message}</span>}
