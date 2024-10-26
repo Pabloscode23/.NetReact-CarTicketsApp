@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Notifications;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -22,6 +23,10 @@ namespace API
             // JWT Authentication setup
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
+
+            // Registro de la interfaz y su implementación antes de construir la app
+            builder.Services.AddScoped<INotification>(provider =>
+                NotificationFactory.CreateNotification("email"));
 
             builder.Services.AddAuthentication(options =>
             {
@@ -89,7 +94,7 @@ namespace API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
-
+            
             app.UseHttpsRedirection();
 
             // Use CORS policy
