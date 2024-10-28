@@ -105,3 +105,9 @@
     color: var(--color-blue-dark);
     transform: scale(1.1);
 }
+
+.two-factor__error-message {
+    color: red;
+    margin-top: 8px;
+    font-size: 2.1vh;
+}

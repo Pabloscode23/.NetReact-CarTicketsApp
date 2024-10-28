@@ -26,7 +26,7 @@ export const LoginPage = () => {
             localStorage.setItem('token', response.data.token);
             console.log("Login exitoso:", response.data);
             reset();
-            navigate('/two-factor', { replace: true });
+            navigate('/two-factor', { replace: true, state: { email: data.email } });
         } catch (error) {
             if (error.response) {
                 console.error("Error details:", error.response);
