@@ -24,9 +24,9 @@ namespace API
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
 
-            // Registro de la interfaz y su implementación antes de construir la app
+            // Creacion de notificacion
             builder.Services.AddScoped<INotification>(provider =>
-                NotificationFactory.CreateNotification("email"));
+            NotificationFactory.CreateNotification("email"));
 
             builder.Services.AddAuthentication(options =>
             {

@@ -7,17 +7,19 @@ namespace Notifications
     public interface INotification
     {
         void Send(string message, string recipient);
+        bool ValidateCode(string inputCode); // Método para validar el código
     }
 
     public class EmailNotification : INotification
     {
-        private string senderEmail = "bytedev0101@gmail.com"; //correo
-        private string password = "elkr elbu jlvd qsux"; //contraseña de correo
+        private string senderEmail = "bytedev0101@gmail.com"; //correo de la "empresa"
+        private string password = "elkr elbu jlvd qsux"; // NO CAMBIAR
+        private string generatedCode; // Almacenar el código generado
 
         public void Send(string message, string recipient)
         {
-            string code2FA = Generate2FACode();
-            string messageWithCode = $"{message}\nCodigo 2FA: {code2FA}"; //mensaje que se enviará
+            generatedCode = Generate2FACode(); // Generar el código antes de enviarlo
+            string messageWithCode = $"{message}\nCódigo de un solo uso"; // mensaje que se enviará
 
             try
             {
@@ -30,7 +32,7 @@ namespace Notifications
                 MailMessage mailMessage = new MailMessage
                 {
                     From = new MailAddress(senderEmail),
-                    Subject = "Verification Code (2FA)",
+                    Subject = "Código de Verificación (2FA)",
                     Body = messageWithCode,
                     IsBodyHtml = false
                 };
@@ -38,7 +40,7 @@ namespace Notifications
                 mailMessage.To.Add(recipient);
 
                 client.Send(mailMessage);
-                Console.WriteLine($"Correo enviado a {recipient} con el codigo 2FA.");
+                Console.WriteLine($"Correo enviado a {recipient} con el código 2FA.");
             }
             catch (Exception ex)
             {
@@ -51,6 +53,11 @@ namespace Notifications
         {
             Random random = new Random();
             return random.Next(100000, 999999).ToString();
+        }
+
+        public bool ValidateCode(string inputCode)
+        {
+            return inputCode == generatedCode; // Validar el código ingresado
         }
     }
 
