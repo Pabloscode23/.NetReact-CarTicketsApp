@@ -28,11 +28,39 @@ namespace API.Controllers
                 return StatusCode(500, $"Error sending notification: {ex.Message}");
             }
         }
+
+        [HttpPost("validate-code")]
+        public IActionResult ValidateCode([FromBody] ValidateCodeRequest request)
+        {
+            try
+            {
+                // Suponiendo que _notification es de tipo EmailNotification
+                var emailNotification = _notification as EmailNotification;
+
+                if (emailNotification == null)
+                {
+                    return BadRequest("Notification type is not supported.");
+                }
+
+                bool isValid = emailNotification.ValidateCode(request.InputCode);
+                return Ok(new { IsValid = isValid });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error validating code: {ex.Message}");
+            }
+        }
     }
-    //
+
     public class NotificationRequest
     {
         public string Message { get; set; }
         public string Recipient { get; set; }
+    }
+
+    //validacion de codigo
+    public class ValidateCodeRequest
+    {
+        public string InputCode { get; set; }
     }
 }
