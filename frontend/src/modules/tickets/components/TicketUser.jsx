@@ -1,20 +1,21 @@
+// TicketUser.js
 import PropTypes from 'prop-types';
 
-export const TicketUser = ({ id, date, reason, amount, status, onDispute, isClaimed }) => {
+export const TicketUser = ({ id, date, reason, amount, status, onReclamar, isClaimed }) => {
     return (
-        <tr key={id}>
+        <tr>
             <td>{id}</td>
             <td>{date}</td>
             <td>{reason}</td>
-            <td>{"₡" + amount}</td>
+            <td>{amount}</td>
             <td>{status}</td>
             <td className='table__buttons'>
-                <button>Pagar</button> {/* Debe de redirigir a la pagina de pago*/}
-                <button onClick={onDispute} disabled={isClaimed}>Reclamar</button> {/* Disable if claimed */}
+                <button onClick={onReclamar} disabled={isClaimed}>Reclamar</button>
+                <button>Pagar</button>
             </td>
         </tr>
-    )
-}
+    );
+};
 
 TicketUser.propTypes = {
     id: PropTypes.number.isRequired,
@@ -22,6 +23,6 @@ TicketUser.propTypes = {
     reason: PropTypes.string.isRequired,
     amount: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired,
-    onDispute: PropTypes.func.isRequired,
-    isClaimed: PropTypes.bool.isRequired, // Add prop type for isClaimed
+    onReclamar: PropTypes.func.isRequired, // Cambiado a onReclamar
+    isClaimed: PropTypes.bool.isRequired,
 };

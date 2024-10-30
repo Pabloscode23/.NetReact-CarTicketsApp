@@ -77,7 +77,7 @@ export const InfoPermissions = {
         icon: faClockRotateLeft,
         title: 'Historial de reclamos',
         description: 'Aquí podrá consultar los reclamos presentados en relación a las multas.',
-        link: '/historial-reclamos'
+        link: '/multas/reclamos'
     },
     //juez
     "respond_claims": {

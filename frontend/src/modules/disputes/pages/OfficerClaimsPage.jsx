@@ -7,7 +7,7 @@ import { useAuth } from "../../../hooks";
 import { API_URL } from "../../../constants/Api";
 import { TicketsInfo } from "../../../constants/TicketsInfo";
 
-export const UserClaimsPage = () => {
+export const OfficerClaimsPage = () => {
     const { user } = useAuth();
     const [claims, setClaims] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -19,7 +19,7 @@ export const UserClaimsPage = () => {
                 const response = await axios.get(`${API_URL}/TicketDTO`);
 
                 const claims = response.data
-                    .filter(claim => claim.userId === user.userId && claim.status !== "Pendiente") // Use strict equality
+                    .filter(claim => claim.officerId === user.userId && claim.status !== "Pendiente") // Use strict equality
                     .map(claim => {
                         console.log("Ticket Description:", claim.description);
 
@@ -51,7 +51,7 @@ export const UserClaimsPage = () => {
     return (
         <div className="container__tickets">
             <h1 className="main__ticket-title">Reclamos</h1>
-            <h2 className="main__ticket-subtitle">Aquí encuentra las multas que ha reclamado</h2>
+            <h2 className="main__ticket-subtitle">Aquí encuentra las multas reclamadas que su persona ha hecho</h2>
             <div className="search__container">
                 <FontAwesomeIcon icon={faMagnifyingGlass} className="search__icon" />
                 <input
