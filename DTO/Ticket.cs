@@ -23,5 +23,10 @@ namespace DTO
         public Double Longitude { get; set; }
         [Required]
         public string Description { get; set; }
+        [Required]
+        public string Status { get; set; }
+        [Required]
+        public string OfficerId { get; set; }
+
     }
 }
