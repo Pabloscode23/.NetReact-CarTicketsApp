@@ -41,16 +41,22 @@ namespace API.Controllers
 
             return ticket;
         }
-
-        // PUT: api/TicketDTO/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTicket(string id, Ticket ticket)
+        // PUT: api/TicketDTO/{id}/status
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateTicketStatus(string id, [FromBody] TicketStatusUpdateDto statusUpdate)
         {
-            if (id != ticket.Id)
+            if (statusUpdate == null || string.IsNullOrEmpty(statusUpdate.Status))
             {
-                return BadRequest();
+                return BadRequest("Invalid status update request.");
             }
+
+            var ticket = await _context.Tickets.FindAsync(id);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            ticket.Status = statusUpdate.Status; // Update the status to the new value
 
             _context.Entry(ticket).State = EntityState.Modified;
 
@@ -72,6 +78,13 @@ namespace API.Controllers
 
             return NoContent();
         }
+
+        // DTO class for status update
+        public class TicketStatusUpdateDto
+        {
+            public string Status { get; set; }
+        }
+
 
         // POST: api/TicketDTO
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

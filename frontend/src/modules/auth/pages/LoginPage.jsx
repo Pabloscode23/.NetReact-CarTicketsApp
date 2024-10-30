@@ -23,7 +23,7 @@ export const LoginPage = () => {
     const onSubmit = handleSubmit(async (data) => {
         try {
             const response = await axios.post(`${API_URL}/UserDTO/login`, data);
-            localStorage.setItem('token', response.data.token);
+
             console.log("Login exitoso:", response.data);
             reset();
             navigate('/two-factor', { replace: true, state: { email: data.email } });

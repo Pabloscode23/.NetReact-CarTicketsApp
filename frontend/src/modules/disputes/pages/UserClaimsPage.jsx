@@ -2,52 +2,43 @@ import { useEffect, useState } from "react";
 import { UserClaims } from "../components/UserClaims";
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-const ApiExample = [
-    {
-        id: 1,
-        date: "01/10/2024",
-        reason: "Exceso de velocidad",
-        amount: "13434",
-        status: "Reclamada",
-    }, {
-        id: 2,
-        date: "02/10/2022",
-        reason: "Parqueo mal",
-        amount: "12340",
-        status: "Pendiente",
-    }, {
-        id: 3,
-        date: "01/10/2024",
-        reason: "Ebriedad",
-        amount: "660",
-        status: "Aprobada",
-    }, {
-        id: 4,
-        date: "01/10/2024",
-        reason: "Exceso de velocidad",
-        amount: "650",
-        status: "Pendiente",
-    }, {
-        id: 5,
-        date: "01/10/2024",
-        reason: "Exceso de velocidad",
-        amount: "6500",
-        status: "Pendiente",
-    }
-]
-
+import axios from 'axios';
+import { useAuth } from "../../../hooks";
+import { API_URL } from "../../../constants/Api";
+import { TicketsInfo } from "../../../constants/TicketsInfo";
 
 export const UserClaimsPage = () => {
-    {/**Hacer un context y llamarlo aqui */ }
+    const { user } = useAuth();
     const [claims, setClaims] = useState([]);
-    const [searchTerm, setSearchTerm] = useState(""); // State to capture input
+    const [searchTerm, setSearchTerm] = useState("");
 
 
     useEffect(() => {
-        setClaims(ApiExample
-            .filter(ticket => ticket.status !== "Pendiente"));
-    }, []);
-    //Debe de generarse un update en la base de datos
+        const fetchClaims = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/TicketDTO`);
+
+                const claims = response.data
+                    .filter(claim => claim.userId === user.userId) // Use strict equality
+                    .map(claim => {
+                        console.log("Ticket Description:", claim.description);
+
+                        const amount = TicketsInfo[claim.description] || 0;
+
+                        return {
+                            ...claim,
+                            status: claim.status,
+                            amount
+                        };
+                    });
+                setClaims(claims);                // Set the filtered claims in state
+            } catch (error) {
+                console.error("Error fetching claims:", error);
+            }
+        };
+
+        fetchClaims();
+    }, [user]); // Fetch claims when userId changes
 
     const filteredClaims = claims.filter((ticket) =>
         ticket.id.toString().includes(searchTerm) ||
@@ -56,7 +47,6 @@ export const UserClaimsPage = () => {
         ticket.amount.includes(searchTerm) ||
         ticket.status.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
 
     return (
         <div className="container__tickets">
@@ -80,7 +70,6 @@ export const UserClaimsPage = () => {
                         <th>Razón de la multa</th>
                         <th>Monto de la multa</th>
                         <th>Estado</th>
-
                     </tr>
                 </thead>
                 <tbody className='table__children'>
@@ -88,14 +77,13 @@ export const UserClaimsPage = () => {
                         <UserClaims key={ticket.id}
                             id={ticket.id}
                             date={ticket.date}
-                            reason={ticket.reason}
+                            reason={ticket.description}
                             amount={ticket.amount}
                             status={ticket.status}
-
                         />
                     ))}
                 </tbody>
             </table>
         </div>
     );
-}
+};
