@@ -3,14 +3,17 @@ import '../styles/TicketsModule.css';
 import { useForm } from 'react-hook-form';
 import { API_URL } from '../../../constants/Api';
 import { useNavigate } from 'react-router-dom';
+import { TicketsInfo } from '../../../constants/TicketsInfo';
+import { useAuth } from '../../../hooks';
 
 export const CreateTicketsPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const onSubmit = async (data) => {
     // Generar un ID único para el ticket
-    const uniqueID = `ticket-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const uniqueID = `ticket-${Date.now()}`;
 
     // Crear el objeto de ticket que se enviará al backend
     const ticketData = {
@@ -20,6 +23,8 @@ export const CreateTicketsPage = () => {
       latitude: 0, // Placeholder, ajusta según tu necesidad
       longitude: 0, // Placeholder, ajusta según tu necesidad
       description: data.multaPor, // Usar el motivo de la multa como descripción
+      status: "Pendiente", // Estado inicial
+      officer: user.UserId, //
     };
 
     try {
@@ -119,9 +124,9 @@ export const CreateTicketsPage = () => {
               {...register("multaPor", { required: "Por favor seleccione el motivo de la multa" })}
             >
               <option value="">Seleccione...</option>
-              <option value="Exceso de velocidad">Exceso de velocidad</option>
-              <option value="Estacionar en lugar prohibido">Estacionar en lugar prohibido</option>
-              <option value="Conducir en estado de ebriedad">Conducir en estado de ebriedad</option>
+              {Object.entries(TicketsInfo).map(([title]) => (
+                <option key={title} value={title}>{title}</option>
+              ))}
             </select>
             {errors.multaPor && <p className="form__error">{errors.multaPor.message}</p>}
           </div>
