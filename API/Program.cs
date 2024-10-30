@@ -17,7 +17,7 @@ namespace API
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
-            var connectionString2 = builder.Configuration.GetConnectionString("DefaultConnection");
+            var connectionString2 = builder.Configuration.GetConnectionString("SecondaryConnection");
             builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(connectionString2));
 
             // Add services to the container
