@@ -2,11 +2,11 @@
 using DTO;
 using Microsoft.EntityFrameworkCore;
 
-public class AuthDBContext : DbContext
+public class AuthDbContext : DbContext
 {
     public DbSet<VerificationCodeDTO> VerificationCode { get; set; }
 
-    public AuthDBContext(DbContextOptions<AppDbContext> options) : base(options)
+    public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
     {
     }
 
