@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { TicketUser } from '../components/TicketUser';
+import { TicketOfficer } from '../components/TicketOfficer';
 import '../styles/AllUserTickets.css';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,7 +8,8 @@ import { useAuth } from '../../../hooks';
 import { API_URL } from '../../../constants/Api';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
 
-export const AllUserTicketsPage = () => {
+
+export const OfficerTicketsPage = () => {
     const { user } = useAuth();
     const [tickets, setTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -23,7 +24,7 @@ export const AllUserTicketsPage = () => {
 
                 // Filter tickets by the logged-in user's ID
                 const userTickets = response.data
-                    .filter(ticket => ticket.userId === user.userId)
+                    .filter(ticket => ticket.officerId === user.userId)
                     .map(ticket => {
                         console.log("Ticket Description:", ticket.description);
 
@@ -33,7 +34,7 @@ export const AllUserTicketsPage = () => {
                             ...ticket,
                             status: ticket.status || "Pendiente",
                             amount,
-                            claimed: ticket.status === "En disputa" // Add a claimed property based on status
+                            claimed: ticket.status === "Reclamada" // Add a claimed property based on status
                         };
                     });
 
@@ -80,7 +81,7 @@ export const AllUserTicketsPage = () => {
     return (
         <div className="container__tickets">
             <h1 className="main__ticket-title">Multas</h1>
-            <h2 className="main__ticket-subtitle">Aquí encuentra las multas hechas a su persona y las acciones que puede tomar en cada una</h2>
+            <h2 className="main__ticket-subtitle">Aquí encuentra las multas hechas por su persona</h2>
             {error && <p className="error-message">{error}</p>}
             <div className="search__container">
                 <FontAwesomeIcon icon={faMagnifyingGlass} className="search__icon" />
@@ -100,12 +101,12 @@ export const AllUserTicketsPage = () => {
                         <th>Razón de la multa</th>
                         <th>Monto de la multa</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
+
                     </tr>
                 </thead>
                 <tbody className='table__children'>
                     {filteredTickets.map((ticket) => (
-                        <TicketUser
+                        <TicketOfficer
                             key={ticket.id}
                             id={ticket.id}
                             date={ticket.date}
