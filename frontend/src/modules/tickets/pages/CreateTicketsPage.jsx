@@ -12,19 +12,17 @@ export const CreateTicketsPage = () => {
   const { user } = useAuth();
 
   const onSubmit = async (data) => {
-    // Generar un ID único para el ticket
-    const uniqueID = `ticket-${Date.now()}`;
 
-    // Crear el objeto de ticket que se enviará al backend
+    const uniqueID = `ticket-${Date.now()}`;
     const ticketData = {
       id: uniqueID,
-      userId: data.cedula, // Usar el número de cédula como userId
+      userId: data.idNumber, // Usar el número de cédula como userId
       date: new Date().toISOString(), // Fecha actual
       latitude: 0, // Placeholder, ajusta según tu necesidad
       longitude: 0, // Placeholder, ajusta según tu necesidad
-      description: data.multaPor, // Usar el motivo de la multa como descripción
+      description: data.reason, // Usar el motivo de la multa como descripción
       status: "Pendiente", // Estado inicial
-      officer: user.UserId, //
+      officerId: user.userId, //
     };
 
     try {
@@ -33,7 +31,13 @@ export const CreateTicketsPage = () => {
       // Manejar la respuesta del servidor según sea necesario
       navigate('/', { replace: true });
     } catch (error) {
-      console.error('Error en la solicitud:', error);
+      if (error.response) {
+        console.error('Server response error:', error.response.data);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+      } else {
+        console.error('Error setting up request:', error.message);
+      }
     }
   };
 
@@ -89,7 +93,7 @@ export const CreateTicketsPage = () => {
               <input
                 className="form__input-grey"
                 type="text"
-                {...register("cedula", {
+                {...register("idNumber", {
                   required: "Número de cédula es requerido",
                   pattern: {
                     value: /^[0-9]+$/,
@@ -97,7 +101,7 @@ export const CreateTicketsPage = () => {
                   }
                 })}
               />
-              {errors.cedula && <p className="form__error">{errors.cedula.message}</p>}
+              {errors.idNumber && <p className="form__error">{errors.idNumber.message}</p>}
             </div>
             <div className="input__container">
               <label>Número de placa:</label>
@@ -121,14 +125,14 @@ export const CreateTicketsPage = () => {
             <label>Multa por:</label>
             <select
               className="form__input-grey"
-              {...register("multaPor", { required: "Por favor seleccione el motivo de la multa" })}
+              {...register("reason", { required: "Por favor seleccione el motivo de la multa" })}
             >
               <option value="">Seleccione...</option>
               {Object.entries(TicketsInfo).map(([title]) => (
                 <option key={title} value={title}>{title}</option>
               ))}
             </select>
-            {errors.multaPor && <p className="form__error">{errors.multaPor.message}</p>}
+            {errors.reason && <p className="form__error">{errors.reason.message}</p>}
           </div>
 
           <div className="btn__container justify-center mt-20">
