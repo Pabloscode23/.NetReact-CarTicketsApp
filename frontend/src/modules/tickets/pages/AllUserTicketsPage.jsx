@@ -7,33 +7,30 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAuth } from '../../../hooks';
 import { API_URL } from '../../../constants/Api';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
+import { ModalTicketPayment } from '../../../modules/disputes/components/ModalTicketPayment';
 
 export const AllUserTicketsPage = () => {
     const { user } = useAuth();
     const [tickets, setTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [error, setError] = useState(null);
+    const [selectedTicket, setSelectedTicket] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [fileUploaded, setFileUploaded] = useState(false); // Agregar estado para seguimiento de subida
 
     useEffect(() => {
         const fetchTickets = async () => {
             try {
                 const response = await axios.get(`${API_URL}/TicketDTO`);
-                console.log("Logged in user ID:", user.userId);
-                console.log("Fetched tickets:", response.data);
-
-                // Filter tickets by the logged-in user's ID
                 const userTickets = response.data
                     .filter(ticket => ticket.userId === user.userId)
                     .map(ticket => {
-                        console.log("Ticket Description:", ticket.description);
-
                         const amount = TicketsInfo[ticket.description] || 0;
-
                         return {
                             ...ticket,
                             status: ticket.status || "Pendiente",
                             amount,
-                            claimed: ticket.status === "En disputa" // Add a claimed property based on status
+                            claimed: ticket.status === "En disputa",
                         };
                     });
 
@@ -49,26 +46,42 @@ export const AllUserTicketsPage = () => {
         }
     }, [user]);
 
-    const handleDispute = async (id) => {
-        try {
-            await axios.put(`${API_URL}/TicketDTO/${id}/status`, { status: "En disputa" }, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+    const handleReclamar = async (ticket) => {
+        setSelectedTicket(ticket);
+        setModalOpen(true);
+        setFileUploaded(false); // Reiniciar estado de subida
+    };
 
-            // Update local state to reflect the change
-            setTickets((prevTickets) =>
-                prevTickets.map((ticket) =>
-                    ticket.id === id ? { ...ticket, status: "En disputa", claimed: true } : ticket // Mark as claimed
+    const closeModal = () => {
+        if (fileUploaded && selectedTicket) {
+            // Actualizar el estado del ticket localmente después de cerrar el modal
+            setTickets(prevTickets =>
+                prevTickets.map(t =>
+                    t.id === selectedTicket.id ? { ...t, status: "En disputa", claimed: true } : t
                 )
             );
-        } catch (error) {
-            console.error("Error updating ticket status:", error);
+        }
+        setSelectedTicket(null);
+        setModalOpen(false);
+    };
+
+    const handleFileUpload = async (file) => {
+        if (selectedTicket) {
+            try {
+                // Cambiar el estado a "En disputa" en la base de datos al subir el archivo
+                await axios.put(`${API_URL}/TicketDTO/${selectedTicket.id}/status`, { status: "En disputa" }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                setFileUploaded(true); // Indicar que el archivo se ha subido exitosamente
+            } catch (error) {
+                console.error("Error updating ticket status:", error);
+            }
         }
     };
 
-    // Filter tickets based on searchTerm
     const filteredTickets = tickets.filter((ticket) =>
         ticket.id.toString().includes(searchTerm) ||
         ticket.date.includes(searchTerm) ||
@@ -110,14 +123,22 @@ export const AllUserTicketsPage = () => {
                             id={ticket.id}
                             date={ticket.date}
                             reason={ticket.description}
-                            amount={(ticket.amount ? ticket.amount.toLocaleString() : '0')}
+                            amount={ticket.amount.toLocaleString()}
                             status={ticket.status}
-                            onDispute={() => handleDispute(ticket.id)}
-                            isClaimed={ticket.claimed} // Pass claimed status to TicketUser
+                            isClaimed={ticket.claimed}
+                            onReclamar={() => handleReclamar(ticket)}
                         />
                     ))}
                 </tbody>
             </table>
+            {modalOpen && (
+                <ModalTicketPayment
+                    onClose={closeModal}
+                    ticket={selectedTicket}
+                    isClaimed={selectedTicket?.claimed}
+                    onFileUpload={handleFileUpload}
+                />
+            )}
         </div>
     );
 };
