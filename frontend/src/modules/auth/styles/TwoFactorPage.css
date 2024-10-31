@@ -4,12 +4,31 @@
     box-shadow: 0 0 100px #DFF5FC;
     border-radius: 30px;
     height: 50vh;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5vh 1vw;
+    justify-content: space-evenly;
+    background-color: var(--color-blue-lighter);
+}
+
+.two-factor-request {
+    color: var(--color-grey-dark);
+    box-shadow: 0 0 100px #DFF5FC;
+    border-radius: 30px;
+    height: auto;
     width: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 3vh 1vw;
     justify-content: space-evenly;
     background-color: var(--color-blue-lighter);
+}
+
+.title-request {
+    padding: 2vh 0;
 }
 
 .two-factor__inputs {

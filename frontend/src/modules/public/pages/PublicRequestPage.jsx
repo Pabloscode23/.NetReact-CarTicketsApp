@@ -36,8 +36,8 @@ export const PublicResquestPage = () => {
     });
 
     return (
-        <div className="two-factor">
-            <h1 className="two-factor__title">Consulta pública de multas</h1>
+        <div className="two-factor-request">
+            <h1 className="two-factor__title title-request">Consulta pública de multas</h1>
             <form className="two-factor__form" onSubmit={onSubmit}>
                 <div className="two-factor__inputs">
                     <div className="login-form__field">

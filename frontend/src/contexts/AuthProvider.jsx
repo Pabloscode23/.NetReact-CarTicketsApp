@@ -46,11 +46,7 @@ export const AuthProvider = memo(({ children }) => {
         // Simulate setting the user based on the current token
         if (token) {
             // Example user, replace with actual user fetch logic
-<<<<<<< Updated upstream
-            const exampleUser = { id: 1, name: "santiago", role: { name: 'usuario' } };
-=======
             const exampleUser = { name: "santiago", role: { name: 'oficial' }, userId: "222" };
->>>>>>> Stashed changes
             setUser(exampleUser);
         }
 
