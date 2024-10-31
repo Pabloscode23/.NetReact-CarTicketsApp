@@ -4,74 +4,106 @@ using System.Net.Mail;
 
 namespace Notifications
 {
+    //interfaz de notificacion
     public interface INotification
     {
-        void Send(string message, string recipient);
-        bool ValidateCode(string inputCode); // Método para validar el código
+        void Send(string subject, string message, string recipient);
     }
 
-    public class EmailNotification : INotification
+    //notificacion standaar que se va a cambiar por 2fa
+    public class NotificationFA : INotification
     {
-        private string senderEmail = "bytedev0101@gmail.com"; //correo de la "empresa"
-        private string password = "elkr elbu jlvd qsux"; // NO CAMBIAR
-        private string generatedCode; // Almacenar el código generado
+        private readonly INotification _notification;
 
-        public void Send(string message, string recipient)
+        public NotificationFA(INotification notification)
         {
-            generatedCode = Generate2FACode(); // Generar el código antes de enviarlo
-            string messageWithCode = $"{message}\nCódigo de un solo uso"; // mensaje que se enviará
-
-            try
-            {
-                SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
-                {
-                    Credentials = new NetworkCredential(senderEmail, password),
-                    EnableSsl = true
-                };
-
-                MailMessage mailMessage = new MailMessage
-                {
-                    From = new MailAddress(senderEmail),
-                    Subject = "Código de Verificación (2FA)",
-                    Body = messageWithCode,
-                    IsBodyHtml = false
-                };
-
-                mailMessage.To.Add(recipient);
-
-                client.Send(mailMessage);
-                Console.WriteLine($"Correo enviado a {recipient} con el código 2FA.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al enviar el correo: {ex.Message}");
-                throw; // Lanzar la excepción para manejo adicional
-            }
+            _notification = notification;
         }
 
-        private string Generate2FACode()
+        public void Send(string subject, string message, string recipient)
         {
-            Random random = new Random();
-            return random.Next(100000, 999999).ToString();
-        }
-
-        public bool ValidateCode(string inputCode)
-        {
-            return inputCode == generatedCode; // Validar el código ingresado
+            _notification.Send(subject, message, recipient);
+            Console.WriteLine("Notificación de 2FA enviada.");
         }
     }
 
-    public static class NotificationFactory
+    //Notificacion cambio contraseña
+    public class ResetPasswordNotification : INotification
     {
-        public static INotification CreateNotification(string type)
+        private readonly INotification _notification;
+
+        public ResetPasswordNotification(INotification notification)
         {
-            switch (type.ToLower())
-            {
-                case "email":
-                    return new EmailNotification();
-                default:
-                    throw new ArgumentException("Tipo de notificación no válida.");
-            }
+            _notification = notification;
+        }
+
+        public void Send(string subject, string message, string recipient)
+        {
+            _notification.Send(subject, message, recipient);
+            Console.WriteLine("Notificación de restablecimiento de contraseña enviada.");
         }
     }
+    
+
+        //Notificacion por correo
+        public class EmailNotification : INotification
+        {
+            private string senderEmail = "bytedev0101@gmail.com";
+            private string password = "elkr elbu jlvd qsux";
+
+            public void Send(string subject, string message, string recipient)
+            {
+                try
+                {
+                    SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
+                    {
+                        Credentials = new NetworkCredential(senderEmail, password),
+                        EnableSsl = true
+                    };
+
+                    MailMessage mailMessage = new MailMessage
+                    {
+                        From = new MailAddress(senderEmail),
+                        Subject = subject,
+                        Body = message,
+                        IsBodyHtml = false
+                    };
+
+                        mailMessage.To.Add(recipient);
+                        client.Send(mailMessage);
+
+                        Console.WriteLine($"Correo enviado a {recipient} con el código 2FA.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al enviar el correo: {ex.Message}");
+                    throw;
+                }
+            }
+        }
+
+    /*
+  public interface ICodeGenerator
+  {
+      string GenerateCode();
+      bool ValidateCode(string inputCode);
+  }
+
+  public class TwoFactorCodeGenerator : ICodeGenerator
+  {
+      private string _generatedCode;
+
+      public string GenerateCode()
+      {
+          Random random = new Random();
+          _generatedCode = random.Next(100000, 999999).ToString();
+          return _generatedCode;
+      }
+
+      public bool ValidateCode(string inputCode)
+      {
+          return inputCode == _generatedCode;
+      }
+  }*/
+    
 }

@@ -7,60 +7,18 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class NotificationController : ControllerBase
     {
-        private readonly INotification _notification;
+        private readonly NotificationFA _notificationFA;
 
-        // Inyección de dependencias en el constructor
-        public NotificationController(INotification notification)
+        public NotificationController(NotificationFA notificationFA)
         {
-            _notification = notification;
+            _notificationFA = notificationFA;
         }
 
         [HttpPost("send")]
-        public IActionResult SendNotification([FromBody] NotificationRequest request)
+        public IActionResult SendNotification()
         {
-            try
-            {
-                _notification.Send(request.Message, request.Recipient);
-                return Ok("Notification sent");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error sending notification: {ex.Message}");
-            }
+            _notificationFA.Send("Código de prueba", "Este es un mensaje de prueba.", "example@gmail.com");
+            return Ok("Notificación enviada.");
         }
-
-        [HttpPost("validate-code")]
-        public IActionResult ValidateCode([FromBody] ValidateCodeRequest request)
-        {
-            try
-            {
-                // Suponiendo que _notification es de tipo EmailNotification
-                var emailNotification = _notification as EmailNotification;
-
-                if (emailNotification == null)
-                {
-                    return BadRequest("Notification type is not supported.");
-                }
-
-                bool isValid = emailNotification.ValidateCode(request.InputCode);
-                return Ok(new { IsValid = isValid });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error validating code: {ex.Message}");
-            }
-        }
-    }
-
-    public class NotificationRequest
-    {
-        public string Message { get; set; }
-        public string Recipient { get; set; }
-    }
-
-    //validacion de codigo
-    public class ValidateCodeRequest
-    {
-        public string InputCode { get; set; }
     }
 }
