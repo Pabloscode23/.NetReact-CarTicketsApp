@@ -1,6 +1,7 @@
+
 import PropTypes from 'prop-types';
 
-export const TicketOfficer = ({ id, date, reason, amount, status }) => {
+export const TicketOfficer = ({ id, date, reason, amount, status, onEdit }) => {
     return (
         <tr key={id}>
             <td>{id}</td>
@@ -8,9 +9,15 @@ export const TicketOfficer = ({ id, date, reason, amount, status }) => {
             <td>{reason}</td>
             <td>{"₡" + amount}</td>
             <td>{status}</td>
+            <td className='table__buttons'>
+                {/* Deshabilitar el botón si el estado no es "Pendiente" */}
+                <button onClick={onEdit} disabled={status !== "Pendiente"}>
+                    Editar
+                </button>
+            </td>
         </tr>
-    )
-}
+    );
+};
 
 TicketOfficer.propTypes = {
     id: PropTypes.number.isRequired,
@@ -18,6 +25,5 @@ TicketOfficer.propTypes = {
     reason: PropTypes.string.isRequired,
     amount: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired,
-    onDispute: PropTypes.func.isRequired,
-    isClaimed: PropTypes.bool.isRequired, // Add prop type for isClaimed
+    onEdit: PropTypes.func.isRequired,
 };
