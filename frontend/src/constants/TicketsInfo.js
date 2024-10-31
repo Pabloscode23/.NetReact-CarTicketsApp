@@ -3,5 +3,4 @@ export const TicketsInfo = {
     'Mal estacionamiento': 52000,
     'Conducir en estado de ebriedad': 240000,
     'Conducir sin licencia': 27000,
-
 }
