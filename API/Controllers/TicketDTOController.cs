@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DTO;
-//using DataAccess.EF;
 
 namespace API.Controllers
 {
@@ -42,15 +41,22 @@ namespace API.Controllers
             return ticket;
         }
 
-        // PUT: api/TicketDTO/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTicket(string id, Ticket ticket)
+        // PUT: api/TicketDTO/{id}/status
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateTicketStatus(string id, [FromBody] TicketStatusUpdateDto statusUpdate)
         {
-            if (id != ticket.Id)
+            if (statusUpdate == null || string.IsNullOrEmpty(statusUpdate.Status))
             {
-                return BadRequest();
+                return BadRequest("Invalid status update request.");
             }
+
+            var ticket = await _context.Tickets.FindAsync(id);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            ticket.Status = statusUpdate.Status; // Update the status to the new value
 
             _context.Entry(ticket).State = EntityState.Modified;
 
@@ -73,8 +79,61 @@ namespace API.Controllers
             return NoContent();
         }
 
+        // New PUT method to update Description and Date
+        // PUT: api/TicketDTO/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTicket(string id, [FromBody] TicketUpdateDto ticketUpdate)
+        {
+            if (ticketUpdate == null || string.IsNullOrEmpty(ticketUpdate.Description) || ticketUpdate.Date == default)
+            {
+                return BadRequest("Invalid ticket update request.");
+            }
+
+            var ticket = await _context.Tickets.FindAsync(id);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            // Update the Description and Date fields
+            ticket.Description = ticketUpdate.Description;
+            ticket.Date = ticketUpdate.Date;
+
+            _context.Entry(ticket).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TicketExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // DTO class for status update
+        public class TicketStatusUpdateDto
+        {
+            public string Status { get; set; }
+        }
+
+        // DTO class for ticket update
+        public class TicketUpdateDto
+        {
+            public string Description { get; set; }
+            public DateTime Date { get; set; }
+        }
+
         // POST: api/TicketDTO
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Ticket>> PostTicket(Ticket ticket)
         {

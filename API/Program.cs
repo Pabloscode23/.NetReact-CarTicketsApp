@@ -17,6 +17,9 @@ namespace API
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
+            var connectionString2 = builder.Configuration.GetConnectionString("SecondaryConnection");
+            builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(connectionString2));
+
             // Add services to the container
             builder.Services.AddControllers();
 
@@ -25,6 +28,8 @@ namespace API
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
 
             // Creacion de notificacion
+            //builder.Services.AddScoped<INotification>(provider =>
+            //NotificationFactory.CreateNotification("email"));
             builder.Services.AddSingleton<INotification, EmailNotification>();
             builder.Services.AddSingleton<NotificationFA>();
 
@@ -94,7 +99,7 @@ namespace API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
-            
+
             app.UseHttpsRedirection();
 
             // Use CORS policy

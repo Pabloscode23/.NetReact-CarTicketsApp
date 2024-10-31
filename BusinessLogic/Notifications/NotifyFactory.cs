@@ -43,6 +43,7 @@ namespace Notifications
             Console.WriteLine("Notificación de restablecimiento de contraseña enviada.");
         }
     }
+    
 
         //Notificacion por correo
         public class EmailNotification : INotification

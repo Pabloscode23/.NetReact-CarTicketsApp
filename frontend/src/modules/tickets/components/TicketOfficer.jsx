@@ -1,28 +1,29 @@
-// TicketUser.js
+
 import PropTypes from 'prop-types';
 
-export const TicketUser = ({ id, date, reason, amount, status, onReclamar, isClaimed }) => {
+export const TicketOfficer = ({ id, date, reason, amount, status, onEdit }) => {
     return (
-        <tr>
+        <tr key={id}>
             <td>{id}</td>
             <td>{date}</td>
             <td>{reason}</td>
-            <td>{amount}</td>
+            <td>{"₡" + amount}</td>
             <td>{status}</td>
             <td className='table__buttons'>
-                <button onClick={onReclamar} disabled={isClaimed}>Reclamar</button>
-                <button>Pagar</button>
+                {/* Deshabilitar el botón si el estado no es "Pendiente" */}
+                <button onClick={onEdit} disabled={status !== "Pendiente"}>
+                    Editar
+                </button>
             </td>
         </tr>
     );
 };
 
-TicketUser.propTypes = {
+TicketOfficer.propTypes = {
     id: PropTypes.number.isRequired,
     date: PropTypes.string.isRequired,
     reason: PropTypes.string.isRequired,
     amount: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired,
-    onReclamar: PropTypes.func.isRequired, // Cambiado a onReclamar
-    isClaimed: PropTypes.bool.isRequired,
+    onEdit: PropTypes.func.isRequired,
 };
