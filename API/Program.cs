@@ -28,8 +28,10 @@ namespace API
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
 
             // Creacion de notificacion
-            builder.Services.AddSingleton<INotification, EmailNotification>();
-            builder.Services.AddSingleton<NotificationFA>();
+            builder.Services.AddScoped<INotification>(provider =>
+            NotificationFactory.CreateNotification("email"));
+            // builder.Services.AddSingleton<INotification, EmailNotification>();
+            //builder.Services.AddSingleton<NotificationFA>();
 
             builder.Services.AddAuthentication(options =>
             {
