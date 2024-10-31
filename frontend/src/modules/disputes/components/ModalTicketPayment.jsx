@@ -9,15 +9,15 @@ export const ModalTicketPayment = ({ onClose, ticket, isClaimed, onFileUpload })
         onFileUpload(file);
     };
 
-    // Nueva función para cerrar el modal sin aplicar cambios
+    // Cerrar modal sin aplicar cambios
     const handleCloseWithoutApplying = () => {
-        onClose(false); // Pasamos un valor falso para indicar que no se debe aplicar el cambio de estado
+        onClose(false); // No aplicar cambios si se cierra con la "X"
     };
 
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-
+                {/* Botón "X" para cerrar sin cambios */}
                 <button className="close-button" onClick={handleCloseWithoutApplying}>X</button>
 
                 <h2>Reclamar multa</h2>
@@ -29,11 +29,12 @@ export const ModalTicketPayment = ({ onClose, ticket, isClaimed, onFileUpload })
                     onChange={handleFileChange}
                     disabled={isClaimed} // Deshabilitar si ya está reclamado
                 />
-                <button className='apply-btn' onClick={() => onClose(true)}>Aplicar</button> {/* Llamada para aplicar el cambio */}
+                <button className='apply-btn' onClick={() => onClose(true)}>Aplicar</button> {/* Aplicar cambios */}
             </div>
         </div>
     );
 };
+
 
 // Definición de PropTypes
 ModalTicketPayment.propTypes = {

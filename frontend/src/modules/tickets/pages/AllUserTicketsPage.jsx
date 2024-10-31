@@ -52,9 +52,9 @@ export const AllUserTicketsPage = () => {
         setFileUploaded(false); // Reiniciar estado de subida
     };
 
-    const closeModal = () => {
-        if (fileUploaded && selectedTicket) {
-            // Actualizar el estado del ticket localmente después de cerrar el modal
+    const closeModal = (applyChanges) => {
+        if (applyChanges && fileUploaded && selectedTicket) {
+            // Actualizar el estado del ticket solo si se hizo clic en "Aplicar" y el archivo fue subido
             setTickets(prevTickets =>
                 prevTickets.map(t =>
                     t.id === selectedTicket.id ? { ...t, status: "En disputa", claimed: true } : t
@@ -64,6 +64,7 @@ export const AllUserTicketsPage = () => {
         setSelectedTicket(null);
         setModalOpen(false);
     };
+
 
     const handleFileUpload = async (file) => {
         if (selectedTicket) {
