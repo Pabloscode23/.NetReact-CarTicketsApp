@@ -4,73 +4,82 @@ using System.Net.Mail;
 
 namespace Notifications
 {
+    // Interfaz INotification
     public interface INotification
     {
-        void Send(string message, string recipient);
-        bool ValidateCode(string inputCode); // Método para validar el código
+        void Send(string subject, string message, string recipient);
     }
 
+    // Clase NotificationFA que es la de 2FA
+    public class NotificationFA
+    {
+        private readonly INotification _notification;
+        public NotificationFA(INotification notification)
+        {
+            _notification = notification;
+        }
+
+        public void Send(string subject, string message, string recipient)
+        {
+            _notification.Send(subject, message, recipient);
+        }
+    }
+
+    // Clase ChangePasswordNotification que es la de cambio de contraseña
+    public class ChangePasswordNotification
+    {
+        private readonly INotification _notification;
+        public ChangePasswordNotification(INotification notification)
+        {
+            _notification = notification;
+        }
+
+        public void Send(string subject, string message, string recipient)
+        {
+            _notification.Send(subject, message, recipient);
+        }
+    }
+
+    // Implementación de la interfaz INotification
     public class EmailNotification : INotification
     {
-        private string senderEmail = "bytedev0101@gmail.com"; //correo de la "empresa"
-        private string password = "elkr elbu jlvd qsux"; // NO CAMBIAR
-        private string generatedCode; // Almacenar el código generado
+        private readonly string senderEmail = "bytedev0101@gmail.com";
+        private readonly string password = "elkr elbu jlvd qsux";
+        private readonly SmtpClient smtpClient;
+        private readonly MailMessage mailMessage;
 
-        public void Send(string message, string recipient)
+        public EmailNotification()
         {
-            generatedCode = Generate2FACode(); // Generar el código antes de enviarlo
-            string messageWithCode = $"{message}\nCódigo de un solo uso"; // mensaje que se enviará
+            smtpClient = new SmtpClient("smtp.gmail.com", 587)
+            {
+                Credentials = new NetworkCredential(senderEmail, password),
+                EnableSsl = true
+            };
 
+            mailMessage = new MailMessage
+            {
+                From = new MailAddress(senderEmail),
+                IsBodyHtml = false
+            };
+        }
+
+        public void Send(string subject, string message, string recipient)
+        {
             try
             {
-                SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
-                {
-                    Credentials = new NetworkCredential(senderEmail, password),
-                    EnableSsl = true
-                };
-
-                MailMessage mailMessage = new MailMessage
-                {
-                    From = new MailAddress(senderEmail),
-                    Subject = "Código de Verificación (2FA)",
-                    Body = messageWithCode,
-                    IsBodyHtml = false
-                };
-
+              
+                mailMessage.Subject = subject;
+                mailMessage.Body = message;
+                mailMessage.To.Clear(); // Limpiamos los destinatarios previos
                 mailMessage.To.Add(recipient);
 
-                client.Send(mailMessage);
+                smtpClient.Send(mailMessage);
                 Console.WriteLine($"Correo enviado a {recipient} con el código 2FA.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al enviar el correo: {ex.Message}");
-                throw; // Lanzar la excepción para manejo adicional
-            }
-        }
-
-        private string Generate2FACode()
-        {
-            Random random = new Random();
-            return random.Next(100000, 999999).ToString();
-        }
-
-        public bool ValidateCode(string inputCode)
-        {
-            return inputCode == generatedCode; // Validar el código ingresado
-        }
-    }
-
-    public static class NotificationFactory
-    {
-        public static INotification CreateNotification(string type)
-        {
-            switch (type.ToLower())
-            {
-                case "email":
-                    return new EmailNotification();
-                default:
-                    throw new ArgumentException("Tipo de notificación no válida.");
+                throw;
             }
         }
     }
