@@ -46,7 +46,19 @@ export const AuthProvider = memo(({ children }) => {
         // Simulate setting the user based on the current token
         if (token) {
             // Example user, replace with actual user fetch logic
-            const exampleUser = { name: "santiago", role: { name: 'oficial' }, userId: "222" };
+          // const exampleUser = { name: "santiago", role: { name: 'oficial' }, userId: "222" };
+           // setUser(exampleUser);
+            //setUser(null);
+           const exampleUser={
+                userId: "3333333",
+                name: "Fabiana Madrigal Flores",
+                idNumber: "3333333",
+                email: "fabiana.madrigal.f@gmail.com",
+                password: "Fabi1301",
+                phoneNumber: "22222222",
+                role: {name: "oficial"},
+                profilePicture: ""
+            }
             setUser(exampleUser);
         }
 
