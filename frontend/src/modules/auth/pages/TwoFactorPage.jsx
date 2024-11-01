@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import '../styles/TwoFactorPage.css';
 import { useAuth } from "../../../hooks";
-import { useLocation, useNavigate } from "react-router-dom";
+import { json, useLocation, useNavigate } from "react-router-dom";
 import { API_URL } from "../../../constants/Api";
 
 export const TwoFactorPage = () => {
@@ -22,7 +22,8 @@ export const TwoFactorPage = () => {
             if (!email || hasSentCode.current) return; // No enviar si no hay email o si ya se envió
 
             const code = generateTwoFactorCode();
-            setGeneratedCode(code);
+            setGeneratedCode(code); 
+           console.log(code)
             hasSentCode.current = true; // Marcar como enviado
 
             try {
@@ -39,7 +40,7 @@ export const TwoFactorPage = () => {
                     throw new Error("Error al enviar el código de verificación");
                 }
 
-                console.log("Código de verificación enviado a:", email);
+                console.log("Código de verificación enviado a:", email,code);
             } catch (error) {
                 console.error("Error al enviar el código de verificación:", error);
             }
@@ -52,12 +53,26 @@ export const TwoFactorPage = () => {
         return Math.floor(100000 + Math.random() * 900000).toString();
     };
 
-    const onSubmit = handleSubmit((data) => {
+    const onSubmit = handleSubmit( async (data) => {
         console.log("Código ingresado:", data.code);
         if (data.code === generatedCode) {
+            const response = await fetch(`${API_URL}/UserDTO/GetUserByEmail`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(email)
+            });
+
+            if (!response.ok) {
+                throw new Error("Error no se encontro el usuario");
+            }
+            const userData= await response.json()
+            console.log("Usuario cargado: " ,userData);
+    
             reset();
             setToken("token de prueba");
-            setUser({ name: "Usuario", role: { name: "admin", permissions: ["Ver multas", "Ver reclamos", "Ver perfil"] } });
+            //setUser({ name: "Usuario", role: { name: "admin", permissions: ["Ver multas", "Ver reclamos", "Ver perfil"] } }); 
+            //remover rol quemado 
+            setUser({...userData,...{role: { name: 'oficial' }}})
             navigate("/", { replace: true });
             setErrorMessage(""); // Reiniciar mensaje de error
         } else {

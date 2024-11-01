@@ -104,6 +104,17 @@ namespace API.Controllers
                     user.ProfilePicture
                 }
             };
+        } 
+        // POST: api/UserDTO
+        [HttpPost("GetUserByEmail")]
+        public async Task<ActionResult<object>> PostGetUserByEmail([FromBody]string email)
+        {
+          var user = await _context.Users.FirstOrDefaultAsync(u=>u.Email==email);
+          if (user==null) 
+          {
+            return NotFound();
+          }
+          return user;
         }
 
         // POST: api/UserDTO/login

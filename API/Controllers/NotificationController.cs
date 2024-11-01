@@ -17,7 +17,7 @@ namespace API.Controllers
         [HttpPost("send")]
         public IActionResult SendNotification()
         {
-            _notificationFA.Send("Código de prueba", "Este es un mensaje de prueba.", "example@gmail.com");
+            _notificationFA.Send("Código de prueba", "Este es un mensaje de prueba.", "fabiana.madrigal.f@gmail.com");
             return Ok("Notificación enviada.");
         }
     }
