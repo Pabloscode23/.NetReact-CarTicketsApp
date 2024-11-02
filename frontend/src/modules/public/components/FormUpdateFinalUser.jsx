@@ -104,6 +104,7 @@ export const FormUpdateFinalUser = () => {
                             required: "Número de cédula es requerido",
                             pattern: { value: /^[0-9]+$/, message: "Número de cédula debe ser solo numérico" }
                         })}
+                        disabled={true}
                     />
                     {errors.idNumber && <span className="form__error">{errors.idNumber.message}</span>}
                 </div>
@@ -135,6 +136,7 @@ export const FormUpdateFinalUser = () => {
                                 message: "Verifique el formato de su correo electrónico"
                             }
                         })}
+                        disabled={true}
                     />
                     {errors.email && <span className="form__error">{errors.email.message}</span>}
                 </div>
