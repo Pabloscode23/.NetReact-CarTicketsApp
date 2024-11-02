@@ -13,6 +13,8 @@ import { PublicResquestPage } from "../modules/public/pages/PublicRequestPage"
 import { AllUserTicketsPage } from "../modules/tickets/pages/AllUserTicketsPage"
 import { UserClaimsPage } from "../modules/disputes/pages/UserClaimsPage"
 import { RegistUpdateFinalUser} from "../modules/public/pages/RegistUpdateFinalUserPage"
+import { ChangePasswordPage } from "../modules/auth/pages/ChangePasswordPage"; // Ensure this path is correct
+
 
 
 // Rutas publicas
@@ -34,7 +36,7 @@ export const routesForPublic = [
         element: <MainLayout><ForgotPasswordPage /></MainLayout>
     },
     {
-        path: "/cambiar-contrasena/",
+        path: "/cambiar-contrasena",
         element: <MainLayout><ChangePasswordPage /></MainLayout>
     },
     {
