@@ -12,7 +12,7 @@ import { ForgotPasswordPage } from "../modules/auth/pages/ForgotPasswordPage"
 import { PublicResquestPage } from "../modules/public/pages/PublicRequestPage"
 import { AllUserTicketsPage } from "../modules/tickets/pages/AllUserTicketsPage"
 import { UserClaimsPage } from "../modules/disputes/pages/UserClaimsPage"
-
+import { RegistUpdateFinalUser} from "../modules/public/pages/RegistUpdateFinalUserPage"
 
 
 // Rutas publicas
@@ -66,10 +66,6 @@ export const routesForAuthenticatedOnly = [
                 element: <AdminRoutes />
             },
             {
-                path: "/perfil",
-                element: <h1>PROFILE</h1>
-            },
-            {
                 path: "/caja-de-pago",
                 element: <h1>Caja de pago</h1>
             }, {
@@ -78,7 +74,11 @@ export const routesForAuthenticatedOnly = [
             }, {
                 path: "/reclamos-usuario",
                 element: <UserClaimsPage />
-            }
+            },
+            {
+                path: "/perfil",
+                element: <RegistUpdateFinalUser/>
+            },
         ]
     }
 ]

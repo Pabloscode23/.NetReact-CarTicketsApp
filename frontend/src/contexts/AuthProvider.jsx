@@ -2,7 +2,6 @@ import axios from "axios";
 import { memo, useEffect, useMemo, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import { RolePermissions } from "../constants/RolePermissions"; // Import role permissions
-import { API_URL } from "../constants/Api";
 
 // Create the authentication provider
 // eslint-disable-next-line react/display-name
@@ -46,11 +45,21 @@ export const AuthProvider = memo(({ children }) => {
 
         // Simulate setting the user based on the current token
         if (token) {
-            axios.get(`${API_URL}/UserDTO/details`).then(response => {
-                setUser(response.data);
-            }).catch(error => {
-                console.error("Failed to set user:", error);
-            });
+            // Example user, replace with actual user fetch logic
+          // const exampleUser = { name: "santiago", role: { name: 'oficial' }, userId: "222" };
+           // setUser(exampleUser);
+            //setUser(null);
+           const exampleUser={
+                userId: "3333333",
+                name: "Fabiana Madrigal Flores",
+                idNumber: "3333333",
+                email: "fabiana.madrigal.f@gmail.com",
+                password: "Fabi1301",
+                phoneNumber: "22222222",
+                role: {name: "oficial"},
+                profilePicture: ""
+            }
+            setUser(exampleUser);
         }
 
     }, [token]);
