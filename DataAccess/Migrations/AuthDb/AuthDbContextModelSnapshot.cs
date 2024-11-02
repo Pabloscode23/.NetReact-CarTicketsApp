@@ -33,15 +33,14 @@ namespace DataAccess.Migrations.AuthDb
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CodeType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("ExpiringDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
 
                     b.Property<string>("UserEmail")
                         .IsRequired()
@@ -49,7 +48,7 @@ namespace DataAccess.Migrations.AuthDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("VerificationCode");
+                    b.ToTable("VerificationCodes");
                 });
 #pragma warning restore 612, 618
         }

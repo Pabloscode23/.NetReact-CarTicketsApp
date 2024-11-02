@@ -1,109 +1,86 @@
-﻿using System;
+﻿using Microsoft.Extensions.Options;
+using System;
 using System.Net;
 using System.Net.Mail;
 
 namespace Notifications
 {
-    //interfaz de notificacion
+    // Interfaz de notificación
     public interface INotification
     {
         void Send(string subject, string message, string recipient);
     }
 
-    //notificacion standaar que se va a cambiar por 2fa
-    public class NotificationFA : INotification
+    // Servicio de notificación
+    public class NotificationService
     {
         private readonly INotification _notification;
 
-        public NotificationFA(INotification notification)
+        // Constructor que recibe una implementación de INotification (inyección de dependencias)
+        public NotificationService(INotification notification)
         {
-            _notification = notification;
+            _notification = notification ?? throw new ArgumentNullException(nameof(notification));
         }
 
-        public void Send(string subject, string message, string recipient)
+        public void ResetPasswordNotification(string code, string recipient)
         {
-            _notification.Send(subject, message, recipient);
+            _notification.Send("Restablecimiento de contraseña", $"Haga clic en el siguiente enlace para restablecer su contraseña: http://localhost:5173/{code}", recipient);
+            Console.WriteLine("Notificación de restablecimiento de contraseña enviada.");
+        }
+
+        public void Send2FA(string code, string recipient)
+        {
+            _notification.Send("Código de verificación", $"Su código de verificación es: {code}", recipient);
             Console.WriteLine("Notificación de 2FA enviada.");
         }
     }
 
-    //Notificacion cambio contraseña
-    public class ResetPasswordNotification : INotification
+    public class EmailSettings
     {
-        private readonly INotification _notification;
+        public string SenderEmail { get; set; }
+        public string Password { get; set; }
+    }
 
-        public ResetPasswordNotification(INotification notification)
+
+        public class EmailNotification : INotification
+    {
+        private readonly EmailSettings _emailSettings;
+
+        // Modifica el constructor para aceptar IOptions<EmailSettings>
+        public EmailNotification(IOptions<EmailSettings> emailSettings)
         {
-            _notification = notification;
+            _emailSettings = emailSettings.Value ?? throw new ArgumentNullException(nameof(emailSettings));
         }
 
         public void Send(string subject, string message, string recipient)
         {
-            _notification.Send(subject, message, recipient);
-            Console.WriteLine("Notificación de restablecimiento de contraseña enviada.");
-        }
-    }
-    
-
-        //Notificacion por correo
-        public class EmailNotification : INotification
-        {
-            private string senderEmail = "bytedev0101@gmail.com";
-            private string password = "elkr elbu jlvd qsux";
-
-            public void Send(string subject, string message, string recipient)
+            try
             {
-                try
+                using (var client = new SmtpClient("smtp.gmail.com", 587))
                 {
-                    SmtpClient client = new SmtpClient("smtp.gmail.com", 587)
-                    {
-                        Credentials = new NetworkCredential(senderEmail, password),
-                        EnableSsl = true
-                    };
+                    client.Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password);
+                    client.EnableSsl = true;
 
-                    MailMessage mailMessage = new MailMessage
+                    var mailMessage = new MailMessage
                     {
-                        From = new MailAddress(senderEmail),
+                        From = new MailAddress(_emailSettings.SenderEmail),
                         Subject = subject,
                         Body = message,
                         IsBodyHtml = false
                     };
 
-                        mailMessage.To.Add(recipient);
-                        client.Send(mailMessage);
+                    mailMessage.To.Add(recipient);
+                    client.Send(mailMessage);
 
-                        Console.WriteLine($"Correo enviado a {recipient} con el código 2FA.");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error al enviar el correo: {ex.Message}");
-                    throw;
+                    Console.WriteLine($"Correo enviado a {recipient} con el asunto: {subject}");
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al enviar el correo: {ex.Message}");
+                throw;
+            }
         }
-
-    /*
-  public interface ICodeGenerator
-  {
-      string GenerateCode();
-      bool ValidateCode(string inputCode);
-  }
-
-  public class TwoFactorCodeGenerator : ICodeGenerator
-  {
-      private string _generatedCode;
-
-      public string GenerateCode()
-      {
-          Random random = new Random();
-          _generatedCode = random.Next(100000, 999999).ToString();
-          return _generatedCode;
-      }
-
-      public bool ValidateCode(string inputCode)
-      {
-          return inputCode == _generatedCode;
-      }
-  }*/
+    }
     
 }

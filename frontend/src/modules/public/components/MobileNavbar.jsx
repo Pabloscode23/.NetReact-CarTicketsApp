@@ -12,6 +12,11 @@ export const MobileNavbar = ({ ByteDevLogo, navItems, user, logout }) => {
         setMenuOpen(!menuOpen);
     }
 
+    const handleLogout = () => {
+        logout();
+        setMenuOpen(!menuOpen);
+    }
+
     return (
         <>
             <nav className="navbar navbar-mobile">
@@ -25,16 +30,16 @@ export const MobileNavbar = ({ ByteDevLogo, navItems, user, logout }) => {
             <div>
                 <div className={`navbar-mobile_content ${menuOpen && "active"}`}>
                     <ul className="navbar__menu">
-                        <Link to={'/'}>
+                        <Link onClick={handleOpenMenu} to={'/'}>
                             <li className="navbar__menu-item">Inicio</li>
                         </Link>
                         {navItems.map((item) => {
                             return (
-                                <Link to={item.link} key={item.title}><li className="navbar__menu-item">{item.title}</li></Link>
+                                <Link onClick={handleOpenMenu} to={item.link} key={item.title}><li className="navbar__menu-item">{item.title}</li></Link>
                             );
                         })}
                         {user && user.name !== "Guest" && (
-                            <li className="navbar__menu-item" onClick={logout} style={{ cursor: 'pointer' }}>
+                            <li className="navbar__menu-item" onClick={handleLogout} style={{ cursor: 'pointer' }}>
                                 Cerrar sesión
                             </li>
                         )}

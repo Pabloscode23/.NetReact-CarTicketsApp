@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 public class AuthDbContext : DbContext
 {
-    public DbSet<VerificationCodeDTO> VerificationCode { get; set; }
+    public DbSet<VerificationCodeDTO> VerificationCodes { get; set; }
 
     public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
     {

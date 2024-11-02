@@ -9,7 +9,6 @@ export const LoginPage = () => {
         register,
         handleSubmit,
         formState: { errors },
-        reset,
     } = useForm({
         defaultValues: {
             email: "",
@@ -24,9 +23,9 @@ export const LoginPage = () => {
         try {
             const response = await axios.post(`${API_URL}/UserDTO/login`, data);
 
-            console.log("Login exitoso:", response.data);
-            reset();
-            navigate('/two-factor', { replace: true, state: { email: data.email } });
+            if (response.status === 200) {
+                navigate('/two-factor', { replace: true, state: { email: data.email } });
+            }
         } catch (error) {
             if (error.response) {
                 console.error("Error details:", error.response);
