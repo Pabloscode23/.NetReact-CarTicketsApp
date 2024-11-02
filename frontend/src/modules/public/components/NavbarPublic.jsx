@@ -5,16 +5,24 @@ import { useAuth } from '../../../../src/hooks';  // Make sure this is your corr
 import { InfoPermissions } from '../../../constants/InfoPermissions';
 import { DesktopNav } from './DesktopNav';
 import { MobileNavbar } from './MobileNavbar';
+import { useEffect, useState } from 'react';
+import { RolePermissions } from '../../../constants/RolePermissions';
+// Default permissions for non-authenticated users
+const defaultPermissions = ["regist", "login", "public-request", "heat-map"];
+
 
 export const NavbarPublic = () => {
     const { user, setToken, setUser } = useAuth();  // Get the token and user from useAuth hook
+    const [permissions, setPermissions] = useState(defaultPermissions);
     const navigate = useNavigate();
 
-    // Default permissions for non-authenticated users
-    const defaultPermissions = ["regist", "login", "public-request", "heat-map"];
-
-    // Use user permissions if available, otherwise default to guest permissions
-    const permissionsToDisplay = user?.permissions || defaultPermissions;
+    useEffect(() => {
+        {
+            if (user) {
+                setPermissions(RolePermissions[user.role]);
+            }
+        }
+    }, [user]);
 
     // Handle logout: clear token, clear user, and navigate to login
     const handleLogout = () => {
@@ -25,7 +33,7 @@ export const NavbarPublic = () => {
 
     const findNavItems = () => {
         const items = [];
-        permissionsToDisplay.map((permission) => {
+        permissions.map((permission) => {
             items.push(InfoPermissions[permission]);
         });
 

@@ -4,6 +4,8 @@ using Notifications;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Microsoft.Extensions.Options;
+using BusinessLogic.AuthService;
 
 namespace API
 {
@@ -20,18 +22,31 @@ namespace API
             var connectionString2 = builder.Configuration.GetConnectionString("SecondaryConnection");
             builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(connectionString2));
 
-            // Add services to the container
-            builder.Services.AddControllers();
+            
+
+            // Configura Email Settings desde appsettings.json
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+            // Registra INotification con EmailNotification usando IOptions<EmailSettings>
+            builder.Services.AddTransient<INotification, EmailNotification>();
+
+            // Registra NotificationService, que depende de INotification
+            builder.Services.AddTransient<NotificationService>();
+
+            builder.Services.AddScoped<IAuthService, AuthService>();
+
+            // Configura JwtSettings desde appsettings.json
+            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
             // JWT Authentication setup
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
 
-            // Creacion de notificacion
-            //builder.Services.AddScoped<INotification>(provider =>
-            //NotificationFactory.CreateNotification("email"));
-            builder.Services.AddSingleton<INotification, EmailNotification>();
-            builder.Services.AddSingleton<NotificationFA>();
+            // Registra AuthService
+            builder.Services.AddTransient<AuthService>();
+
+            // Add services to the container
+            builder.Services.AddControllers();
 
             builder.Services.AddAuthentication(options =>
             {

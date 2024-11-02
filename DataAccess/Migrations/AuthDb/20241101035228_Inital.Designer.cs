@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations.AuthDb
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20241030021328_SecondaryDB")]
-    partial class SecondaryDB
+    [Migration("20241101035228_Inital")]
+    partial class Inital
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,15 +36,14 @@ namespace DataAccess.Migrations.AuthDb
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CodeType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("ExpiringDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
 
                     b.Property<string>("UserEmail")
                         .IsRequired()
@@ -52,7 +51,7 @@ namespace DataAccess.Migrations.AuthDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("VerificationCode");
+                    b.ToTable("VerificationCodes");
                 });
 #pragma warning restore 612, 618
         }

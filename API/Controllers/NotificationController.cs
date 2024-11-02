@@ -7,18 +7,18 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class NotificationController : ControllerBase
     {
-        private readonly NotificationFA _notificationFA;
+        private readonly NotificationService _notification;
 
-        public NotificationController(NotificationFA notificationFA)
+        public NotificationController(NotificationService notification)
         {
-            _notificationFA = notificationFA;
+            _notification = notification;
         }
 
         [HttpPost("send")]
         public IActionResult SendNotification()
         {
-            _notificationFA.Send("Código de prueba", "Este es un mensaje de prueba.", "example@gmail.com");
-            return Ok("Notificación enviada.");
+            _notification.Send2FA("123", "szeledonm@ucenfotec.ac.cr");
+            return Ok("Notificación enviada."); 
         }
     }
 }

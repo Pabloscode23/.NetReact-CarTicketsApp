@@ -69,12 +69,13 @@ export const FormRegistFinalUser = () => {
                 role: "usuario",
                 profilePicture: data.profilePicture,
             };
-            console.log(formData);
+
             const response = await axios.post(`${API_URL}/UserDTO`, formData);
 
-            console.log("Usuario creado:", response.data);
-            reset();
-            navigate('/login', { replace: true });
+            if (response.status === 200) {
+                navigate('/login', { replace: true });
+            }
+
         } catch (error) {
             console.error("Error en la creación del usuario:", error);
         }
