@@ -34,8 +34,8 @@ export const routesForPublic = [
         element: <MainLayout><ForgotPasswordPage /></MainLayout>
     },
     {
-        path: "/cambiar-contrasena/:token",
-        element: <AuthLayout><h1>PASSWORD CHANGE</h1></AuthLayout>
+        path: "/cambiar-contrasena/",
+        element: <MainLayout><ChangePasswordPage /></MainLayout>
     },
     {
         path: "*",
