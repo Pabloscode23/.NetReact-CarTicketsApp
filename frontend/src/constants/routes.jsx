@@ -13,7 +13,7 @@ import { PublicResquestPage } from "../modules/public/pages/PublicRequestPage"
 import { AllUserTicketsPage } from "../modules/tickets/pages/AllUserTicketsPage"
 import { UserClaimsPage } from "../modules/disputes/pages/UserClaimsPage"
 import { RegistUpdateFinalUser} from "../modules/public/pages/RegistUpdateFinalUserPage"
-import { ChangePasswordPage } from "../modules/auth/pages/ChangePasswordPage"; // Ensure this path is correct
+import { ChangePasswordPage } from "../modules/auth/pages/ChangePasswordPage";
 
 
 
