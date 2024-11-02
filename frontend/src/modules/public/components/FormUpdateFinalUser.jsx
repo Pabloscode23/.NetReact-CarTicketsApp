@@ -16,7 +16,6 @@ export const FormUpdateFinalUser = () => {
         watch,
         setValue,
         reset,
-        setError,
     } = useForm({
         defaultValues: {
             firstName: firstName,

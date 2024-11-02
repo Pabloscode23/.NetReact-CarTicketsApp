@@ -1,9 +1,10 @@
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import '../styles/TwoFactorPage.css';
 import { useAuth } from "../../../hooks";
-import { json, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { API_URL } from "../../../constants/Api";
+import axios from "axios";
 
 export const TwoFactorPage = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues: { code: "" } });
@@ -12,72 +13,39 @@ export const TwoFactorPage = () => {
     const location = useLocation();
     const email = location.state?.email;
 
-    const [generatedCode, setGeneratedCode] = useState("");
-    const hasSentCode = useRef(false); // Usar useRef para controlar si el código ha sido enviado
     const [errorMessage, setErrorMessage] = useState(""); // Estado para manejar el mensaje de error
 
-    // Enviar el código de 2FA al correo cuando se cargue la página
-    useEffect(() => {
-        const sendTwoFactorCode = async () => {
-            if (!email || hasSentCode.current) return; // No enviar si no hay email o si ya se envió
+    const onSubmit = handleSubmit((data) => {
 
-            const code = generateTwoFactorCode();
-            setGeneratedCode(code); 
-           console.log(code)
-            hasSentCode.current = true; // Marcar como enviado
-
-            try {
-                const response = await fetch(`${API_URL}/notification/send`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        message: `Este es tu código de verificación: ${code}`,
-                        recipient: email
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error("Error al enviar el código de verificación");
-                }
-
-                console.log("Código de verificación enviado a:", email,code);
-            } catch (error) {
-                console.error("Error al enviar el código de verificación:", error);
-            }
-        };
-
-        sendTwoFactorCode();
-    }, [email]); // Solo depende del email
-
-    const generateTwoFactorCode = () => {
-        return Math.floor(100000 + Math.random() * 900000).toString();
-    };
-
-    const onSubmit = handleSubmit( async (data) => {
-        console.log("Código ingresado:", data.code);
-        if (data.code === generatedCode) {
-            const response = await fetch(`${API_URL}/UserDTO/GetUserByEmail`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(email)
-            });
-
-            if (!response.ok) {
-                throw new Error("Error no se encontro el usuario");
-            }
-            const userData= await response.json()
-            console.log("Usuario cargado: " ,userData);
-    
-            reset();
-            setToken("token de prueba");
-            //setUser({ name: "Usuario", role: { name: "admin", permissions: ["Ver multas", "Ver reclamos", "Ver perfil"] } }); 
-            //remover rol quemado 
-            setUser({...userData,...{role: { name: 'oficial' }}})
-            navigate("/", { replace: true });
-            setErrorMessage(""); // Reiniciar mensaje de error
-        } else {
-            setErrorMessage("Código incorrecto. Por favor, inténtalo de nuevo."); // Establecer mensaje de error
+        const request = {
+            Email: email,
+            Code: data.code
         }
+
+        axios.post(`${API_URL}/Auth/ValidateCode2FA`, request)
+            .then(response => {
+                if (response.status === 200) {
+                    reset();
+                    setToken(response.data.token);
+                    setUser(response.data.user);
+                    navigate("/", { replace: true });
+                    setErrorMessage(""); // Reiniciar mensaje de error
+                }
+            })
+            .catch(error => {
+                if (error.response) {
+                    console.error("Error details:", error.response);
+
+                    if (error.response.status === 401) {
+                        setErrorMessage("Código incorrecto. Por favor, inténtalo de nuevo.");
+                    } else if (error.response.status === 500) {
+                        setErrorMessage("Un error inesperado ha ocurrido. Por favor, inténtelo de nuevo.");
+                    }
+                } else {
+                    setErrorMessage("Error de conexión. Por favor, inténtelo de nuevo.");
+                }
+                console.error("Login fallado:", error.message);
+            })
     });
 
     return (
