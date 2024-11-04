@@ -71,23 +71,21 @@ namespace API.Controllers
         }
 
         [HttpPost("ValidateCodePassRecover")]
-        public async Task<ActionResult<bool>> ValidateCodePassRecover(VerificationCodeDTO verificationCodeDto)
+        public async Task<ActionResult<bool>> ValidateCodePassRecover(ValidateRecoverPasswordDTO verificationCodeDto)
         {
             if (verificationCodeDto == null)
             {
                 return BadRequest("Verification code cannot be null.");
             }
 
-            var code = await _context.VerificationCodes.FindAsync(verificationCodeDto.Id);
+            var tempCode = verificationCodeDto.Code[9..];
+
+            var code = await _context.VerificationCodes
+        .FirstOrDefaultAsync(c => c.CodeNumber == tempCode);
 
             if (code == null)
             {
                 return NotFound();
-            }
-
-            if (code.CodeNumber != verificationCodeDto.CodeNumber)
-            {
-                return BadRequest("Invalid verification code.");
             }
 
             if (code.IsUsed)
@@ -99,6 +97,10 @@ namespace API.Controllers
             {
                 return BadRequest("Verification code is expired.");
             }
+
+            code.IsUsed = true;
+            _context.VerificationCodes.Update(code);
+            await _context.SaveChangesAsync();
 
             return Ok(true);
         }
@@ -176,7 +178,7 @@ namespace API.Controllers
 
             if (user == null)
             {
-                return BadRequest("No account found.");
+                return NotFound("No account found.");
             }
 
             var result = await _authService.CodeSendingHandlingAsync(recoverPassword.Email, "RecoverPassword");
@@ -193,6 +195,11 @@ namespace API.Controllers
     public class RecoverPasswordDTO
     {
         public string Email { get; set; }
+    }
+
+    public class ValidateRecoverPasswordDTO
+    {
+        public string Code { get; set; }
     }
 
     public class Validation2FACodeDTO

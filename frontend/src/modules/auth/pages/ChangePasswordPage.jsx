@@ -1,10 +1,29 @@
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import '../styles/ChangePasswordPage.css';
+import { API_URL } from "../../../constants/Api";
+import axios from "axios";
 //
+
+
+
+const validateToken = async (code) => {
+    try {
+        const res = await axios.post(`${API_URL}/Auth/ValidateCodePassRecover`, { code });
+
+        if (res.status === 200) {
+            return true;
+        }
+    } catch (error) {
+        alert("El token es inválido o ha expirado.");
+        console.log(error);
+        return false;
+    }
+};
+
 export const ChangePasswordPage = () => {
-    const { register, handleSubmit, formState: { errors }, reset, watch } = useForm({
+    const { register, handleSubmit, formState: { errors }, watch } = useForm({
         defaultValues: {
             password: "",
             confirmPassword: ""
@@ -15,20 +34,41 @@ export const ChangePasswordPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Verifica si el token existe
+
         if (!token) {
-            // navigate('/login'); // Redirige si no hay token
+            navigate('/login');
+        }
+
+        const isValid = validateToken(token);
+
+        if (!isValid) {
+            return <>
+                <h1>Token inválido</h1>
+                <p>El token es inválido o ha expirado.</p>
+                <Link to="/login"><button className="change-password__button">Volver al login</button></Link>
+            </>
         }
     }, [token, navigate]);
 
     const onSubmit = handleSubmit(async (data) => {
+
+        if (data.confirmPassword !== data.password) {
+            return alert("Las contraseñas no coinciden");
+        }
+
+        const changePasswordObject = {
+            newPassword: data.password
+        };
+
         try {
-            console.log("Cambiar contraseña a:", data.password);
-            reset();
-            navigate('/login'); // Redirige al login tras el cambio exitoso
+            const res = await axios.post(`${API_URL}/UserDTO/ChangePassword/${token}`, changePasswordObject);
+            if (res.status === 200) {
+                navigate('/login');
+            }
         } catch (error) {
-            alert("Ocurrió un error al cambiar la contraseña.");
-            navigate('/login'); // Redirige al login si hay un error
+            console.error("Error al cambiar la contraseña:", error);
+
+            alert("Ha ocurrido un error al cambiar la contraseña. Por favor, inténtelo de nuevo.");
         }
     });
 

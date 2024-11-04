@@ -1,13 +1,17 @@
 import { useForm } from "react-hook-form";
 import '../styles/TwoFactorPage.css';
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { API_URL } from "../../../constants/Api";
+import { useState } from "react";
 
 export const ForgotPasswordPage = () => {
+    const [error, setError] = useState(null);
+    const [msg, setMsg] = useState(null);
     const {
         register,
         handleSubmit,
         formState: { errors },
-        reset,
     } = useForm({
         defaultValues: {
             email: "",
@@ -17,8 +21,24 @@ export const ForgotPasswordPage = () => {
     const navigate = useNavigate();
     const onSubmit = handleSubmit((data) => {
         console.log(data);
-        reset();
-        navigate('/login', { replace: true });
+
+        axios.post(`${API_URL}/Auth/RecoverPassword`, data).then((response) => {
+            if (response.status === 200) {
+                setMsg("Correo enviado correctamente");
+                setTimeout(() => {
+                    navigate("/login");
+                }, 3000);
+                setError(null);
+            }
+        }).catch((error) => {
+            if (error.status === 404) {
+                setError("Este correo no está registrado.");
+                setTimeout(() => {
+                    setError(null);
+                }, 3000);
+            }
+        });
+
     });
 
     return (
@@ -27,6 +47,7 @@ export const ForgotPasswordPage = () => {
             <form className="two-factor__form" onSubmit={onSubmit}>
                 <div className="two-factor__inputs">
                     <div className="login-form__field">
+                        {msg && <span className="login-form__msg">{msg}</span>}
                         <label className="login-form__label">Ingrese su correo electrónico</label>
                         <input
                             className="login-form__input"
@@ -42,6 +63,9 @@ export const ForgotPasswordPage = () => {
                         />
                         {errors.email && (
                             <span className="login-form__error">{errors.email.message}</span>
+                        )}
+                        {error && (
+                            <span className="login-form__error">{error}</span>
                         )}
                     </div>
                 </div>

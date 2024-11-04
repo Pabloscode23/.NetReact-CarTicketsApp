@@ -24,7 +24,7 @@ namespace Notifications
 
         public void ResetPasswordNotification(string code, string recipient)
         {
-            _notification.Send("Restablecimiento de contraseña", $"Haga clic en el siguiente enlace para restablecer su contraseña: http://localhost:5173/{code}", recipient);
+            _notification.Send("Restablecimiento de contraseña", $"Haga clic en el siguiente enlace para restablecer su contraseña: http://localhost:5173/cambiar-contrasena?t={code}", recipient);
             Console.WriteLine("Notificación de restablecimiento de contraseña enviada.");
         }
 
