@@ -17,11 +17,15 @@ export const OfficerTicketsPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
+
         const fetchTickets = async () => {
+
             try {
                 const response = await axios.get(`${API_URL}/TicketDTO`);
+
+
                 const userTickets = response.data
-                    .filter(ticket => ticket.officerId === user.userId)
+                    .filter(ticket => ticket.officerId === user.idNumber)
                     .map(ticket => ({
                         ...ticket,
                         status: ticket.status || "Pendiente",
@@ -33,7 +37,7 @@ export const OfficerTicketsPage = () => {
             }
         };
 
-        if (user?.userId) {
+        if (user?.idNumber) {
             fetchTickets();
         }
     }, [user]);
@@ -95,31 +99,35 @@ export const OfficerTicketsPage = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
-            <table className="ticket-table">
-                <thead>
-                    <tr className='table__head'>
-                        <th>ID multa</th>
-                        <th>Fecha</th>
-                        <th>Razón de la multa</th>
-                        <th>Monto de la multa</th>
-                        <th>Estado</th>
-                        <th>Editar</th>
-                    </tr>
-                </thead>
-                <tbody className='table__children'>
-                    {filteredTickets.map(ticket => (
-                        <TicketOfficer
-                            key={ticket.id}
-                            id={ticket.id}
-                            date={ticket.date}
-                            reason={ticket.description}
-                            amount={ticket.amount.toLocaleString()}
-                            status={ticket.status}
-                            onEdit={() => handleEdit(ticket)}
-                        />
-                    ))}
-                </tbody>
-            </table>
+            {(filteredTickets.length === 0) ? (
+                <div className='table__empty'>No hay multas disponibles.</div>
+            ) : (
+                <table className="ticket-table">
+                    <thead>
+                        <tr className='table__head'>
+                            <th>ID multa</th>
+                            <th>Fecha</th>
+                            <th>Razón de la multa</th>
+                            <th>Monto de la multa</th>
+                            <th>Estado</th>
+                            <th>Editar</th>
+                        </tr>
+                    </thead>
+                    <tbody className='table__children'>
+                        {filteredTickets.map(ticket => (
+                            <TicketOfficer
+                                key={ticket.id}
+                                id={ticket.id}
+                                date={ticket.date}
+                                reason={ticket.description}
+                                amount={ticket.amount.toLocaleString()}
+                                status={ticket.status}
+                                onEdit={() => handleEdit(ticket)}
+                            />
+                        ))}
+                    </tbody>
+                </table>
+            )}
             <EditTicketModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

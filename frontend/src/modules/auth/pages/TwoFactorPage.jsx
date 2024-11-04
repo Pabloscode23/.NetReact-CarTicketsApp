@@ -34,6 +34,7 @@ export const TwoFactorPage = () => {
             })
             .catch(error => {
                 if (error.response) {
+                    alert("Verifique el código ingresado");
                     console.error("Error details:", error.response);
 
                     if (error.response.status === 401) {

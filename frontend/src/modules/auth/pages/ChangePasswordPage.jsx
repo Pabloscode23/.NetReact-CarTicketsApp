@@ -61,7 +61,7 @@ export const ChangePasswordPage = () => {
         };
 
         try {
-            const res = await axios.post(`${API_URL}/UserDTO/ChangePassword/${token}`, changePasswordObject);
+            const res = await axios.put(`${API_URL}/UserDTO/ChangePassword/${token}`, changePasswordObject);
             if (res.status === 200) {
                 navigate('/login');
             }
@@ -89,8 +89,8 @@ export const ChangePasswordPage = () => {
                                     message: "La contraseña debe tener al menos 8 caracteres"
                                 },
                                 pattern: {
-                                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
-                                    message: "La contraseña debe contener al menos una letra mayúscula, una letra minúscula y un número"
+                                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+                                    message: "Contraseña debe incluir al menos una letra mayúscula, una letra minúscula y un número"
                                 }
                             })}
                         />

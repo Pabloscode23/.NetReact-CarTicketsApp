@@ -98,3 +98,9 @@ td {
     background-color: var(--color-blue-lighter);
     color: var(--color-grey-dark);
 }
+
+.table__empty {
+    margin: 0 auto;
+    font-size: 2.5vh;
+    color: var(--color-grey-dark);
+}

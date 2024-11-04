@@ -109,9 +109,12 @@ export const FormRegistFinalUser = () => {
                         name="lastName"
                         {...register("lastName", {
                             required: "Apellidos son requeridos",
-                            maxLength: { value: 50, message: "Apellidos tienen que ser menores a 30 caracteres" },
+                            maxLength: { value: 30, message: "Apellidos tienen que ser menores a 30 caracteres" },
                             minLength: { value: 2, message: "Apellidos tienen que ser al menos 2 caracteres" },
-                            pattern: { value: /^[a-zA-ZÀ-ÿ\s]+$/, message: "Apellidos solo aceptan letras y tildes" }
+                            pattern: {
+                                value: /^[a-zA-ZÀ-ÿ]+(?:\s[a-zA-ZÀ-ÿ]+)$/,
+                                message: "Apellidos deben ser de dos palabras y solo letras"
+                            }
                         })}
                     />
                     {errors.lastName && <span className="form__error">{errors.lastName.message}</span>}
@@ -125,7 +128,7 @@ export const FormRegistFinalUser = () => {
                         name="idNumber"
                         {...register("idNumber", {
                             required: "Número de cédula es requerido",
-                            pattern: { value: /^[0-9]+$/, message: "Número de cédula debe ser solo numérico" }
+                            pattern: { value: /^[0-9]{9}$/, message: "Número de cédula debe ser solo numérico y de 9 caracteres" }
                         })}
                     />
                     {errors.idNumber && <span className="form__error">{errors.idNumber.message}</span>}

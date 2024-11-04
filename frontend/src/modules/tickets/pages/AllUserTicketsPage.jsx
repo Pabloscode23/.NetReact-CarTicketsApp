@@ -23,7 +23,7 @@ export const AllUserTicketsPage = () => {
             try {
                 const response = await axios.get(`${API_URL}/TicketDTO`);
                 const userTickets = response.data
-                    .filter(ticket => ticket.userId === user.userId)
+                    .filter(ticket => ticket.userId === user.idNumber)
                     .map(ticket => {
                         const amount = TicketsInfo[ticket.description] || 0;
                         return {
@@ -41,7 +41,7 @@ export const AllUserTicketsPage = () => {
             }
         };
 
-        if (user?.userId) {
+        if (user?.idNumber) {
             fetchTickets();
         }
     }, [user]);
@@ -106,7 +106,9 @@ export const AllUserTicketsPage = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
-            <table className="ticket-table">
+            {filteredTickets.length === 0 ? (
+                <div className='table__empty'>No hay multas disponibles.</div>
+            ) : (<table className="ticket-table">
                 <thead>
                     <tr className='table__head'>
                         <th>ID multa</th>
@@ -118,20 +120,23 @@ export const AllUserTicketsPage = () => {
                     </tr>
                 </thead>
                 <tbody className='table__children'>
-                    {filteredTickets.map((ticket) => (
-                        <TicketUser
-                            key={ticket.id}
-                            id={ticket.id}
-                            date={ticket.date}
-                            reason={ticket.description}
-                            amount={ticket.amount.toLocaleString()}
-                            status={ticket.status}
-                            isClaimed={ticket.claimed}
-                            onReclamar={() => handleReclamar(ticket)}
-                        />
-                    ))}
+                    {
+                        filteredTickets.map((ticket) => (
+                            <TicketUser
+                                key={ticket.id}
+                                id={ticket.id}
+                                date={ticket.date}
+                                reason={ticket.description}
+                                amount={ticket.amount.toLocaleString()}
+                                status={ticket.status}
+                                isClaimed={ticket.claimed}
+                                onReclamar={() => handleReclamar(ticket)}
+                            />
+                        ))
+                    }
                 </tbody>
-            </table>
+
+            </table>)}
             {modalOpen && (
                 <ModalTicketPayment
                     onClose={closeModal}
