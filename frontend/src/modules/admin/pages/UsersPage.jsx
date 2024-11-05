@@ -80,9 +80,9 @@ export const UsersPage = () => {
     };
 
     return (
-        <>
-            <h1 style={{ textAlign: "left" }}>Gestión Usuarios</h1>
-            <p>Cree, borre y asigne los datos respectivos a cada usuario del sistema.</p>
+        <div className='container__tickets'>
+            <h1 className="main__ticket-title" style={{ textAlign: "left" }}>Gestión de usuarios</h1>
+            <h2 className="main__ticket-subtitle"> Cree, borre y asigne los datos respectivos a cada usuario del sistema.</h2>
             <div style={{ width: "100%" }}>
                 <div style={{ textAlign: "left", width: "80%", margin: "0 auto", display: 'flex', flexDirection: "column", gap: "10px" }}>
                     <label style={{ color: "#2E8EB1" }}>Buscar por cédula, nombre, apellidos, correo electrónico o rol</label>
@@ -117,6 +117,6 @@ export const UsersPage = () => {
                     }
                 </div>
             </div>
-        </>
+        </div>
     );
 };

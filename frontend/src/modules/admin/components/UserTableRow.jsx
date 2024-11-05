@@ -39,7 +39,7 @@ export const UserTableRow = ({ user, onDelete, onEdit }) => { // Añadido onEdit
                     style={{ padding: "5px 10px" }}
                     onClick={handleDelete}
                 >
-                    Borrar
+                    Eliminar
                 </button>
             </td>
         </tr>
