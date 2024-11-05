@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { API_URL } from '../../../constants/Api'; // Asegúrate de que el archivo tenga el URL base correcto
+import { API_URL } from '../../../constants/Api';
 
 const tdStyle = {
     width: "20%"
 }
 
-export const UserTableRow = ({ user, onDelete }) => {
+export const UserTableRow = ({ user, onDelete, onEdit }) => { // Añadido onEdit
     const { idNumber, name, email, role } = user;
 
     const handleDelete = async () => {
@@ -28,13 +28,18 @@ export const UserTableRow = ({ user, onDelete }) => {
             <td style={tdStyle}>{name}</td>
             <td style={tdStyle}>{email}</td>
             <td style={tdStyle}>{role}</td>
-            <td className='table__buttons' style={{ justifyContent: "end", gap: "10px", padding: "10px 0" }}>
-                <button style={{ maxWidth: "100px", padding: "10px 0" }}>Editar Usuario</button>
+            <td className='table__buttons' >
                 <button
-                    style={{ maxWidth: "100px", padding: "10px 0" }}
+                    style={{ padding: "5px 10px" }}
+                    onClick={() => onEdit(user)} // Abre el modal con los datos del usuario
+                >
+                    Editar
+                </button>
+                <button
+                    style={{ padding: "5px 10px" }}
                     onClick={handleDelete}
                 >
-                    Eliminar Usuario
+                    Borrar
                 </button>
             </td>
         </tr>
@@ -43,5 +48,6 @@ export const UserTableRow = ({ user, onDelete }) => {
 
 UserTableRow.propTypes = {
     user: PropTypes.object.isRequired,
-    onDelete: PropTypes.func.isRequired // Asegúrate de pasar esta función desde el componente principal
+    onDelete: PropTypes.func.isRequired,
+    onEdit: PropTypes.func.isRequired // Asegúrate de pasar esta función desde el componente principal
 }

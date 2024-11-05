@@ -7,8 +7,9 @@ import { faRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { API_URL } from '../../../constants/Api';
 import axios from 'axios';
+import EditUserForm from '../../public/components/EditUserForm'// Importa tu componente para editar usuarios
 
-const columns = ['Cédula', 'Nombre', 'Correo electrónico', 'Tipo de Usuario', ''];
+const columns = ['Cédula', 'Nombre', 'Correo electrónico', 'Tipo de Usuario', 'Acciones'];
 
 export const UsersPage = () => {
     const { openModal } = useModal();
@@ -59,6 +60,25 @@ export const UsersPage = () => {
         }
     };
 
+    const handleEditUser = (user) => {
+        openModal(<EditUserForm user={user} onUserUpdated={handleUserUpdated} />); // Abre el modal de edición con el usuario
+    };
+
+    const handleDeleteUser = async (userId) => {
+        try {
+            await axios.delete(`${API_URL}/UserDTO/${userId}`);
+            setUsers(users.filter(user => user.id !== userId));
+            setFilteredUsers(filteredUsers.filter(user => user.id !== userId));
+        } catch (error) {
+            console.error("Error al eliminar el usuario:", error);
+        }
+    };
+
+    const handleUserUpdated = (updatedUser) => {
+        setUsers(users.map(user => (user.idNumber === updatedUser.idNumber ? updatedUser : user)));
+        setFilteredUsers(filteredUsers.map(user => (user.idNumber === updatedUser.idNumber ? updatedUser : user)));
+    };
+
     return (
         <>
             <h1 style={{ textAlign: "left" }}>Gestión Usuarios</h1>
@@ -86,7 +106,12 @@ export const UsersPage = () => {
                         filteredUsers.length === 0 ? <p>No hay resultados</p> :
                             <GlobalTable columns={columns}>
                                 {filteredUsers.map((user) => (
-                                    <UserTableRow key={user.id} user={user} />
+                                    <UserTableRow
+                                        key={user.id}
+                                        user={user}
+                                        onDelete={handleDeleteUser}
+                                        onEdit={handleEditUser} // Pasar la función onEdit
+                                    />
                                 ))}
                             </GlobalTable>
                     }

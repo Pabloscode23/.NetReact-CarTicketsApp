@@ -1,14 +1,19 @@
-import { useRef } from "react";
-import { useForm } from "react-hook-form";
-import '../styles/FormRegistFinalUser.css';
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import { API_URL } from '../../../constants/Api';
-import { useAuth } from "../../../hooks";
+import { useForm } from "react-hook-form";
+import '../styles/FormRegistFinalUser.css'; // Asegúrate de que la ruta sea correcta
 
-export const FormUpdateFinalUser = () => {
-    const { user } = useAuth();
-
+const EditUserForm = ({ user, onUserUpdated }) => {
+    const roles = [
+        { value: "admin", label: "Administrador" },
+        { value: "oficial", label: "Oficial" },
+        { value: "juez", label: "Juez" },
+        {
+            value: "usuario", label: "Usuario final"
+        }
+    ];
     const {
         register,
         handleSubmit,
@@ -26,13 +31,17 @@ export const FormUpdateFinalUser = () => {
             password: user.password,
             confirmPassword: '',
             profilePicture: user.profilePicture,
+            role: user.role,
         },
     });
 
-    const navigate = useNavigate();
+    useEffect(() => {
+        setValue("idNumber", user.idNumber);
+        setValue("name", user.name);
+        setValue("email", user.email);
+    }, [user, setValue]);
     const password = useRef(null);
     password.current = watch("password", "");
-
     const onSubmit = async (data) => {
         try {
             // Preparar datos del formulario
@@ -43,15 +52,16 @@ export const FormUpdateFinalUser = () => {
                 email: data.email,
                 password: data.password,
                 phoneNumber: data.phoneNumber,
-                role: user.role, // Mantener el rol existente
+                role: data.role,
                 profilePicture: data.profilePicture,
             };
+
             console.log(formData);
             const response = await axios.put(`${API_URL}/UserDTO/${data.idNumber}`, formData);
 
             console.log("Usuario actualizado:", response.data);
+            alert("Usuario actualizado, refresque la página para ver los cambios");
             reset();
-            navigate('/', { replace: true });
         } catch (error) {
             console.error("Error al actualizar el usuario:", error);
         }
@@ -59,7 +69,8 @@ export const FormUpdateFinalUser = () => {
 
     return (
         <div className="container__form">
-            <h1>Actualice sus datos</h1>
+            <h1>Editar Usuario</h1>
+            <br />
             <form className="form" onSubmit={handleSubmit(onSubmit)}>
                 <div className="form__group">
                     <label className="form__label">Nombre:</label>
@@ -103,7 +114,7 @@ export const FormUpdateFinalUser = () => {
                             required: "Número de cédula es requerido",
                             pattern: { value: /^[0-9]{9}$/, message: "Número de cédula debe ser solo numérico y de 9 caracteres" }
                         })}
-                        disabled={true} // Campo de cédula permanece deshabilitado
+
                     />
                     {errors.idNumber && <span className="form__error">{errors.idNumber.message}</span>}
                 </div>
@@ -133,7 +144,7 @@ export const FormUpdateFinalUser = () => {
                                 message: "Verifique el formato de su correo electrónico"
                             }
                         })}
-                        disabled={true} // Campo de correo permanece deshabilitado
+
                     />
                     {errors.email && <span className="form__error">{errors.email.message}</span>}
                 </div>
@@ -168,6 +179,15 @@ export const FormUpdateFinalUser = () => {
                     {errors.confirmPassword && <span className="form__error">{errors.confirmPassword.message}</span>}
                 </div>
 
+
+                <div className='form__group full-width'>
+                    <label className="form__label">Rol:</label>
+                    <select className='form__input' {...register("role")}>
+                        {roles.map((role) => (
+                            <option key={role.value} value={role.value}>{role.label}</option>
+                        ))}
+                    </select>
+                </div>
                 <div className="form__group">
                     <label className="form__label">Imagen de perfil:</label>
                     <input
@@ -179,7 +199,6 @@ export const FormUpdateFinalUser = () => {
                     />
                     {errors.profilePicture && <span className="form__error">{errors.profilePicture.message}</span>}
                 </div>
-
                 <div className="form__button-wrapper">
                     <button className="form__button" type="submit">Actualizar datos</button>
                 </div>
@@ -187,3 +206,10 @@ export const FormUpdateFinalUser = () => {
         </div>
     );
 };
+
+EditUserForm.propTypes = {
+    user: PropTypes.object.isRequired,
+    onUserUpdated: PropTypes.func.isRequired,
+};
+
+export default EditUserForm;
