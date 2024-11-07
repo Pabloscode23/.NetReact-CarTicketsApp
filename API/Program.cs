@@ -106,6 +106,9 @@ namespace API
                 });
             });
 
+            // Registrar el servicio de negocio
+            builder.Services.AddSingleton<UploadImageService>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline

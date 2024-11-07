@@ -14,6 +14,7 @@ import { AllUserTicketsPage } from "../modules/tickets/pages/AllUserTicketsPage"
 import { UserClaimsPage } from "../modules/disputes/pages/UserClaimsPage"
 import { RegistUpdateFinalUser} from "../modules/public/pages/RegistUpdateFinalUserPage"
 import { ChangePasswordPage } from "../modules/auth/pages/ChangePasswordPage";
+import {UploadImagePage} from "../modules/auth/pages/UploadImagePage";
 
 
 
@@ -38,6 +39,10 @@ export const routesForPublic = [
     {
         path: "/cambiar-contrasena",
         element: <MainLayout><ChangePasswordPage /></MainLayout>
+    },
+    {
+        path: "/imagen",
+        element: <MainLayout><UploadImagePage /></MainLayout>
     },
     {
         path: "*",
