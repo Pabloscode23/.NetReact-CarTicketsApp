@@ -18,14 +18,16 @@ namespace BusinessLogic.AuthService
     public class AuthService : IAuthService
     {
         private readonly AuthDbContext _context;
+        private readonly AppDbContext _appContext;
         private readonly NotificationService _notificationService;
         private readonly IConfiguration _configuration;
 
-        public AuthService(AuthDbContext context, NotificationService notificationService, IConfiguration configuration)
+        public AuthService(AuthDbContext context, NotificationService notificationService, IConfiguration configuration, AppDbContext _appDbContext)
         {
             _context = context;
             _notificationService = notificationService;
             _configuration = configuration;
+            _appContext = _appDbContext;
         }
 
         public string GenerateValidationCode()
@@ -68,18 +70,25 @@ namespace BusinessLogic.AuthService
         {
             // Generate Code
             var verificationCode = GenerateValidationCode();
-
             // Add Code to Database
             await AddVerificationCodeAsync(verificationCode, email);
 
+            var user = await _appContext.Users
+                    .FirstOrDefaultAsync(u => u.Email == email);
 
-            switch(type)
+            if (user == null)
+            {
+                return "Usuario no encontrado.";
+            }
+
+            switch (type)
             {
                 case "2FA":
                     _notificationService.Send2FA(verificationCode, email);
                     break;
                 case "RecoverPassword":
-                    _notificationService.ResetPasswordNotification(verificationCode, email);
+                    string newCode = user.IdNumber + verificationCode;
+                    _notificationService.ResetPasswordNotification(newCode, email);
                     break;
                 default:
                     return "Tipo de notificación no válido.";

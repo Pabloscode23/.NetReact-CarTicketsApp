@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using DTO;
 
 namespace API.Controllers
 {
@@ -77,6 +78,44 @@ namespace API.Controllers
             }
 
             return NoContent();
+        }
+
+        // PUT: api/UserDTO/ChangePassword/5
+        [HttpPut("ChangePassword/{token}")]
+        public async Task<IActionResult> ChangePassword(string token, ChangePasswordDTO changePasswordDTO)
+        {
+
+            var id = token.Substring(0, 9);
+
+            var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.IdNumber == id);
+
+            if (user == null)
+            {
+                return BadRequest(id);
+            }
+
+            user.Password = changePasswordDTO.newPassword;
+
+            _context.Entry(user).Property(u => u.Password).IsModified = true;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok("Contraseña modificada satisfactoriamente.");
         }
 
         // POST: api/UserDTO
@@ -226,5 +265,10 @@ namespace API.Controllers
     {
         public string Email { get; set; }
         public string Password { get; set; }
+    }
+
+    public class ChangePasswordDTO
+    {
+        public string newPassword { get; set; }
     }
 }

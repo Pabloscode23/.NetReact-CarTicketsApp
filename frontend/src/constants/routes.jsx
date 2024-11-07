@@ -12,7 +12,7 @@ import { ForgotPasswordPage } from "../modules/auth/pages/ForgotPasswordPage"
 import { PublicResquestPage } from "../modules/public/pages/PublicRequestPage"
 import { AllUserTicketsPage } from "../modules/tickets/pages/AllUserTicketsPage"
 import { UserClaimsPage } from "../modules/disputes/pages/UserClaimsPage"
-import { RegistUpdateFinalUser} from "../modules/public/pages/RegistUpdateFinalUserPage"
+import { RegistUpdateFinalUser } from "../modules/public/pages/RegistUpdateFinalUserPage"
 import { ChangePasswordPage } from "../modules/auth/pages/ChangePasswordPage";
 import {UploadImagePage} from "../modules/auth/pages/UploadImagePage";
 
@@ -84,7 +84,7 @@ export const routesForAuthenticatedOnly = [
             },
             {
                 path: "/perfil",
-                element: <RegistUpdateFinalUser/>
+                element: <RegistUpdateFinalUser />
             },
         ]
     }

@@ -6,6 +6,11 @@ import PropTypes from 'prop-types';
 export const ModalTicketPayment = ({ onClose, ticket, isClaimed, onFileUpload }) => {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
+        // Check if the selected file is a PDF
+        if (file && file.type !== 'application/pdf') {
+            alert('Por favor, selecciona un archivo PDF.');
+            return;
+        }
         onFileUpload(file);
     };
 

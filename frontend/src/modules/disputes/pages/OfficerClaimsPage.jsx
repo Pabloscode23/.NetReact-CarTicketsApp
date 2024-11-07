@@ -19,7 +19,7 @@ export const OfficerClaimsPage = () => {
                 const response = await axios.get(`${API_URL}/TicketDTO`);
 
                 const claims = response.data
-                    .filter(claim => claim.officerId === user.userId && claim.status !== "Pendiente") // Use strict equality
+                    .filter(claim => claim.officerId === user.idNumber && claim.status !== "Pendiente") // Use strict equality
                     .map(claim => {
                         console.log("Ticket Description:", claim.description);
 
@@ -62,28 +62,33 @@ export const OfficerClaimsPage = () => {
                     onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm on input change
                 />
             </div>
-            <table className="ticket-table">
-                <thead>
-                    <tr className='table__head'>
-                        <th>ID multa</th>
-                        <th>Fecha</th>
-                        <th>Razón de la multa</th>
-                        <th>Monto de la multa</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody className='table__children'>
-                    {filteredClaims.map((ticket) => (
-                        <UserClaims key={ticket.id}
-                            id={ticket.id}
-                            date={ticket.date}
-                            reason={ticket.description}
-                            amount={ticket.amount}
-                            status={ticket.status}
-                        />
-                    ))}
-                </tbody>
-            </table>
+            {(filteredClaims.length === 0) ? (
+                <div className='table__empty'>No hay reclamos disponibles.</div>
+            ) : (
+
+                <table className="ticket-table">
+                    <thead>
+                        <tr className='table__head'>
+                            <th>ID multa</th>
+                            <th>Fecha</th>
+                            <th>Razón de la multa</th>
+                            <th>Monto de la multa</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody className='table__children'>
+                        {filteredClaims.map((ticket) => (
+                            <UserClaims key={ticket.id}
+                                id={ticket.id}
+                                date={ticket.date}
+                                reason={ticket.description}
+                                amount={ticket.amount}
+                                status={ticket.status}
+                            />
+                        ))}
+                    </tbody>
+                </table>
+            )}
         </div>
     );
 };
