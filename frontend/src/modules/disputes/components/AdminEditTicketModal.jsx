@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { TicketsInfo } from "../../../constants/TicketsInfo";
 import axios from "axios";
 import { API_URL } from "../../../constants/Api";
+import { showSuccessAlert } from "../../../constants/Swal/SwalFunctions";
 
 export const AdminEditTicketModal = ({ isOpen, onClose, ticket, onSave }) => {
     const [editableTicket, setEditableTicket] = useState({});
@@ -29,6 +30,7 @@ export const AdminEditTicketModal = ({ isOpen, onClose, ticket, onSave }) => {
 
             // Call onSave with the updated ticket data
             onSave(response.data);
+            showSuccessAlert("Multa actualizada correctamente");
             onClose();
         } catch (error) {
             console.error("Error updating ticket:", error);

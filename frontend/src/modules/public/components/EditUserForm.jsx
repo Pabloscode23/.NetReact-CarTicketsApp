@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { API_URL } from '../../../constants/Api';
 import { useForm } from "react-hook-form";
 import '../styles/FormRegistFinalUser.css'; // Asegúrate de que la ruta sea correcta
+import { showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 
-const EditUserForm = ({ user, onUserUpdated }) => {
+const EditUserForm = ({ user, onUserUpdated, closeModal }) => {
     const roles = [
         { value: "admin", label: "Administrador" },
         { value: "oficial", label: "Oficial" },
@@ -60,7 +61,10 @@ const EditUserForm = ({ user, onUserUpdated }) => {
             const response = await axios.put(`${API_URL}/UserDTO/${data.idNumber}`, formData);
 
             console.log("Usuario actualizado:", response.data);
-            alert("Usuario actualizado, refresque la página para ver los cambios");
+
+            showSuccessAlert("Usuario actualizado, refresque la página para ver los cambios");
+            closeModal();
+
             reset();
         } catch (error) {
             console.error("Error al actualizar el usuario:", error);
