@@ -8,7 +8,7 @@ const tdStyle = {
     width: "20%"
 }
 
-export const UserTableRow = ({ user, onDelete, onEdit, }) => { // Añadido onEdit
+export const UserTableRow = ({ user, onDelete, onEdit }) => { // Añadido onEdit
     const { idNumber, name, email, role } = user;
 
     const handleDelete = async () => {
@@ -16,11 +16,8 @@ export const UserTableRow = ({ user, onDelete, onEdit, }) => { // Añadido onEdi
         if (confirmDelete) {
             try {
                 await axios.delete(`${API_URL}/UserDTO/${idNumber}`);
-
-                showSuccessAlert('Eliminación exitosa', `Usuario ${name} eliminado correctamente. Refresque la página para ver los cambios.`);
-
-
-                onDelete(idNumber); // Llama a la función de callback para actualizar la lista de usuarios
+                showSuccessAlert('Eliminación exitosa', `Usuario ${name} eliminado correctamente.`);
+                onDelete(); // Llama a la función de callback para actualizar la lista de usuarios
             } catch (error) {
                 console.error("Error al eliminar el usuario:", error);
             }
