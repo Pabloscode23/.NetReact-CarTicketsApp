@@ -16,7 +16,6 @@ const validateToken = async (code) => {
             return true;
         }
     } catch (error) {
-        alert("El token es inválido o ha expirado.");
         console.log(error);
         return false;
     }
