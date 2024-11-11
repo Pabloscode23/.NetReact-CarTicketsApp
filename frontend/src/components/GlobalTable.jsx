@@ -9,18 +9,18 @@ export const GlobalTable = ({ columns, children }) => {
         <>
             <table className="global-table">
                 <thead>
-                    <tr className='table__head'>
+                    <tr className='table__head' >
                         {
                             columns.map((column) =>
-                                <th key={column}>{column}</th>
+                                <th key={column} style={{ margin: "0 auto", textAlign: "center" }}>{column}</th>
                             )
                         }
                     </tr>
                 </thead>
-                <tbody className='table__children'>
+                <tbody className='table__children' style={{ margin: "0 auto", textAlign: "center" }}>
                     {children}
                 </tbody>
-            </table>
+            </table >
             {/*             
                 TODO: Implementar paginacion si da tiempo
             <div className='pagination'>

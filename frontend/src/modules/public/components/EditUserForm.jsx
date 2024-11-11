@@ -1,11 +1,20 @@
-import { useRef } from "react";
-import { useForm } from "react-hook-form";
-import '../styles/FormRegistFinalUser.css';
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import { API_URL } from '../../../constants/Api';
+import { useForm } from "react-hook-form";
+import '../styles/FormRegistFinalUser.css'; // Asegúrate de que la ruta sea correcta
+import { showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 
-export const FormRegistFinalUser = () => {
+const EditUserForm = ({ user, onUserUpdated, closeModal }) => {
+    const roles = [
+        { value: "admin", label: "Administrador" },
+        { value: "oficial", label: "Oficial" },
+        { value: "juez", label: "Juez" },
+        {
+            value: "usuario", label: "Usuario final"
+        }
+    ];
     const {
         register,
         handleSubmit,
@@ -13,52 +22,30 @@ export const FormRegistFinalUser = () => {
         watch,
         setValue,
         reset,
-        setError,
     } = useForm({
         defaultValues: {
-            firstName: "",
-            lastName: "",
-            idNumber: "",
-            phoneNumber: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-            profilePicture: "",
+            firstName: user.name.split(" ").slice(0, -2).join(" "), // Obtener todos los nombres hasta los últimos dos apellidos
+            lastName: user.name.split(" ").slice(-2).join(" "),
+            idNumber: user.idNumber,
+            phoneNumber: user.phoneNumber,
+            email: user.email,
+            password: user.password,
+            confirmPassword: '',
+            profilePicture: user.profilePicture,
+            role: user.role,
         },
     });
 
-    const navigate = useNavigate();
+    useEffect(() => {
+        setValue("idNumber", user.idNumber);
+        setValue("name", user.name);
+        setValue("email", user.email);
+    }, [user, setValue]);
     const password = useRef(null);
     password.current = watch("password", "");
-
     const onSubmit = async (data) => {
         try {
-            // Primero verifica si el ID o correo ya existen
-            const existingUsersResponse = await axios.get(`${API_URL}/UserDTO`);
-            const existingUsers = existingUsersResponse.data;
-
-            const userExists = existingUsers.some(user => user.idNumber === data.idNumber);
-            const emailExists = existingUsers.some(user => user.email === data.email);
-
-            if (userExists) {
-                // Si el usuario ya existe, establecer un error en el campo idNumber
-                setError("idNumber", {
-                    type: "manual",
-                    message: "El número de cédula ya está registrado"
-                });
-                return;
-            }
-
-            if (emailExists) {
-                // Si el correo ya existe, establecer un error en el campo email
-                setError("email", {
-                    type: "manual",
-                    message: "El correo electrónico ya está registrado"
-                });
-                return;
-            }
-
-            // Si no existe, proceder a crear el usuario
+            // Preparar datos del formulario
             const formData = {
                 userId: data.idNumber,
                 name: `${data.firstName} ${data.lastName}`,
@@ -66,31 +53,34 @@ export const FormRegistFinalUser = () => {
                 email: data.email,
                 password: data.password,
                 phoneNumber: data.phoneNumber,
-                role: "usuario",
+                role: data.role,
                 profilePicture: data.profilePicture,
             };
 
-            const response = await axios.post(`${API_URL}/UserDTO`, formData);
+            console.log(formData);
+            const response = await axios.put(`${API_URL}/UserDTO/${data.idNumber}`, formData);
 
-            if (response.status === 200) {
-                navigate('/login', { replace: true });
-            }
+            console.log("Usuario actualizado:", response.data);
 
+            showSuccessAlert("Usuario actualizado, refresque la página para ver los cambios");
+            closeModal();
+
+            reset();
         } catch (error) {
-            console.error("Error en la creación del usuario:", error);
+            console.error("Error al actualizar el usuario:", error);
         }
     };
 
     return (
         <div className="container__form">
-            <h1>Registrarse</h1>
+            <h1>Editar Usuario</h1>
+            <br />
             <form className="form" onSubmit={handleSubmit(onSubmit)}>
                 <div className="form__group">
                     <label className="form__label">Nombre:</label>
                     <input
                         className="form__input"
                         type="text"
-                        name="firstName"
                         {...register("firstName", {
                             required: "Nombre es requerido",
                             maxLength: { value: 30, message: "Nombre tiene que ser menor a 30 caracteres" },
@@ -106,10 +96,9 @@ export const FormRegistFinalUser = () => {
                     <input
                         className="form__input"
                         type="text"
-                        name="lastName"
                         {...register("lastName", {
                             required: "Apellidos son requeridos",
-                            maxLength: { value: 30, message: "Apellidos tienen que ser menores a 30 caracteres" },
+                            maxLength: { value: 50, message: "Apellidos tienen que ser menores a 50 caracteres" },
                             minLength: { value: 2, message: "Apellidos tienen que ser al menos 2 caracteres" },
                             pattern: {
                                 value: /^[a-zA-ZÀ-ÿ]+(?:\s[a-zA-ZÀ-ÿ]+)$/,
@@ -125,11 +114,11 @@ export const FormRegistFinalUser = () => {
                     <input
                         className="form__input"
                         type="text"
-                        name="idNumber"
                         {...register("idNumber", {
                             required: "Número de cédula es requerido",
                             pattern: { value: /^[0-9]{9}$/, message: "Número de cédula debe ser solo numérico y de 9 caracteres" }
                         })}
+
                     />
                     {errors.idNumber && <span className="form__error">{errors.idNumber.message}</span>}
                 </div>
@@ -139,7 +128,6 @@ export const FormRegistFinalUser = () => {
                     <input
                         className="form__input"
                         type="tel"
-                        name="phoneNumber"
                         {...register("phoneNumber", {
                             required: "Número de teléfono es requerido",
                             pattern: { value: /^[0-9]{8}$/, message: "Número de teléfono debe ser de 8 dígitos" }
@@ -153,7 +141,6 @@ export const FormRegistFinalUser = () => {
                     <input
                         className="form__input"
                         type="email"
-                        name="email"
                         {...register("email", {
                             required: "Correo electrónico es requerido",
                             pattern: {
@@ -161,6 +148,7 @@ export const FormRegistFinalUser = () => {
                                 message: "Verifique el formato de su correo electrónico"
                             }
                         })}
+
                     />
                     {errors.email && <span className="form__error">{errors.email.message}</span>}
                 </div>
@@ -170,7 +158,6 @@ export const FormRegistFinalUser = () => {
                     <input
                         className="form__input"
                         type="password"
-                        name="password"
                         {...register("password", {
                             required: "Contraseña es requerida",
                             minLength: { value: 8, message: "Contraseña debe tener al menos 8 caracteres" },
@@ -188,7 +175,6 @@ export const FormRegistFinalUser = () => {
                     <input
                         className="form__input"
                         type="password"
-                        name="confirmPassword"
                         {...register("confirmPassword", {
                             required: "Confirmación de contraseña es requerida",
                             validate: (value) => value === password.current || "Contraseñas no coinciden"
@@ -197,6 +183,15 @@ export const FormRegistFinalUser = () => {
                     {errors.confirmPassword && <span className="form__error">{errors.confirmPassword.message}</span>}
                 </div>
 
+
+                <div className='form__group full-width'>
+                    <label className="form__label">Rol:</label>
+                    <select className='form__input' {...register("role")}>
+                        {roles.map((role) => (
+                            <option key={role.value} value={role.value}>{role.label}</option>
+                        ))}
+                    </select>
+                </div>
                 <div className="form__group">
                     <label className="form__label">Imagen de perfil:</label>
                     <input
@@ -208,16 +203,17 @@ export const FormRegistFinalUser = () => {
                     />
                     {errors.profilePicture && <span className="form__error">{errors.profilePicture.message}</span>}
                 </div>
-
                 <div className="form__button-wrapper">
-                    <button className="form__button" type="submit">Registrarme</button>
-                </div>
-                <div className="form__regist-login">
-                    <p>Si ya tiene cuenta,
-                        <Link to="/login" className="form__link-login"> inicie sesión</Link>
-                    </p>
+                    <button className="form__button" type="submit">Actualizar datos</button>
                 </div>
             </form>
         </div>
     );
 };
+
+EditUserForm.propTypes = {
+    user: PropTypes.object.isRequired,
+    onUserUpdated: PropTypes.func.isRequired,
+};
+
+export default EditUserForm;

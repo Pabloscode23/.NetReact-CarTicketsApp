@@ -5,6 +5,7 @@ import { API_URL } from '../../../constants/Api';
 import { useNavigate } from 'react-router-dom';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
 import { useAuth } from '../../../hooks';
+import { showErrorAlert } from '../../../constants/Swal/SwalFunctions';
 
 export const CreateTicketsPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -12,7 +13,6 @@ export const CreateTicketsPage = () => {
   const { user } = useAuth();
 
   const onSubmit = async (data) => {
-
     const uniqueID = `ticket-${Date.now()}`;
     const ticketData = {
       id: uniqueID,
@@ -22,24 +22,39 @@ export const CreateTicketsPage = () => {
       longitude: 0, // Placeholder, ajusta según tu necesidad
       description: data.reason, // Usar el motivo de la multa como descripción
       status: "Pendiente", // Estado inicial
-      officerId: user.userId, //
+      officerId: user.idNumber, //
     };
 
     try {
-      const response = await axios.post(`${API_URL}/TicketDTO`, ticketData);
-      console.log('Ticket creado:', response.data); // Acceder directamente a response.data
-      // Manejar la respuesta del servidor según sea necesario
-      navigate('/', { replace: true });
+      // Llamada a la API para verificar los datos del infractor
+      const infractorResponse = await axios.get(`${API_URL}/UserDTO/${data.idNumber}`);
+      const infractor = infractorResponse.data;
+      console.log(infractor);
+      console.log(data.nombre + " " + data.apellidos);
+
+      // Verifica si el nombre y apellidos del infractor coinciden con los datos ingresados
+      if ((infractor.name) == (data.nombre + " " + data.apellidos)) {
+        console.log('Creando ticket:', ticketData);
+        const response = await axios.post(`${API_URL}/TicketDTO`, ticketData);
+        console.log('Ticket creado:', response.data);
+        navigate('/', { replace: true });
+      } else {
+        showErrorAlert('El nombre y apellidos no coinciden con la identificación del infractor');
+      }
     } catch (error) {
       if (error.response) {
         console.error('Server response error:', error.response.data);
+        showErrorAlert(`Error: ${error.response.data.message || 'Algo salió mal!'}`);
       } else if (error.request) {
         console.error('No response received:', error.request);
+        showErrorAlert('No se recibió respuesta del servidor. Por favor, inténtalo de nuevo.');
       } else {
         console.error('Error setting up request:', error.message);
+        showErrorAlert('Hubo un error configurando la solicitud.');
       }
     }
   };
+
 
   return (
     <section className="container" style={{ color: "#4B4B4E" }}>
@@ -76,10 +91,9 @@ export const CreateTicketsPage = () => {
                 type="text"
                 {...register("apellidos", {
                   required: "Apellidos son requeridos",
-                  pattern: {
-                    value: /^[a-zA-ZÀ-ÿ\s]+$/,
-                    message: "Solo se permiten letras en los apellidos"
-                  }
+                  maxLength: { value: 50, message: "Apellidos tienen que ser menores a 50 caracteres" },
+                  minLength: { value: 2, message: "Apellidos tienen que ser al menos 2 caracteres" },
+                  pattern: { value: /^[a-zA-ZÀ-ÿ\s]+$/, message: "Apellidos solo aceptan letras y tildes" }
                 })}
               />
               {errors.apellidos && <p className="form__error">{errors.apellidos.message}</p>}
@@ -95,10 +109,7 @@ export const CreateTicketsPage = () => {
                 type="text"
                 {...register("idNumber", {
                   required: "Número de cédula es requerido",
-                  pattern: {
-                    value: /^[0-9]+$/,
-                    message: "Solo se permiten números en el número de cédula"
-                  }
+                  pattern: { value: /^[0-9]{9}$/, message: "Número de cédula debe ser solo numérico y de 9 caracteres" }
                 })}
               />
               {errors.idNumber && <p className="form__error">{errors.idNumber.message}</p>}

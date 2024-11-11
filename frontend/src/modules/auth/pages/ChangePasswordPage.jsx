@@ -4,6 +4,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import '../styles/ChangePasswordPage.css';
 import { API_URL } from "../../../constants/Api";
 import axios from "axios";
+import { showErrorAlert } from "../../../constants/Swal/SwalFunctions";
 //
 
 
@@ -52,7 +53,10 @@ export const ChangePasswordPage = () => {
     const onSubmit = handleSubmit(async (data) => {
 
         if (data.confirmPassword !== data.password) {
-            return alert("Las contraseñas no coinciden");
+            return showErrorAlert("Las contraseñas no coinciden");
+
+
+
         }
 
         const changePasswordObject = {
@@ -60,14 +64,15 @@ export const ChangePasswordPage = () => {
         };
 
         try {
-            const res = await axios.post(`${API_URL}/UserDTO/ChangePassword/${token}`, changePasswordObject);
+            const res = await axios.put(`${API_URL}/UserDTO/ChangePassword/${token}`, changePasswordObject);
             if (res.status === 200) {
                 navigate('/login');
             }
         } catch (error) {
             console.error("Error al cambiar la contraseña:", error);
 
-            alert("Ha ocurrido un error al cambiar la contraseña. Por favor, inténtelo de nuevo.");
+            showErrorAlert("Ha ocurrido un error al cambiar la contraseña. Por favor, inténtelo de nuevo.");
+
         }
     });
 
@@ -88,8 +93,8 @@ export const ChangePasswordPage = () => {
                                     message: "La contraseña debe tener al menos 8 caracteres"
                                 },
                                 pattern: {
-                                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
-                                    message: "La contraseña debe contener al menos una letra mayúscula, una letra minúscula y un número"
+                                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+                                    message: "Contraseña debe incluir al menos una letra mayúscula, una letra minúscula y un número"
                                 }
                             })}
                         />

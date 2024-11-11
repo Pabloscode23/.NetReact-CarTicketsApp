@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import '../styles/CreateUserForm.css';
 import { API_URL } from "../../../constants/Api";
 import axios from "axios";
+import { showErrorAlert, showSuccessAlert } from "../../../constants/Swal/SwalFunctions";
+
 
 const roles = [
     { value: "admin", label: "Administrador" },
@@ -10,7 +12,7 @@ const roles = [
     { value: "juez", label: "Juez" },
 ];
 
-export const CreateUserForm = () => {
+export const CreateUserForm = ({ closeModal }) => {
 
     const {
         register,
@@ -73,7 +75,13 @@ export const CreateUserForm = () => {
             }
             const response = await axios.post(`${API_URL}/UserDTO`, userData); // Replace YOUR_API_ENDPOINT with your actual endpoint
             console.log("Usuario creado:", response.data);
+
+
+
+            showSuccessAlert('Usuario creado exitosamente', 'El usuario ha sido registrado correctamente.');
+            // Navigate to the users page
             reset();
+            closeModal();
             // Handle successful response (e.g., show a success message, redirect, etc.)
         } catch (error) {
             console.error("Error al crear usuario:", error);
@@ -107,9 +115,12 @@ export const CreateUserForm = () => {
                         type="text"
                         {...register("lastName", {
                             required: "Apellidos son requeridos",
-                            maxLength: { value: 50, message: "Apellidos tienen que ser menores a 50 caracteres" },
+                            maxLength: { value: 30, message: "Apellidos tienen que ser menores a 30 caracteres" },
                             minLength: { value: 2, message: "Apellidos tienen que ser al menos 2 caracteres" },
-                            pattern: { value: /^[a-zA-ZÀ-ÿ\s]+$/, message: "Apellidos solo aceptan letras" }
+                            pattern: {
+                                value: /^[a-zA-ZÀ-ÿ]+(?:\s[a-zA-ZÀ-ÿ]+)$/,
+                                message: "Apellidos deben ser de dos palabras y solo letras"
+                            }
                         })}
                     />
                     {errors.lastName && <span className="form__error">{errors.lastName.message}</span>}
@@ -122,7 +133,7 @@ export const CreateUserForm = () => {
                         type="text"
                         {...register("idNumber", {
                             required: "Número de cédula es requerido",
-                            pattern: { value: /^[0-9]+$/, message: "Número de cédula debe ser solo numérico" }
+                            pattern: { value: /^[0-9]{9}$/, message: "Número de cédula debe ser solo numérico y de 9 caracteres" }
                         })}
                     />
                     {errors.idNumber && <span className="form__error">{errors.idNumber.message}</span>}

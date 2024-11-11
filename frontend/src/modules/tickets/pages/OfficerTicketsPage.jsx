@@ -8,6 +8,7 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../../hooks';
 import { API_URL } from '../../../constants/Api';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
+import { showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 
 export const OfficerTicketsPage = () => {
     const { user } = useAuth();
@@ -17,11 +18,15 @@ export const OfficerTicketsPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
+
         const fetchTickets = async () => {
+
             try {
                 const response = await axios.get(`${API_URL}/TicketDTO`);
+
+
                 const userTickets = response.data
-                    .filter(ticket => ticket.officerId === user.userId)
+                    .filter(ticket => ticket.officerId === user.idNumber)
                     .map(ticket => ({
                         ...ticket,
                         status: ticket.status || "Pendiente",
@@ -33,7 +38,7 @@ export const OfficerTicketsPage = () => {
             }
         };
 
-        if (user?.userId) {
+        if (user?.idNumber) {
             fetchTickets();
         }
     }, [user]);
@@ -53,7 +58,9 @@ export const OfficerTicketsPage = () => {
 
         // Send the updated ticket to the server
         try {
-            alert("Multa actualizada correctamente, refrezca la página para ver los cambios.");
+            showSuccessAlert("Multa actualizada correctamente, refrezca la página para ver los cambios.");
+
+
             const response = await axios.put(`${API_URL}/TicketDTO/${updatedTicket.id}`, updatedTicket);
             // If you want to ensure the response matches what you expect, update the ticket with the response data
             setTickets((prevTickets) =>
@@ -95,31 +102,35 @@ export const OfficerTicketsPage = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
-            <table className="ticket-table">
-                <thead>
-                    <tr className='table__head'>
-                        <th>ID multa</th>
-                        <th>Fecha</th>
-                        <th>Razón de la multa</th>
-                        <th>Monto de la multa</th>
-                        <th>Estado</th>
-                        <th>Editar</th>
-                    </tr>
-                </thead>
-                <tbody className='table__children'>
-                    {filteredTickets.map(ticket => (
-                        <TicketOfficer
-                            key={ticket.id}
-                            id={ticket.id}
-                            date={ticket.date}
-                            reason={ticket.description}
-                            amount={ticket.amount.toLocaleString()}
-                            status={ticket.status}
-                            onEdit={() => handleEdit(ticket)}
-                        />
-                    ))}
-                </tbody>
-            </table>
+            {(filteredTickets.length === 0) ? (
+                <div className='table__empty'>No hay multas disponibles.</div>
+            ) : (
+                <table className="ticket-table">
+                    <thead>
+                        <tr className='table__head'>
+                            <th>ID multa</th>
+                            <th>Fecha</th>
+                            <th>Razón de la multa</th>
+                            <th>Monto de la multa</th>
+                            <th>Estado</th>
+                            <th>Editar</th>
+                        </tr>
+                    </thead>
+                    <tbody className='table__children'>
+                        {filteredTickets.map(ticket => (
+                            <TicketOfficer
+                                key={ticket.id}
+                                id={ticket.id}
+                                date={ticket.date}
+                                reason={ticket.description}
+                                amount={ticket.amount.toLocaleString()}
+                                status={ticket.status}
+                                onEdit={() => handleEdit(ticket)}
+                            />
+                        ))}
+                    </tbody>
+                </table>
+            )}
             <EditTicketModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

@@ -5,6 +5,7 @@ import { useAuth } from "../../../hooks";
 import { useLocation, useNavigate } from "react-router-dom";
 import { API_URL } from "../../../constants/Api";
 import axios from "axios";
+import { showErrorAlert } from "../../../constants/Swal/SwalFunctions";
 
 export const TwoFactorPage = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm({ defaultValues: { code: "" } });
@@ -34,6 +35,9 @@ export const TwoFactorPage = () => {
             })
             .catch(error => {
                 if (error.response) {
+                    showErrorAlert("Verifique el código ingresado");
+
+
                     console.error("Error details:", error.response);
 
                     if (error.response.status === 401) {
