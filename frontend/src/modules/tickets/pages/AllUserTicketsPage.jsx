@@ -19,22 +19,34 @@ export const AllUserTicketsPage = () => {
     const [fileUploaded, setFileUploaded] = useState(false); // Agregar estado para seguimiento de subida
 
     useEffect(() => {
-        const fetchTickets = async () => {
+        async function fetchAllTickets() {
             try {
                 const response = await axios.get(`${API_URL}/TicketDTO`);
-                const userTickets = response.data
-                    .filter(ticket => ticket.userId === user.idNumber)
-                    .map(ticket => {
-                        const amount = TicketsInfo[ticket.description] || 0;
-                        return {
-                            ...ticket,
-                            status: ticket.status || "Pendiente",
-                            amount,
-                            claimed: ticket.status === "En disputa",
-                        };
-                    });
+                return response
+            } catch (error) {
+                console.error("Error fetching tickets:", error);
+                setError("Error fetching tickets. Please try again later.");
+            }
+        }
 
-                setTickets(userTickets);
+        const fetchTickets = async () => {
+            try {
+
+                if (fetchAllTickets) {
+                    const response = await fetchAllTickets();
+                    const userTickets = response.data
+                        .filter(ticket => ticket.userId === user.idNumber)
+                        .map(ticket => {
+                            const amount = TicketsInfo[ticket.description] || 0;
+                            return {
+                                ...ticket,
+                                status: ticket.status || "Pendiente",
+                                amount,
+                                claimed: ticket.status === "En disputa",
+                            };
+                        });
+                    setTickets(userTickets);
+                }
             } catch (error) {
                 console.error("Error fetching tickets:", error);
                 setError("Error fetching tickets. Please try again later.");
@@ -130,7 +142,9 @@ export const AllUserTicketsPage = () => {
                                 amount={ticket.amount.toLocaleString()}
                                 status={ticket.status}
                                 isClaimed={ticket.claimed}
-                                onReclamar={() => handleReclamar(ticket)}
+                                isPayed={ticket.status === "Pagada"}
+                                onReclamar={() => handleReclamar(ticket)
+                                }
                             />
                         ))
                     }

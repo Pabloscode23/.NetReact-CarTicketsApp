@@ -36,12 +36,20 @@ export const UsersPage = () => {
         }
     };
 
+    const usersCall = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/UserDTO`);
+            setUsers(response.data);
+            setFilteredUsers(response.data);
+        } catch (error) {
+            console.error("Error al cargar los usuarios:", error);
+        }
+    };
+
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get(`${API_URL}/UserDTO`);
-                setUsers(response.data);
-                setFilteredUsers(response.data);
+                usersCall();
             } catch (error) {
                 console.error("Error al cargar los usuarios:", error);
             }
@@ -68,14 +76,12 @@ export const UsersPage = () => {
     };
 
     const handleEditUser = (user) => {
-        openModal(<EditUserForm user={user} onUserUpdated={handleUserUpdated} closeModal={closeModal} />); // Abre el modal de edición con el usuario
+        openModal(<EditUserForm user={user} onUpdate={usersCall} onUserUpdated={handleUserUpdated} closeModal={closeModal} />); // Abre el modal de edición con el usuario
     };
 
-    const handleDeleteUser = async (userId) => {
+    const handleDeleteUser = async () => {
         try {
-            await axios.delete(`${API_URL}/UserDTO/${userId}`);
-            setUsers(users.filter(user => user.id !== userId));
-            setFilteredUsers(filteredUsers.filter(user => user.id !== userId));
+            usersCall();
         } catch (error) {
             console.error("Error al eliminar el usuario:", error);
         }
