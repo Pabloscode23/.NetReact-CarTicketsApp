@@ -1,15 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import '../styles/CardPaymentFormModal.css';
+import { paymentCards } from '../../../constants/paymentCards';
+import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
+import axios from 'axios';
+import { API_URL } from '../../../constants/Api';
 
-export const CardPaymentFormModal = ({ onClose }) => {
-    const { register, handleSubmit, formState: { errors } } = useForm();
+export const CardPaymentFormModal = ({ onClose, id }) => {
+    const { register, handleSubmit, formState: { errors }, } = useForm();
 
-    const onSubmit = (data) => {
-        console.log("Form data:", data);
-        onClose(); // Close modal after submission
+    const [generalError, setGeneralError] = useState("");
+    console.log("Multa es" + id);
+
+    const onSubmit = async (data) => {
+        setGeneralError("");
+
+        const cardMatch = paymentCards.find(card =>
+            card.number === data.cardNumber &&
+            card.name === data.ownerName &&
+            card.date === data.expiryDate &&
+            card.ccv === data.ccv
+        );
+
+        if (cardMatch) {
+            try {
+                console.log("Pago realizado con éxito", data);
+
+                // Realiza la llamada PUT y maneja posibles errores
+                const response = await axios.put(`${API_URL}/TicketDTO/${id}/status`, { status: "Pagada" });
+
+                // Verifica la respuesta del servidor
+                if (response.status === 200 || response.status === 204) {
+                    showSuccessAlert("Pago realizado con éxito");
+                    onClose(); // Cerrar el modal si el pago es exitoso
+                } else {
+                    throw new Error("Error al actualizar el estado de la multa");
+                }
+            } catch (error) {
+                console.error("Error en la solicitud PUT:", error);
+                showErrorAlert("Hubo un problema al procesar el pago. Intenta de nuevo.");
+            }
+        } else {
+            // Si no hay coincidencia, mostrar un error general
+            showErrorAlert("Los datos de la tarjeta no son válidos o no coinciden.");
+        }
     };
 
     return ReactDOM.createPortal(

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { PaymentModal } from './PaymentModal';
 
-export const TicketUser = ({ id, date, reason, amount, status, onReclamar, isClaimed }) => {
+export const TicketUser = ({ id, date, reason, amount, status, onReclamar, isClaimed, isPayed }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleOpenModal = () => setIsModalOpen(true);
@@ -22,12 +22,12 @@ export const TicketUser = ({ id, date, reason, amount, status, onReclamar, isCla
                 <td>{amount}</td>
                 <td>{status}</td>
                 <td className='table__buttons'>
-                    <button onClick={onReclamar} disabled={isClaimed}>Reclamar</button>
-                    <button onClick={handleOpenModal}>Pagar</button>
+                    <button onClick={onReclamar} disabled={isClaimed || status == "Pagada"}>Reclamar</button>
+                    <button id={id} disabled={isPayed} onClick={handleOpenModal}>Pagar</button>
                 </td>
             </tr>
             {isModalOpen && (
-                <PaymentModal onClose={handleCloseModal} onSelectPayment={handleSelectPayment} />
+                <PaymentModal id={id} onClose={handleCloseModal} onSelectPayment={handleSelectPayment} />
             )}
         </>
     );
