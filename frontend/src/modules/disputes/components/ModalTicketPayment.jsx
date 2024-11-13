@@ -1,51 +1,99 @@
-// Modal.js
-
-import '../styles/ModalTicketPayment.css'
+import React, { useState } from 'react';
+import '../styles/ModalTicketPayment.css';
 import PropTypes from 'prop-types';
-
 import { showErrorAlert } from '../../../constants/Swal/SwalFunctions';
 
 export const ModalTicketPayment = ({ onClose, ticket, isClaimed, onFileUpload }) => {
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [pdfUrl, setPdfUrl] = useState('');
+
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        // Check if the selected file is a PDF
         if (file && file.type !== 'application/pdf') {
             showErrorAlert('Por favor, selecciona un archivo PDF.');
-
-
             return;
         }
-        onFileUpload(file);
+        setSelectedFile(file);
     };
 
-    // Cerrar modal sin aplicar cambios
+    const handleFileUpload = async () => {
+        if (!selectedFile) {
+            showErrorAlert('Por favor, selecciona un archivo antes de aplicar.');
+            return;
+        }
+
+        const data = new FormData();
+        data.append('file', selectedFile);
+        data.append('upload_preset', 'MyCloudinary');
+        data.append('cloud_name', 'dgiuo69gy');
+        data.append('public_id', `ticket_pdf/${selectedFile.name}`);
+
+        try {
+            const response = await fetch('https://api.cloudinary.com/v1_1/dgiuo69gy/raw/upload', {
+                method: 'POST',
+                body: data,
+                headers: {},
+                mode: 'cors',
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Verifica que la respuesta contiene el URL seguro
+                console.log("Archivo subido con éxito:", result);
+
+                // Acceder a la URL segura (PDF)
+                const pdfUrl = result.secure_url;
+
+                // Almacenar la URL del PDF para mostrarla más tarde
+                setPdfUrl(pdfUrl);
+                onFileUpload(pdfUrl); // Pasar la URL al callback para que se maneje en el componente padre
+                onClose(true);
+            } else {
+                showErrorAlert('Error al subir el archivo.');
+                console.error('Error:', result);
+            }
+        } catch (error) {
+            console.error('Error en la solicitud:', error);
+            showErrorAlert('Ocurrió un error inesperado.');
+        }
+    };
+
     const handleCloseWithoutApplying = () => {
-        onClose(false); // No aplicar cambios si se cierra con la "X"
+        onClose(false);
     };
 
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-                {/* Botón "X" para cerrar sin cambios */}
                 <button className="close-button" onClick={handleCloseWithoutApplying}>X</button>
-
                 <h2>Reclamar multa</h2>
                 <p>ID: {ticket.id}</p>
                 <p>Razón de la multa: {ticket.description}</p>
                 <p>Monto: {ticket.amount}</p>
+
                 <input
                     type="file"
                     onChange={handleFileChange}
-                    disabled={isClaimed} // Deshabilitar si ya está reclamado
+                    disabled={isClaimed}
                 />
-                <button className='apply-btn' onClick={() => onClose(true)}>Aplicar</button> {/* Aplicar cambios */}
+
+                <div>
+                    {pdfUrl && <p>Vista previa del archivo: <a href={pdfUrl} target="_blank" rel="noopener noreferrer">Ver el PDF</a></p>}
+                </div>
+
+                <button
+                    className="apply-btn"
+                    onClick={handleFileUpload}
+                    disabled={isClaimed}
+                >
+                    Aplicar
+                </button>
             </div>
         </div>
     );
 };
 
-
-// Definición de PropTypes
 ModalTicketPayment.propTypes = {
     onClose: PropTypes.func.isRequired,
     ticket: PropTypes.object.isRequired,
