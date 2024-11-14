@@ -2,6 +2,7 @@
 {
     public class PaymentDTO
     {
+        
         public int Id { get; set; }             
         public decimal Amount { get; set; }     
         public decimal Tax { get; set; }     //IVA

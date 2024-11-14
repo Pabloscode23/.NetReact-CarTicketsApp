@@ -7,6 +7,8 @@ public class AppDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<RoleDTO> Roles { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
+    public DbSet<ClaimDTO> Claims { get; set; }
+    public DbSet<Appeal> Appeals { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -16,5 +18,9 @@ public class AppDbContext : DbContext
     {
         modelBuilder.Entity<User>()
             .HasKey(u => u.UserId);
+
+        modelBuilder.Entity<UserDTO>()
+            .HasMany(p => p.Claims)
+
     }
 }
