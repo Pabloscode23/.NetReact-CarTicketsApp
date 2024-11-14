@@ -14,7 +14,7 @@ import { AllUserTicketsPage } from "../modules/tickets/pages/AllUserTicketsPage"
 import { UserClaimsPage } from "../modules/disputes/pages/UserClaimsPage"
 import { RegistUpdateFinalUser } from "../modules/public/pages/RegistUpdateFinalUserPage"
 import { ChangePasswordPage } from "../modules/auth/pages/ChangePasswordPage";
-import {UploadImagePage} from "../modules/auth/pages/UploadImagePage";
+import UploadImagePage from "../modules/auth/pages/UploadImagePage";
 
 
 
