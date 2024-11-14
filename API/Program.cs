@@ -7,6 +7,8 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using BusinessLogic.AuthService;
 
+
+
 namespace API
 {
     public class Program
@@ -21,8 +23,6 @@ namespace API
 
             var connectionString2 = builder.Configuration.GetConnectionString("SecondaryConnection");
             builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(connectionString2));
-
-            
 
             // Configura Email Settings desde appsettings.json
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
@@ -44,6 +44,9 @@ namespace API
 
             // Registra AuthService
             builder.Services.AddTransient<AuthService>();
+
+            // Registra PaymentService
+            builder.Services.AddScoped<PaymentService>();
 
             // Add services to the container
             builder.Services.AddControllers();

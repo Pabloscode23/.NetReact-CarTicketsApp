@@ -33,6 +33,11 @@ namespace Notifications
             _notification.Send("Código de verificación", $"Su código de verificación es: {code}", recipient);
             Console.WriteLine("Notificación de 2FA enviada.");
         }
+        public void PaymentSuccessNotification(string totalAmount, string recipient)
+        {
+            _notification.Send("Pago exitoso", $"El pago de {totalAmount} ha sido procesado exitosamente. Gracias por su pago.", recipient);
+            Console.WriteLine("Notificación de pago exitoso enviada.");
+        }
     }
 
     public class EmailSettings
@@ -42,7 +47,7 @@ namespace Notifications
     }
 
 
-        public class EmailNotification : INotification
+    public class EmailNotification : INotification
     {
         private readonly EmailSettings _emailSettings;
 
@@ -82,5 +87,5 @@ namespace Notifications
             }
         }
     }
-    
+
 }
