@@ -14,7 +14,7 @@ const UploadImagePage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!image) {
             setMessage('Por favor suba una imagen.');
             return;
@@ -46,7 +46,7 @@ const UploadImagePage = () => {
 
     return (
         <div className="upload-image">
-            <h1 className="upload-image__title">Cargar Imagen para Generar Multa</h1>
+            <h1 className="upload-image__title">Cargar imagen para generar multa</h1>
             <form className="upload-image__form" onSubmit={handleSubmit}>
                 <div className="upload-image__field">
                     <label className="upload-image__label">Subir Imagen</label>

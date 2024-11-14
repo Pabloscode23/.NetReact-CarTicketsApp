@@ -33,11 +33,26 @@ namespace Notifications
             _notification.Send("Código de verificación", $"Su código de verificación es: {code}", recipient);
             Console.WriteLine("Notificación de 2FA enviada.");
         }
-        public void PaymentSuccessNotification(string totalAmount, string recipient)
+        public void PaymentSuccessNotification(string totalAmount, string recipient, string ticketId, string amount, string paymentMethod)
         {
-            _notification.Send("Pago exitoso", $"El pago de {totalAmount} ha sido procesado exitosamente. Gracias por su pago.", recipient);
+            string message = $"El pago final de {totalAmount} con el IVA incluido ha sido procesado exitosamente.\n\n" +
+                    $"Detalles de la multa:\n" +
+                    $"- ID: {ticketId}\n" +
+                    $"- Monto sin impuesto: {amount}\n" +
+                    $"- Método de Pago: {paymentMethod}\n\n" +
+                    "Gracias por su pago.";
+
+
+            Console.WriteLine("Mensaje de notificación antes de enviar el correo:");
+            Console.WriteLine(message); // Verifica el contenido del mensaje
+            Console.WriteLine("Contenido del mensaje de correo:");
+            Console.WriteLine(message);
+
+            _notification.Send("Pago exitoso", message, recipient);
             Console.WriteLine("Notificación de pago exitoso enviada.");
         }
+
+
     }
 
     public class EmailSettings

@@ -17,42 +17,50 @@ public class PaymentService
     // POST: Agregar un nuevo pago
     public async Task<PaymentDTO> AddPaymentAsync(PaymentDTO paymentDto)
     {
-        // Asegurarse de que el ID no sea nulo
+        // Validar el ID y el email
         if (string.IsNullOrEmpty(paymentDto.Id))
         {
             throw new Exception("Payment ID is required.");
         }
 
-        // Asegurarse de que el email no sea nulo
         if (string.IsNullOrEmpty(paymentDto.UserEmail))
         {
             throw new Exception("User email is required for notification.");
         }
 
-        // Crear la entidad Payment con el ID y email proporcionado por el frontend
+        // Crear y guardar el pago
         var payment = new Payment
         {
-            Id = paymentDto.Id,  // Establecer el ID proporcionado por el frontend
+            Id = paymentDto.Id,
             Amount = paymentDto.Amount,
             Tax = paymentDto.Tax,
             TotalAmount = paymentDto.TotalAmount,
             PaymentMethod = paymentDto.PaymentMethod,
-            UserId = paymentDto.UserId,  // Asigna solo el ID del usuario
-            TicketId = paymentDto.TicketId  // Asigna solo el ID del ticket
+            UserId = paymentDto.UserId,
+            TicketId = paymentDto.TicketId
         };
 
-        // Agregar y guardar cambios
         _context.Payments.Add(payment);
         await _context.SaveChangesAsync();
 
-        // Mapear nuevamente a DTO después de guardar
+        // Mapear a DTO después de guardar
         paymentDto.Id = payment.Id;
 
-        // Obtener el correo del usuario desde el frontend
-        var userEmail = paymentDto.UserEmail;  // Usar el email desde el DTO
+        // Obtener detalles del ticket para la notificación
+        var ticket = await _context.Tickets.FindAsync(paymentDto.TicketId);
+        if (ticket == null)
+        {
+            throw new Exception("Ticket not found.");
+        }
 
-        // Enviar notificación de pago exitoso
-        _notificationService.PaymentSuccessNotification(paymentDto.TotalAmount, userEmail);
+        // Enviar notificación de pago exitoso con detalles del ticket
+        _notificationService.PaymentSuccessNotification(
+            paymentDto.TotalAmount,
+            paymentDto.UserEmail,
+            ticket.Id,
+            paymentDto.Amount,
+            paymentDto.PaymentMethod
+        );
 
         return paymentDto;
     }
