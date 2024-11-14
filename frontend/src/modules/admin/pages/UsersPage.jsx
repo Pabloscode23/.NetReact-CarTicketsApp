@@ -12,11 +12,18 @@ import EditUserForm from '../../public/components/EditUserForm'// Importa tu com
 const columns = ['Cédula', 'Nombre', 'Correo electrónico', 'Tipo de Usuario', 'Acciones'];
 
 export const UsersPage = () => {
-    const { openModal } = useModal();
+
     const [users, setUsers] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [isFiltered, setIsFiltered] = useState(false);
     const searchInputRef = useRef(null); // referencia al input de búsqueda
+
+    const { openModal, closeModal } = useModal(); // include closeModal
+
+    // Open the CreateUserForm and pass the closeModal function as a prop
+    const handleOpenCreateUserForm = () => {
+        openModal(<CreateUserForm closeModal={closeModal} />);
+    };
 
     const handleFilter = (e) => {
         e.preventDefault();
@@ -29,12 +36,20 @@ export const UsersPage = () => {
         }
     };
 
+    const usersCall = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/UserDTO`);
+            setUsers(response.data);
+            setFilteredUsers(response.data);
+        } catch (error) {
+            console.error("Error al cargar los usuarios:", error);
+        }
+    };
+
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get(`${API_URL}/UserDTO`);
-                setUsers(response.data);
-                setFilteredUsers(response.data);
+                usersCall();
             } catch (error) {
                 console.error("Error al cargar los usuarios:", error);
             }
@@ -61,14 +76,12 @@ export const UsersPage = () => {
     };
 
     const handleEditUser = (user) => {
-        openModal(<EditUserForm user={user} onUserUpdated={handleUserUpdated} />); // Abre el modal de edición con el usuario
+        openModal(<EditUserForm user={user} onUpdate={usersCall} onUserUpdated={handleUserUpdated} closeModal={closeModal} />); // Abre el modal de edición con el usuario
     };
 
-    const handleDeleteUser = async (userId) => {
+    const handleDeleteUser = async () => {
         try {
-            await axios.delete(`${API_URL}/UserDTO/${userId}`);
-            setUsers(users.filter(user => user.id !== userId));
-            setFilteredUsers(filteredUsers.filter(user => user.id !== userId));
+            usersCall();
         } catch (error) {
             console.error("Error al eliminar el usuario:", error);
         }
@@ -100,7 +113,7 @@ export const UsersPage = () => {
                             }
                             <button type='submit' className='default__button' style={{ borderBottomLeftRadius: 0, borderTopLeftRadius: 0, width: "20%" }}>Buscar</button>
                         </form>
-                        <button className='default__button' onClick={() => openModal(<CreateUserForm />)}>Agregar Usuario Nuevo</button>
+                        <button className='default__button' onClick={handleOpenCreateUserForm}>Agregar usuario nuevo</button>
                     </div>
                     {
                         filteredUsers.length === 0 ? <p>No hay resultados</p> :
@@ -111,6 +124,7 @@ export const UsersPage = () => {
                                         user={user}
                                         onDelete={handleDeleteUser}
                                         onEdit={handleEditUser} // Pasar la función onEdit
+
                                     />
                                 ))}
                             </GlobalTable>

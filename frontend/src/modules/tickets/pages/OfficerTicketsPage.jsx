@@ -8,6 +8,7 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../../hooks';
 import { API_URL } from '../../../constants/Api';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
+import { showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 
 export const OfficerTicketsPage = () => {
     const { user } = useAuth();
@@ -57,7 +58,9 @@ export const OfficerTicketsPage = () => {
 
         // Send the updated ticket to the server
         try {
-            alert("Multa actualizada correctamente, refrezca la página para ver los cambios.");
+            showSuccessAlert("Multa actualizada correctamente, refrezca la página para ver los cambios.");
+
+
             const response = await axios.put(`${API_URL}/TicketDTO/${updatedTicket.id}`, updatedTicket);
             // If you want to ensure the response matches what you expect, update the ticket with the response data
             setTickets((prevTickets) =>

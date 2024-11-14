@@ -8,6 +8,8 @@ using Microsoft.Extensions.Options;
 using BusinessLogic.AuthService;
 using System.Net.WebSockets;
 
+
+
 namespace API
 {
     public class Program
@@ -43,6 +45,9 @@ namespace API
 
             // Registra AuthService
             builder.Services.AddTransient<AuthService>();
+
+            // Registra PaymentService
+            builder.Services.AddScoped<PaymentService>();
 
             // Add services to the container
             builder.Services.AddControllers();
