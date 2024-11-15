@@ -6,6 +6,9 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.Extensions.Options;
 using BusinessLogic.AuthService;
+using System.Net.WebSockets;
+
+
 
 namespace API
 {
@@ -21,8 +24,6 @@ namespace API
 
             var connectionString2 = builder.Configuration.GetConnectionString("SecondaryConnection");
             builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(connectionString2));
-
-            
 
             // Configura Email Settings desde appsettings.json
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
@@ -44,6 +45,9 @@ namespace API
 
             // Registra AuthService
             builder.Services.AddTransient<AuthService>();
+
+            // Registra PaymentService
+            builder.Services.AddScoped<PaymentService>();
 
             // Add services to the container
             builder.Services.AddControllers();
@@ -123,7 +127,41 @@ namespace API
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // Habilitar WebSockets
+            app.UseWebSockets();
+
             app.MapControllers();
+
+            // Manejar las conexiones WebSocket
+            app.Use(async (context, next) =>
+            {
+                if (context.WebSockets.IsWebSocketRequest)
+                {
+                    var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+
+                    // Aquí puedes manejar la conexión WebSocket
+                    // Ejemplo: leer y escribir mensajes a través de WebSocket
+                    var buffer = new byte[1024 * 4];
+                    while (true)
+                    {
+                        var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                        if (result.MessageType == WebSocketMessageType.Close)
+                        {
+                            await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by the client", CancellationToken.None);
+                            break;
+                        }
+                        else
+                        {
+                            // Aquí puedes manejar los mensajes entrantes
+                            await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
+                        }
+                    }
+                }
+                else
+                {
+                    await next();
+                }
+            });
 
             app.Run();
         }

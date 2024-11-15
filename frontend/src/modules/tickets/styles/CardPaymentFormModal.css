@@ -1,0 +1,86 @@
+.modal-overlay-paymentModal {
+    color: var(--color-grey-dark);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    font-size: 2vh;
+}
+
+.modal-content-paymentModal {
+    background-color: var(--color-blue-lighter);
+    padding: 20px;
+    width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal-title-paymentModal {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.payment-form-paymentModal {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-label-paymentModal {
+    font-size: 2vh;
+    font-weight: bold;
+}
+
+.form-input-paymentModal {
+    all: unset;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: white;
+
+}
+
+.modal-buttons-paymentModal {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-button-submit-paymentModal {
+    flex: 1;
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.modal-button-submit-paymentModal:hover {
+    background-color: #45a049;
+}
+
+.modal-button-close-paymentModal {
+    flex: 1;
+    background-color: #f44336;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.modal-button-close-paymentModal:hover {
+    background-color: #e53935;
+}
