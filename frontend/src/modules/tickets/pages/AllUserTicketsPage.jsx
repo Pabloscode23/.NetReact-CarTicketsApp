@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { TicketUser } from '../components/TicketUser';
 import '../styles/AllUserTickets.css';
@@ -8,53 +8,37 @@ import { useAuth } from '../../../hooks';
 import { API_URL } from '../../../constants/Api';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
 import { ModalTicketPayment } from '../../../modules/disputes/components/ModalTicketPayment';
+import { TicketsContext } from '../context/TicketsContext';
 
 export const AllUserTicketsPage = () => {
     const { user } = useAuth();
-    const [tickets, setTickets] = useState([]);
+    const { tickets, setTickets } = useContext(TicketsContext);
+    const [userTickets, setUserTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [error, setError] = useState(null);
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [fileUploaded, setFileUploaded] = useState(false); // Agregar estado para seguimiento de subida
 
+    const formatUserTicket = (tickets) => {
+
+        const userTickets = tickets
+            .filter(ticket => ticket.userId === user.idNumber)
+            .map(ticket => {
+                const amount = TicketsInfo[ticket.description] || 0;
+                return {
+                    ...ticket,
+                    status: ticket.status || "Pendiente",
+                    amount,
+                    claimed: ticket.status === "En disputa",
+                };
+            });
+        return userTickets;
+    };
+
     useEffect(() => {
-        async function fetchAllTickets() {
-            try {
-                const response = await axios.get(`${API_URL}/TicketDTO`);
-                return response
-            } catch (error) {
-                console.error("Error fetching tickets:", error);
-                setError("Error fetching tickets. Please try again later.");
-            }
-        }
-
-        const fetchTickets = async () => {
-            try {
-
-                if (fetchAllTickets) {
-                    const response = await fetchAllTickets();
-                    const userTickets = response.data
-                        .filter(ticket => ticket.userId === user.idNumber)
-                        .map(ticket => {
-                            const amount = TicketsInfo[ticket.description] || 0;
-                            return {
-                                ...ticket,
-                                status: ticket.status || "Pendiente",
-                                amount,
-                                claimed: ticket.status === "En disputa",
-                            };
-                        });
-                    setTickets(userTickets);
-                }
-            } catch (error) {
-                console.error("Error fetching tickets:", error);
-                setError("Error fetching tickets. Please try again later.");
-            }
-        };
-
-        if (user?.idNumber) {
-            fetchTickets();
+        if (user) {
+            setUserTickets(formatUserTicket(tickets));
         }
     }, [user]);
 
@@ -78,7 +62,7 @@ export const AllUserTicketsPage = () => {
     };
 
 
-    const handleFileUpload = async (file) => {
+    const handleFileUpload = async () => {
         if (selectedTicket) {
             try {
                 // Cambiar el estado a "En disputa" en la base de datos al subir el archivo
@@ -95,7 +79,7 @@ export const AllUserTicketsPage = () => {
         }
     };
 
-    const filteredTickets = tickets.filter((ticket) =>
+    const filteredTickets = userTickets.filter((ticket) =>
         ticket.id.toString().includes(searchTerm) ||
         ticket.date.includes(searchTerm) ||
         (ticket.description && ticket.description.toLowerCase().includes(searchTerm.toLowerCase())) ||

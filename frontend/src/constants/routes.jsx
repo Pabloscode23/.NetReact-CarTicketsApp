@@ -14,6 +14,8 @@ import { AllUserTicketsPage } from "../modules/tickets/pages/AllUserTicketsPage"
 import { UserClaimsPage } from "../modules/disputes/pages/UserClaimsPage"
 import { RegistUpdateFinalUser } from "../modules/public/pages/RegistUpdateFinalUserPage"
 import { ChangePasswordPage } from "../modules/auth/pages/ChangePasswordPage";
+import UploadImagePage from "../modules/auth/pages/UploadImagePage";
+import { TicketsContext } from "../modules/tickets/context/TicketsContext"
 
 
 
@@ -38,6 +40,10 @@ export const routesForPublic = [
     {
         path: "/cambiar-contrasena",
         element: <MainLayout><ChangePasswordPage /></MainLayout>
+    },
+    {
+        path: "/imagen",
+        element: <MainLayout><UploadImagePage /></MainLayout>
     },
     {
         path: "*",
@@ -72,7 +78,7 @@ export const routesForAuthenticatedOnly = [
                 element: <h1>Caja de pago</h1>
             }, {
                 path: "/multas-usuario",
-                element: <AllUserTicketsPage />
+                element: <TicketsContext><AllUserTicketsPage /></TicketsContext>
             }, {
                 path: "/reclamos-usuario",
                 element: <UserClaimsPage />

@@ -28,5 +28,6 @@ namespace DTO
         [Required]
         public string OfficerId { get; set; }
 
+
     }
 }
