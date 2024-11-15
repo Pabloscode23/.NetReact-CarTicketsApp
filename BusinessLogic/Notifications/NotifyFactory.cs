@@ -53,6 +53,14 @@ namespace Notifications
         }
 
 
+
+        public void SendClaimNotification(string claimId, string claimDocument, string recipient)
+        {
+            string message = $"Se ha generado una nueva reclamación con el ID {claimId} y el documento {claimDocument}";
+
+            _notification.Send("Nueva reclamación", message, recipient);
+            Console.WriteLine("Notificación de reclamación enviada.");
+        }
     }
 
     public class EmailSettings

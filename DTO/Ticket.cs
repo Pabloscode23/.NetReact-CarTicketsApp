@@ -28,5 +28,7 @@ namespace DTO
         [Required]
         public string OfficerId { get; set; }
 
+        public ICollection<Appeal> Appeals { get; set; }
+
     }
 }
