@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom"
 import { UsersPage } from "../pages"
 import { AdminAllTickets } from "../../tickets/pages/AdminAllTickets"
+import { TicketsProvider } from "../../tickets/context/TicketsProvider"
 
 export const AdminRoutes = () => {
     return (
@@ -16,7 +17,7 @@ export const AdminRoutes = () => {
             <Route path="/informes" element={<h1>Reports</h1>} />
 
             {/* Ruta para control de pagos */}
-            <Route path="/multas" element={<AdminAllTickets />} />
+            <Route path="/multas" element={<TicketsProvider><AdminAllTickets /></TicketsProvider>} />
 
         </Routes>
     )

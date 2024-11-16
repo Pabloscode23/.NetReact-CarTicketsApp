@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import '../styles/ModalTicketPayment.css';
 import PropTypes from 'prop-types';
-import { showErrorAlert } from '../../../constants/Swal/SwalFunctions';
+import axios from 'axios';
+import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
+import { API_URL } from '../../../constants/Api';
 
-export const ModalTicketPayment = ({ onClose, ticket, isClaimed, onFileUpload }) => {
+export const ModalTicketPayment = ({ onClose, ticket, isClaimed, refetchTickets, setTickets }) => {
     const [selectedFile, setSelectedFile] = useState(null);
-    const [pdfUrl, setPdfUrl] = useState('');
+    const [fileUploaded, setFileUploaded] = useState(false); // Estado para verificar si el archivo se subió exitosamente
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -22,40 +24,25 @@ export const ModalTicketPayment = ({ onClose, ticket, isClaimed, onFileUpload })
             return;
         }
 
-        const data = new FormData();
-        data.append('file', selectedFile);
-        data.append('upload_preset', 'MyCloudinary');
-        data.append('cloud_name', 'dgiuo69gy');
-        data.append('public_id', `ticket_pdf/${selectedFile.name}`);
-
         try {
-            const response = await fetch('https://api.cloudinary.com/v1_1/dgiuo69gy/raw/upload', {
-                method: 'POST',
-                body: data,
-                headers: {},
-                mode: 'cors',
+            // Realizar la actualización del ticket en el backend
+            await axios.put(`${API_URL}/TicketDTO/${ticket.id}/status`, { status: "En disputa" }, {
+                headers: { 'Content-Type': 'application/json' }
             });
 
-            const result = await response.json();
+            // Actualizar el estado local en AllUserTicketsPage
+            setTickets(prevTickets =>
+                prevTickets.map(t =>
+                    t.id === ticket.id ? { ...t, status: "En disputa", claimed: true } : t
+                )
+            );
 
-            if (response.ok) {
-                // Verifica que la respuesta contiene el URL seguro
-                console.log("Archivo subido con éxito:", result);
-
-                // Acceder a la URL segura (PDF)
-                const pdfUrl = result.secure_url;
-
-                // Almacenar la URL del PDF para mostrarla más tarde
-                setPdfUrl(pdfUrl);
-                onFileUpload(pdfUrl); // Pasar la URL al callback para que se maneje en el componente padre
-                onClose(true);
-            } else {
-                showErrorAlert('Error al subir el archivo.');
-                console.error('Error:', result);
-            }
+            refetchTickets();  // Refrescar los tickets desde el backend
+            setFileUploaded(true);  // Indicar que el archivo se subió exitosamente
+            showSuccessAlert("Reclamo realizado con éxito");
+            onClose(true); // Cerrar el modal después de aplicar cambios
         } catch (error) {
-            console.error('Error en la solicitud:', error);
-            showErrorAlert('Ocurrió un error inesperado.');
+            console.error("Error actualizando el ticket:", error);
         }
     };
 
@@ -78,10 +65,6 @@ export const ModalTicketPayment = ({ onClose, ticket, isClaimed, onFileUpload })
                     disabled={isClaimed}
                 />
 
-                <div>
-                    {pdfUrl && <p>Vista previa del archivo: <a href={pdfUrl} target="_blank" rel="noopener noreferrer">Ver el PDF</a></p>}
-                </div>
-
                 <button
                     className="apply-btn"
                     onClick={handleFileUpload}
@@ -98,5 +81,6 @@ ModalTicketPayment.propTypes = {
     onClose: PropTypes.func.isRequired,
     ticket: PropTypes.object.isRequired,
     isClaimed: PropTypes.bool,
-    onFileUpload: PropTypes.func.isRequired,
+    refetchTickets: PropTypes.func.isRequired,
+    setTickets: PropTypes.func.isRequired,
 };

@@ -15,6 +15,7 @@ import { UserClaimsPage } from "../modules/disputes/pages/UserClaimsPage"
 import { RegistUpdateFinalUser } from "../modules/public/pages/RegistUpdateFinalUserPage"
 import { ChangePasswordPage } from "../modules/auth/pages/ChangePasswordPage";
 import UploadImagePage from "../modules/auth/pages/UploadImagePage";
+import { TicketsProvider } from "../modules/tickets/context/TicketsProvider"
 
 
 
@@ -77,7 +78,7 @@ export const routesForAuthenticatedOnly = [
                 element: <h1>Caja de pago</h1>
             }, {
                 path: "/multas-usuario",
-                element: <AllUserTicketsPage />
+                element: <TicketsProvider> <AllUserTicketsPage /></TicketsProvider>
             }, {
                 path: "/reclamos-usuario",
                 element: <UserClaimsPage />

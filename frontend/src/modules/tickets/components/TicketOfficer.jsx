@@ -1,16 +1,20 @@
 
 import PropTypes from 'prop-types';
 
+import { TicketsInfo } from '../../../constants/TicketsInfo';
+
 export const TicketOfficer = ({ id, date, reason, amount, status, onEdit }) => {
+    // Verificar si amount está disponible; si no lo está, tomarlo de TicketsInfo
+    const displayAmount = amount !== undefined ? amount : TicketsInfo[reason] || 0;
+
     return (
         <tr key={id}>
             <td>{id}</td>
             <td>{date}</td>
             <td>{reason}</td>
-            <td>{"₡" + amount}</td>
+            <td>{"₡" + displayAmount}</td> {/* Muestra el amount real */}
             <td>{status}</td>
             <td className='table__buttons'>
-                {/* Deshabilitar el botón si el estado no es "Pendiente" */}
                 <button onClick={onEdit} disabled={status !== "Pendiente"}>
                     Editar
                 </button>
@@ -18,6 +22,8 @@ export const TicketOfficer = ({ id, date, reason, amount, status, onEdit }) => {
         </tr>
     );
 };
+
+
 
 TicketOfficer.propTypes = {
     id: PropTypes.number.isRequired,

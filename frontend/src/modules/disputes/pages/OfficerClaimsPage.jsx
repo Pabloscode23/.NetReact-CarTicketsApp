@@ -40,13 +40,23 @@ export const OfficerClaimsPage = () => {
         fetchClaims();
     }, [user]); // Fetch claims when userId changes
 
-    const filteredClaims = claims.filter((ticket) =>
-        ticket.id.toString().includes(searchTerm) ||
-        ticket.date.includes(searchTerm) ||
-        ticket.reason.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ticket.amount.includes(searchTerm) ||
-        ticket.status.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredClaims = claims.filter((ticket) => {
+        const ticketId = ticket.id ? ticket.id.toString() : "";
+        const ticketDate = ticket.date || "";
+        const ticketReason = ticket.description ? ticket.description.toLowerCase() : "";
+        const ticketAmount = ticket.amount ? ticket.amount.toString() : "";
+        const ticketStatus = ticket.status ? ticket.status.toLowerCase() : "";
+
+        return (
+            ticketId.includes(searchTerm) ||
+            ticketDate.includes(searchTerm) ||
+            ticketReason.includes(searchTerm.toLowerCase()) ||
+            ticketAmount.includes(searchTerm) ||
+            ticketStatus.includes(searchTerm.toLowerCase())
+        );
+    });
+
+
 
     return (
         <div className="container__tickets">

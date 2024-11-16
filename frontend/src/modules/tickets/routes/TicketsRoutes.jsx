@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom"
 import { CreateTicketsPage } from "../pages"
 import { OfficerTicketsPage } from "../pages/OfficerTIcketsPage"
 import { OfficerClaimsPage } from "../../disputes/pages/OfficerClaimsPage"
+import { TicketsProvider } from "../context/TicketsProvider"
 export const TicketsRoutes = () => {
     return (
         // Rutas para el módulo de tickets
@@ -18,7 +19,7 @@ export const TicketsRoutes = () => {
             {/* Ruta para crear tipos de multas */}
             <Route path="/tipos" element={<h1>Types</h1>} />
 
-            <Route path="/historial" element={<OfficerTicketsPage />} />
+            <Route path="/historial" element={<TicketsProvider><OfficerTicketsPage /></TicketsProvider>} />
 
             <Route path="/reclamos" element={<OfficerClaimsPage />} />
 
