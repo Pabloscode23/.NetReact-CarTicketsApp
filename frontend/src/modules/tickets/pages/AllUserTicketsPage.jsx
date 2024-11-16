@@ -12,16 +12,9 @@ import { TicketsContext } from '../context/TicketsContext';
 
 export const AllUserTicketsPage = () => {
     const { user } = useAuth();
-<<<<<<< HEAD
     const { tickets, setTickets, refetchTickets } = useContext(TicketsContext);
     const [userTickets, setUserTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState(""); // Estado para el valor del input de búsqueda
-=======
-    const { tickets, setTickets } = useContext(TicketsContext);
-    const [userTickets, setUserTickets] = useState([]);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [error, setError] = useState(null);
->>>>>>> 2d6f87bc512f9b3f7587975660f615dae7735587
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [fileUploaded, setFileUploaded] = useState(false); // Estado para el archivo subido
@@ -42,7 +35,6 @@ export const AllUserTicketsPage = () => {
         return userTickets;
     };
 
-<<<<<<< HEAD
     useEffect(() => {
         if (tickets.length > 0) {
             setUserTickets(formatUserTicket(tickets));
@@ -62,29 +54,6 @@ export const AllUserTicketsPage = () => {
         (ticket.amount !== undefined && ticket.amount.toString().includes(searchTerm)) ||
         (ticket.status && ticket.status.toLowerCase().includes(searchTerm.toLowerCase()))
     );
-=======
-    const formatUserTicket = (tickets) => {
-
-        const userTickets = tickets
-            .filter(ticket => ticket.userId === user.idNumber)
-            .map(ticket => {
-                const amount = TicketsInfo[ticket.description] || 0;
-                return {
-                    ...ticket,
-                    status: ticket.status || "Pendiente",
-                    amount,
-                    claimed: ticket.status === "En disputa",
-                };
-            });
-        return userTickets;
-    };
-
-    useEffect(() => {
-        if (user) {
-            setUserTickets(formatUserTicket(tickets));
-        }
-    }, [user]);
->>>>>>> 2d6f87bc512f9b3f7587975660f615dae7735587
 
     const handleReclamar = (ticket) => {
         setSelectedTicket(ticket);
@@ -104,35 +73,6 @@ export const AllUserTicketsPage = () => {
         setModalOpen(false);
     };
 
-<<<<<<< HEAD
-=======
-
-    const handleFileUpload = async () => {
-        if (selectedTicket) {
-            try {
-                // Cambiar el estado a "En disputa" en la base de datos al subir el archivo
-                await axios.put(`${API_URL}/TicketDTO/${selectedTicket.id}/status`, { status: "En disputa" }, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                setFileUploaded(true); // Indicar que el archivo se ha subido exitosamente
-            } catch (error) {
-                console.error("Error updating ticket status:", error);
-            }
-        }
-    };
-
-    const filteredTickets = userTickets.filter((ticket) =>
-        ticket.id.toString().includes(searchTerm) ||
-        ticket.date.includes(searchTerm) ||
-        (ticket.description && ticket.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (ticket.amount !== undefined && ticket.amount.toString().includes(searchTerm)) ||
-        (ticket.status && ticket.status.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-
->>>>>>> 2d6f87bc512f9b3f7587975660f615dae7735587
     return (
         <div className="container__tickets">
             <h1 className="main__ticket-title">Multas</h1>
