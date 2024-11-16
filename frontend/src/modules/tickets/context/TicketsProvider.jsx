@@ -1,21 +1,12 @@
 import axios from "axios";
 import { memo, useEffect, useMemo, useState } from "react";
-<<<<<<< HEAD
 import { API_URL } from "../../../constants/Api";
 import { TicketsContext } from "./TicketsContext";
 
 // Create the authentication provider
 // eslint-disable-next-line react/display-name
 export const TicketsProvider = memo(({ children }) => {
-=======
-import { AuthContext } from "./AuthContext";
-import { RolePermissions } from "../constants/RolePermissions"; // Import role permissions
-import { API_URL } from "../constants/Api";
 
-// Create the authentication provider
-// eslint-disable-next-line react/display-name
-export const AuthProvider = memo(({ children }) => {
->>>>>>> 2d6f87bc512f9b3f7587975660f615dae7735587
     // State to hold the token
     const [tickets, setTickets_] = useState([]);
 
@@ -54,16 +45,8 @@ export const AuthProvider = memo(({ children }) => {
     );
 
     return (
-<<<<<<< HEAD
         <TicketsContext.Provider value={contextValue}>
             {children}
         </TicketsContext.Provider>
     );
 });
-=======
-        <AuthContext.Provider value={contextValue}>
-            {children}
-        </AuthContext.Provider>
-    );
-});
->>>>>>> 2d6f87bc512f9b3f7587975660f615dae7735587
