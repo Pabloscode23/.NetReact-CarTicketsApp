@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 import axios from 'axios';
 import { API_URL } from '../../../constants/Api';
 import { TicketsInfo } from '../../../constants/TicketsInfo'; // Asumiendo que TicketsInfo está definida correctamente
 import { useAuth } from '../../../hooks';
+import { TicketsContext } from '../context/TicketsContext';
 
 export const UploadReceiptModal = ({ onClose, id }) => {
     const [file, setFile] = useState(null);
     const { user } = useAuth();
+    const { refetchTickets } = useContext(TicketsContext);
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
@@ -69,6 +71,7 @@ export const UploadReceiptModal = ({ onClose, id }) => {
 
                         if (statusResponse.status === 200 || statusResponse.status === 204) {
                             showSuccessAlert("Pago realizado con éxito");
+                            refetchTickets(); // Actualizar la lista de tickets
                             onClose(); // Cerrar el modal si el pago es exitoso
                         } else {
                             throw new Error("Error al actualizar el estado del ticket");

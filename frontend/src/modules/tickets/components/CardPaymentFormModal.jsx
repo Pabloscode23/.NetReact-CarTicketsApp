@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
@@ -9,11 +9,14 @@ import axios from 'axios';
 import { API_URL } from '../../../constants/Api';
 import { useAuth } from '../../../hooks';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
+import { TicketsContext } from '../context/TicketsContext';
 
 export const CardPaymentFormModal = ({ onClose, id }) => {
     const { register, handleSubmit, formState: { errors }, } = useForm();
     const [generalError, setGeneralError] = useState("");
     const { user } = useAuth();
+    const { refetchTickets } = useContext(TicketsContext);
+
     const onSubmit = async (data) => {
         setGeneralError("");
 
@@ -73,6 +76,7 @@ export const CardPaymentFormModal = ({ onClose, id }) => {
 
                                 if (statusResponse.status === 200 || statusResponse.status === 204) {
                                     showSuccessAlert("Pago realizado con éxito");
+                                    refetchTickets(); // Actualizar la lista de tickets 
                                     onClose(); // Cerrar el modal si el pago es exitoso
                                 } else {
                                     throw new Error("Error al actualizar el estado de la multa");

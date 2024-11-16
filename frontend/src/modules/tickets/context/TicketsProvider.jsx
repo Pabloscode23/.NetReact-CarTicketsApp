@@ -1,12 +1,12 @@
 import axios from "axios";
 import { memo, useEffect, useMemo, useState } from "react";
-import { AuthContext } from "./AuthContext";
-import { RolePermissions } from "../constants/RolePermissions"; // Import role permissions
-import { API_URL } from "../constants/Api";
+import { API_URL } from "../../../constants/Api";
+import { TicketsContext } from "./TicketsContext";
 
 // Create the authentication provider
 // eslint-disable-next-line react/display-name
-export const AuthProvider = memo(({ children }) => {
+export const TicketsProvider = memo(({ children }) => {
+
     // State to hold the token
     const [tickets, setTickets_] = useState([]);
 
@@ -45,8 +45,8 @@ export const AuthProvider = memo(({ children }) => {
     );
 
     return (
-        <AuthContext.Provider value={contextValue}>
+        <TicketsContext.Provider value={contextValue}>
             {children}
-        </AuthContext.Provider>
+        </TicketsContext.Provider>
     );
 });
