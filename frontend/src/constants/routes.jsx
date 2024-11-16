@@ -15,7 +15,11 @@ import { UserClaimsPage } from "../modules/disputes/pages/UserClaimsPage"
 import { RegistUpdateFinalUser } from "../modules/public/pages/RegistUpdateFinalUserPage"
 import { ChangePasswordPage } from "../modules/auth/pages/ChangePasswordPage";
 import UploadImagePage from "../modules/auth/pages/UploadImagePage";
+<<<<<<< HEAD
 import { TicketsProvider } from "../modules/tickets/context/TicketsProvider"
+=======
+import { TicketsContext } from "../modules/tickets/context/TicketsContext"
+>>>>>>> 2d6f87bc512f9b3f7587975660f615dae7735587
 
 
 
@@ -78,7 +82,11 @@ export const routesForAuthenticatedOnly = [
                 element: <h1>Caja de pago</h1>
             }, {
                 path: "/multas-usuario",
+<<<<<<< HEAD
                 element: <TicketsProvider> <AllUserTicketsPage /></TicketsProvider>
+=======
+                element: <TicketsContext><AllUserTicketsPage /></TicketsContext>
+>>>>>>> 2d6f87bc512f9b3f7587975660f615dae7735587
             }, {
                 path: "/reclamos-usuario",
                 element: <UserClaimsPage />
