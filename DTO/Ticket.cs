@@ -29,5 +29,6 @@ namespace DTO
         public string OfficerId { get; set; }
         public double Amount { get; set; }
 
+
     }
 }

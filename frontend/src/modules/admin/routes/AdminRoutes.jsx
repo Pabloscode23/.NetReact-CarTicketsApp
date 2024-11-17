@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom"
 import { UsersPage } from "../pages"
 import { AdminAllTickets } from "../../tickets/pages/AdminAllTickets"
+import { TicketsProvider } from "../../tickets/context/TicketsProvider"
 import UploadImagePage from "../../tickets/pages/UploadImagePage"
 
 export const AdminRoutes = () => {

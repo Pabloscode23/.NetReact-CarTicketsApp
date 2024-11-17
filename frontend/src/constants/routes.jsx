@@ -17,6 +17,10 @@ import { ChangePasswordPage } from "../modules/auth/pages/ChangePasswordPage";
 import UploadImagePage from "../modules/tickets/pages/UploadImagePage";
 import { AuthProvider } from "../contexts"
 
+import { TicketsProvider } from "../modules/tickets/context/TicketsProvider"
+
+import { TicketsContext } from "../modules/tickets/context/TicketsContext"
+
 
 
 // Rutas publicas
@@ -74,7 +78,9 @@ export const routesForAuthenticatedOnly = [
                 element: <h1>Caja de pago</h1>
             }, {
                 path: "/multas-usuario",
-                element: <AllUserTicketsPage />
+
+                element: <TicketsProvider> <AllUserTicketsPage /></TicketsProvider>
+
             }, {
                 path: "/reclamos-usuario",
                 element: <UserClaimsPage />

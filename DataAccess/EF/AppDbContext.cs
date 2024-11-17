@@ -8,6 +8,7 @@ public class AppDbContext : DbContext
     public DbSet<RoleDTO> Roles { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<Payment> Payments { get; set; } // Aquí es donde se mapea la entidad Payment
+    public DbSet<ClaimDTO> Claims { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -28,5 +29,9 @@ public class AppDbContext : DbContext
             .HasOne(p => p.Ticket)
             .WithMany()
             .HasForeignKey(p => p.TicketId);
+
+        modelBuilder.Entity<UserDTO>()
+            .HasMany(p => p.Claims);
+
     }
 }

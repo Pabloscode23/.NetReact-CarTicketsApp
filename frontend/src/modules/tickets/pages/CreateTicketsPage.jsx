@@ -5,7 +5,7 @@ import { API_URL } from '../../../constants/Api';
 import { useNavigate } from 'react-router-dom';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
 import { useAuth } from '../../../hooks';
-import { showErrorAlert } from '../../../constants/Swal/SwalFunctions';
+import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 
 export const CreateTicketsPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -36,6 +36,7 @@ export const CreateTicketsPage = () => {
       if ((infractor.name) == (data.nombre + " " + data.apellidos)) {
         console.log('Creando ticket:', ticketData);
         const response = await axios.post(`${API_URL}/TicketDTO`, ticketData);
+        showSuccessAlert('Ticket creado exitosamente');
         console.log('Ticket creado:', response.data);
         navigate('/', { replace: true });
       } else {

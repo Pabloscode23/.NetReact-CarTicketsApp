@@ -44,6 +44,7 @@ const UploadImagePage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+
         if (!image) {
             setMessage('Por favor suba una imagen.');
             return;
