@@ -33,6 +33,6 @@ export const cardsAdminInfo = [
         icon: faCamera,
         title: 'Carga de imágenes de placas',
         description: 'Suba imágenes de placas de vehículos relacionadas con las multas de tránsito.',
-        link: '/plate-image'
+        link: '/imagenes'
     }
 ]

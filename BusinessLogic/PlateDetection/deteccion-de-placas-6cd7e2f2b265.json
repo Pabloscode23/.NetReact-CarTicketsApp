@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "PlateDetectionAPI",
+  "private_key_id": "6cd7e2f2b2650a3454356268c8cb76d64ca31b52",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDAQVD3v1QUhwab\nl8arIUkzQdnFrgxcqVBzax5r1jxOOuNackWcK0Ztcr2kwEsC6w9bKsgWGta2CAp8\nEHEMk5M4rfPfvUa5bjCcwDXeGo/lyKkWPfZ7ixiytzDqdtc4HbxRaF+nlhgqZgMj\nKBzdkyUBbUDacOYzAzbIN+AfOSl79bnLPTEE1QIY4SOSjWtgClgEvDMFvqYlgsX/\nP5ECQ7Cbyuo6gFpHLgAiBHeItD+YrWW1QjDuurXELRbX8r5Bx3ed8YoW8yZjPIta\ncwtIXLEH7FDfMPXEz5TLTL3xUzZoNFkaKO43ZvsrJ3OrqWY25yFlE8uEwhGzOhKl\n0Z1+EPo5AgMBAAECggEAHta7VqpFoe9Q04eCkjPKKqMu/AMhr4FnSsRNgm3Aianv\nizQWT2kvqGHF4tYHkkXDVlPj+Yu/kj5y9BitEZ/gdzCMFIEnhZoTySkZ2vE20Nyh\nptQ0o/eZdB1nhsyeVD2M1iAga+DrKm3npe2Kx84RGwv74a5HdrpWwMIZvNht+5iV\nHc6UCxbjl25M//1ROICGYOQ2xHP9I1BLSfjw13YvjI9ZO1QWcom3JlizrqOmKJdt\nVXNXCNSCuSyBo2xjHKxlLjZf+7JN2kdU1mnqcH/Mc84xIqijUYnek1BWEMZY67M1\nfsXn+Z2+oAqoAd18bC09CgPesToYYPubbY8otRZuKQKBgQDvfXobp9UE22MAVkez\n2UFQSoSjs5ukNIzrcMVS+ffoUet4L8mXjJ1K1zStTuVA1wnvF+WPKwQ5+//+qOC+\nWeeb7ym2sgYKNVYfMW6CNy2OXq8Ub6vxP+qtoDE9tC9wE8HaApVpBEglh0kFz6cC\nTtBSsVZbdKipHSw3ipFhZ2Q4nQKBgQDNgjxcIEFxYQyZKjhE/c/Kb4DCCrsFwdQs\nJ0rrNrjtd9C3tWB5lafpOKYTB6XL6nNI6Lb6YIzwEfs56b1Z8hcE1b4LLs8kz1+b\nch27KUMtoQ2tmlLdhv77LmWn1RkdsP5kytuYmHGQf3fPDC18eUijcmTKoz0t0q29\nqS8oUinPTQKBgQDYmYq7woJF30nd/yrgfWi1/n+SMxpcW+7r7dV5o3zU0GqAC/Bu\nsY19J8CL0mRDzXk9lkZXwxcSfllccE67ukJgZOE8TCxsRSr8EVAaU19PeVEt0YYY\nLq/Ikq6WWQXifuv/igCpt2atEns310P8MV32vE8Xbh4wvaLFJP0xtDoPfQKBgGCT\nSWZJyjdL0i3QR200kYeiarHFdSo5cknllTGAH9uIqM8ML3Azwhq5gmIDAAkZ/l9O\n7V4wLUtMR/FpRJCWUfb1sz9yGepEgbt9HzerJmS1AMaKdVKhdAX6Qc9jN1BastIO\n+q91RDkRje4A3QdXv6j/wxnvKHr2PKuabAzYv8kpAoGBAMMc3ScyTds1OgYY4ren\nSn3Zg6ZMkjKzW/VWaNyjE6au/qEdGs1yHLYhUKwMaGiuMmJ07qx1mhXult6So3KU\n/HFLPPl1IBfvRABncjtlaFD3xhloc4bJ++aJh51WHMKl5ElP2Mle5CAJm9RapEp2\ndsZ48uAVCGS6/80IAT/fXBO3\n-----END PRIVATE KEY-----\n",
+  "client_email": "deteccionplacas@deteccion-de-placas.iam.gserviceaccount.com",
+  "client_id": "109198576160456070084",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/deteccionplacas%40deteccion-de-placas.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

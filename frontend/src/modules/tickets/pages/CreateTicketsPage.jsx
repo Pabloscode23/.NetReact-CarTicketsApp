@@ -5,6 +5,7 @@ import { API_URL } from '../../../constants/Api';
 import { useNavigate } from 'react-router-dom';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
 import { useAuth } from '../../../hooks';
+import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 
 export const CreateTicketsPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -25,29 +26,36 @@ export const CreateTicketsPage = () => {
     };
 
     try {
-      console.log(`${data.nombre} ${data.apellidos}`);
-      console.log(user.name);
-      if (user.name == `${data.nombre} ${data.apellidos}`) {
+      // Llamada a la API para verificar los datos del infractor
+      const infractorResponse = await axios.get(`${API_URL}/UserDTO/${data.idNumber}`);
+      const infractor = infractorResponse.data;
+      console.log(infractor);
+      console.log(data.nombre + " " + data.apellidos);
+
+      // Verifica si el nombre y apellidos del infractor coinciden con los datos ingresados
+      if ((infractor.name) == (data.nombre + " " + data.apellidos)) {
         console.log('Creando ticket:', ticketData);
         const response = await axios.post(`${API_URL}/TicketDTO`, ticketData);
+        showSuccessAlert('Ticket creado exitosamente');
         console.log('Ticket creado:', response.data);
         navigate('/', { replace: true });
       } else {
-        alert('El nombre y apellidos no coinciden con el usuario actual.');
+        showErrorAlert('El nombre y apellidos no coinciden con la identificación del infractor');
       }
     } catch (error) {
       if (error.response) {
         console.error('Server response error:', error.response.data);
-        alert(`Error: ${error.response.data.message || 'Algo salió mal!'}`);
+        showErrorAlert(`Error: ${error.response.data.message || 'Algo salió mal!'}`);
       } else if (error.request) {
         console.error('No response received:', error.request);
-        alert('No se recibió respuesta del servidor.');
+        showErrorAlert('No se recibió respuesta del servidor. Por favor, inténtalo de nuevo.');
       } else {
         console.error('Error setting up request:', error.message);
-        alert('Error al configurar la solicitud: ' + error.message);
+        showErrorAlert('Hubo un error configurando la solicitud.');
       }
     }
   };
+
 
   return (
     <section className="container" style={{ color: "#4B4B4E" }}>

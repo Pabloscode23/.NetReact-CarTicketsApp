@@ -1,0 +1,80 @@
+.upload-image {
+    margin-top: 10vh;
+    color: var(--color-grey-dark);
+    box-shadow: 0 0 100px #DFF5FC;
+    border-radius: 30px;
+    height: auto;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5vh 1vw;
+    justify-content: space-evenly;
+    background-color: var(--color-blue-lighter);
+}
+
+.upload-image__title {
+    padding: 3vh 0;
+    font-size: 4.5vh;
+    font-weight: bold;
+}
+
+.upload-image__form {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+    max-width: 800px;
+    margin: 0 auto;
+    align-items: center;
+}
+
+.upload-image__field {
+    flex: 1 1 45%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40vw;
+}
+
+.upload-image__label {
+    font-size: 2vh;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.upload-image__input {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: white;
+    width: 85%;
+}
+
+.upload-image__button {
+    padding: 10px 20px;
+    background-color: var(--color-blue-dark);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 0 auto;
+    margin-bottom: 1vh;
+    transition: all 200ms ease-in-out;
+}
+
+.upload-image__button:hover {
+    background-color: var(--color-purple-dark);
+}
+
+.upload-image__message {
+    font-size: 1.8vh;
+    color: rgb(255, 0, 0);
+    margin-top: 20px;
+}
+
+.upload-image__error {
+    color: red;
+    margin-top: 8px;
+    font-size: 2.1vh;
+}

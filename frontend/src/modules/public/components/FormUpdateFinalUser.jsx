@@ -1,10 +1,11 @@
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import '../styles/FormRegistFinalUser.css';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { API_URL } from '../../../constants/Api';
 import { useAuth } from "../../../hooks";
+import { showSuccessAlert } from "../../../constants/Swal/SwalFunctions";
 
 export const FormUpdateFinalUser = () => {
     const { user } = useAuth();
@@ -50,6 +51,7 @@ export const FormUpdateFinalUser = () => {
             const response = await axios.put(`${API_URL}/UserDTO/${data.idNumber}`, formData);
 
             console.log("Usuario actualizado:", response.data);
+            showSuccessAlert("Usuario actualizado correctamente");
             reset();
             navigate('/', { replace: true });
         } catch (error) {

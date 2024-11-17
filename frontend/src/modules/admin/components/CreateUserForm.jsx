@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import '../styles/CreateUserForm.css';
 import { API_URL } from "../../../constants/Api";
 import axios from "axios";
+import { showErrorAlert, showSuccessAlert } from "../../../constants/Swal/SwalFunctions";
 
 
 const roles = [
@@ -11,7 +12,7 @@ const roles = [
     { value: "juez", label: "Juez" },
 ];
 
-export const CreateUserForm = () => {
+export const CreateUserForm = ({ closeModal }) => {
 
     const {
         register,
@@ -74,10 +75,13 @@ export const CreateUserForm = () => {
             }
             const response = await axios.post(`${API_URL}/UserDTO`, userData); // Replace YOUR_API_ENDPOINT with your actual endpoint
             console.log("Usuario creado:", response.data);
-            alert("Usuario creado exitosamente");
+
+
+
+            showSuccessAlert('Usuario creado exitosamente', 'El usuario ha sido registrado correctamente.');
             // Navigate to the users page
             reset();
-
+            closeModal();
             // Handle successful response (e.g., show a success message, redirect, etc.)
         } catch (error) {
             console.error("Error al crear usuario:", error);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { TicketOfficer } from '../components/TicketOfficer';
 import { EditTicketModal } from '../../../modules/disputes/components/EditTicketModal';
@@ -8,39 +8,34 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../../hooks';
 import { API_URL } from '../../../constants/Api';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
+import { showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
+import { TicketsContext } from '../context/TicketsContext';
 
 export const OfficerTicketsPage = () => {
     const { user } = useAuth();
-    const [tickets, setTickets] = useState([]);
+    const { tickets, setTickets, refetchTickets } = useContext(TicketsContext);
+    const [filteredTickets, setFilteredTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    // Esta función asegura que se mantenga el valor original de amount
+    const formatUserTicket = (tickets) => {
+        return tickets.map(ticket => {
+            // Obtener amount de TicketsInfo si está disponible, o usar el valor original
+            const amount = TicketsInfo[ticket.description] || 0;
+            return { ...ticket, amount };  // Mantener el valor original de 'amount'
+        });
+    };
+
     useEffect(() => {
-
-        const fetchTickets = async () => {
-
-            try {
-                const response = await axios.get(`${API_URL}/TicketDTO`);
-
-
-                const userTickets = response.data
-                    .filter(ticket => ticket.officerId === user.idNumber)
-                    .map(ticket => ({
-                        ...ticket,
-                        status: ticket.status || "Pendiente",
-                        amount: TicketsInfo[ticket.description] || 0,
-                    }));
-                setTickets(userTickets);
-            } catch (error) {
-                console.error("Error fetching tickets:", error);
-            }
-        };
-
-        if (user?.idNumber) {
-            fetchTickets();
+        if (tickets.length > 0) {
+            const formattedTickets = formatUserTicket(tickets);
+            setFilteredTickets(formattedTickets);  // Se mantiene el amount tal cual es
+        } else {
+            setFilteredTickets([]);
         }
-    }, [user]);
+    }, [tickets]);
 
     const handleEdit = (ticket) => {
         setSelectedTicket(ticket);
@@ -48,42 +43,61 @@ export const OfficerTicketsPage = () => {
     };
 
     const handleSave = async (updatedTicket) => {
-        // Optimistically update the ticket in the local state
         setTickets((prevTickets) =>
             prevTickets.map((ticket) =>
                 ticket.id === updatedTicket.id ? { ...ticket, date: updatedTicket.date, description: updatedTicket.description } : ticket
             )
         );
 
-        // Send the updated ticket to the server
         try {
-            alert("Multa actualizada correctamente, refrezca la página para ver los cambios.");
+            showSuccessAlert("Multa actualizada correctamente.");
             const response = await axios.put(`${API_URL}/TicketDTO/${updatedTicket.id}`, updatedTicket);
-            // If you want to ensure the response matches what you expect, update the ticket with the response data
             setTickets((prevTickets) =>
                 prevTickets.map((ticket) =>
                     ticket.id === response.data.id ? response.data : ticket
                 )
             );
-
         } catch (error) {
             console.error("Error updating ticket:", error);
-            // Optionally revert back to original ticket data if there's an error
-            // You may want to implement a way to save the original ticket data before optimistic update
         }
 
         setIsModalOpen(false);
     };
 
+    // Filtrar tickets sin afectar el valor original de 'amount'
+    const filterTickets = (searchTerm) => {
+        return tickets.filter((ticket) => {
+            const ticketId = ticket.id ? ticket.id.toString() : "";
+            const ticketDate = ticket.date || "";
+            const ticketReason = ticket.description ? ticket.description.toLowerCase() : "";
+            const ticketAmount = ticket.amount ? ticket.amount.toString() : ""; // Aseguramos que 'amount' sea una cadena
+            const ticketStatus = ticket.status ? ticket.status.toLowerCase() : "";
+
+            // Comprobamos si el término de búsqueda está presente en cualquier campo relevante
+            return (
+                ticketId.includes(searchTerm) ||
+                ticketDate.includes(searchTerm) ||
+                ticketReason.includes(searchTerm.toLowerCase()) ||
+                ticketAmount.includes(searchTerm) || // Compara 'amount' como texto
+                ticketStatus.includes(searchTerm.toLowerCase())
+            );
+        });
+    };
 
 
-    const filteredTickets = tickets.filter(ticket =>
-        ticket.id.toString().includes(searchTerm) ||
-        ticket.date.includes(searchTerm) ||
-        ticket.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ticket.amount.toString().includes(searchTerm) ||
-        ticket.status.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const handleSearchChange = (e) => {
+        const searchTerm = e.target.value.trim().toLowerCase();
+        setSearchTerm(searchTerm);
+
+        // Filtrar los tickets al cambiar el término de búsqueda
+        if (searchTerm) {
+            const filtered = filterTickets(searchTerm);
+            setFilteredTickets(filtered);
+        } else {
+            // Restablecer la lista de tickets cuando el campo de búsqueda está vacío
+            setFilteredTickets(tickets);
+        }
+    };
 
     return (
         <div className="container__tickets">
@@ -96,7 +110,7 @@ export const OfficerTicketsPage = () => {
                     placeholder="Buscar multa"
                     className="search__ticket"
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={handleSearchChange} // Actualizar el término de búsqueda
                 />
             </div>
             {(filteredTickets.length === 0) ? (
@@ -120,7 +134,7 @@ export const OfficerTicketsPage = () => {
                                 id={ticket.id}
                                 date={ticket.date}
                                 reason={ticket.description}
-                                amount={ticket.amount.toLocaleString()}
+                                amount={ticket.amount}
                                 status={ticket.status}
                                 onEdit={() => handleEdit(ticket)}
                             />
@@ -132,7 +146,8 @@ export const OfficerTicketsPage = () => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 ticket={selectedTicket}
-                onSave={handleSave} // Pass handleSave to the modal
+                onSave={handleSave}
+                refetchTickets={refetchTickets}
             />
         </div>
     );

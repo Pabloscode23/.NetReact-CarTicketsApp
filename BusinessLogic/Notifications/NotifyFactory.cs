@@ -33,6 +33,34 @@ namespace Notifications
             _notification.Send("Código de verificación", $"Su código de verificación es: {code}", recipient);
             Console.WriteLine("Notificación de 2FA enviada.");
         }
+        public void PaymentSuccessNotification(string totalAmount, string recipient, string ticketId, string amount, string paymentMethod)
+        {
+            string message = $"El pago final de {totalAmount} con el IVA incluido ha sido procesado exitosamente.\n\n" +
+                    $"Detalles de la multa:\n" +
+                    $"- ID: {ticketId}\n" +
+                    $"- Monto sin impuesto: {amount}\n" +
+                    $"- Método de Pago: {paymentMethod}\n\n" +
+                    "Gracias por su pago.";
+
+
+            Console.WriteLine("Mensaje de notificación antes de enviar el correo:");
+            Console.WriteLine(message); // Verifica el contenido del mensaje
+            Console.WriteLine("Contenido del mensaje de correo:");
+            Console.WriteLine(message);
+
+            _notification.Send("Pago exitoso", message, recipient);
+            Console.WriteLine("Notificación de pago exitoso enviada.");
+        }
+
+
+
+        public void SendClaimNotification(string claimId, string claimDocument, string recipient)
+        {
+            string message = $"Se ha generado una nueva reclamación con el ID {claimId} y el documento {claimDocument}";
+
+            _notification.Send("Nueva reclamación", message, recipient);
+            Console.WriteLine("Notificación de reclamación enviada.");
+        }
     }
 
     public class EmailSettings
@@ -42,7 +70,7 @@ namespace Notifications
     }
 
 
-        public class EmailNotification : INotification
+    public class EmailNotification : INotification
     {
         private readonly EmailSettings _emailSettings;
 
@@ -82,5 +110,5 @@ namespace Notifications
             }
         }
     }
-    
+
 }

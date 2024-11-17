@@ -22,4 +22,5 @@ export const Permissions = {
     "create_reports": "create_reports",
     "view_profile": "view_profile",
     "edit_profile": "edit_profile",
+    "Plate_Detection": "Plate_Detection",
 }

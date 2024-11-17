@@ -4,6 +4,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import '../styles/ChangePasswordPage.css';
 import { API_URL } from "../../../constants/Api";
 import axios from "axios";
+import { showErrorAlert } from "../../../constants/Swal/SwalFunctions";
 //
 
 
@@ -16,7 +17,6 @@ const validateToken = async (code) => {
             return true;
         }
     } catch (error) {
-        alert("El token es inválido o ha expirado.");
         console.log(error);
         return false;
     }
@@ -53,7 +53,10 @@ export const ChangePasswordPage = () => {
     const onSubmit = handleSubmit(async (data) => {
 
         if (data.confirmPassword !== data.password) {
-            return alert("Las contraseñas no coinciden");
+            return showErrorAlert("Las contraseñas no coinciden");
+
+
+
         }
 
         const changePasswordObject = {
@@ -68,7 +71,8 @@ export const ChangePasswordPage = () => {
         } catch (error) {
             console.error("Error al cambiar la contraseña:", error);
 
-            alert("Ha ocurrido un error al cambiar la contraseña. Por favor, inténtelo de nuevo.");
+            showErrorAlert("Ha ocurrido un error al cambiar la contraseña. Por favor, inténtelo de nuevo.");
+
         }
     });
 
