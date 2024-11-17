@@ -78,10 +78,10 @@ const UploadImagePage = () => {
 
     return (
         <div className="upload-image">
-            <h1 className="upload-image__title">Cargar Imagen para Detectar Placa y Crear Multa</h1>
+            <h1 className="upload-image__title">Cargar imagen para detectar placa y crear multa</h1>
             <form className="upload-image__form" onSubmit={handleSubmit}>
                 <div className="upload-image__field">
-                    <label className="upload-image__label">Subir Imagen</label>
+                    <label className="upload-image__label">Subir imagen</label>
                     <input
                         className="upload-image__input"
                         type="file"
@@ -91,7 +91,7 @@ const UploadImagePage = () => {
                 </div>
                 <div className="upload-image__actions">
                     <button className="upload-image__button" type="submit" disabled={loading}>
-                        {loading ? 'Procesando...' : 'Enviar Imagen'}
+                        {loading ? 'Procesando...' : 'Enviar imagen'}
                     </button>
                 </div>
                 {message && <p className="upload-image__message">{message}</p>}
