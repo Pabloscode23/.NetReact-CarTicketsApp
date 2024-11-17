@@ -17,7 +17,7 @@ os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:/Users/kcord/OneDrive/Desktop/
 client = vision.ImageAnnotatorClient()
 
 # Set up allowed file extensions
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
 # Create upload folder if it doesn't exist
 upload_folder = 'uploads'

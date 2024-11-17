@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom"
 import { UsersPage } from "../pages"
 import { AdminAllTickets } from "../../tickets/pages/AdminAllTickets"
+import UploadImagePage from "../../tickets/pages/UploadImagePage"
 
 export const AdminRoutes = () => {
     return (
@@ -14,10 +15,12 @@ export const AdminRoutes = () => {
 
             {/* Ruta para control de informes */}
             <Route path="/informes" element={<h1>Reports</h1>} />
-
             {/* Ruta para control de pagos */}
             <Route path="/multas" element={<AdminAllTickets />} />
 
+            
+            {/* Ruta para subir imagen */}
+            <Route path="/imagen" element={<UploadImagePage />} />
         </Routes>
     )
 }
