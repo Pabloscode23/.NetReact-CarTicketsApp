@@ -27,11 +27,11 @@ export const InfoPermissions = {
         description: 'Genere informes sobre el estado y gestión de multas en el sistema.',
         link: '/gestion/informes'
     },
-    "create_ticket_from_image": {
+    "Plate_Detection": {
         icon: faCamera,
-        title: 'Carga de imágenes de placas',
-        description: 'Suba imágenes de placas de vehículos relacionadas con multas de tránsito.',
-        link: '/gestion/carga-imagenes'
+        title: 'Multa automática',
+        description: 'Sube una imagen para generar una multa automática.',
+        link: '/imagenes'
     },
 
     //Usuario final
@@ -78,6 +78,12 @@ export const InfoPermissions = {
         title: 'Historial de reclamos',
         description: 'Aquí podrá consultar los reclamos presentados en relación a las multas.',
         link: '/multas/reclamos'
+    },
+    "Plate_Detection": {
+        icon: faClockRotateLeft,
+        title: 'Multa automática',
+        description: 'Sube una imagen para generar una multa automática.',
+        link:'/imagen'
     },
     //juez
     "respond_claims": {
