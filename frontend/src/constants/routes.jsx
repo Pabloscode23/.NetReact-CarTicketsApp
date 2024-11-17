@@ -14,8 +14,7 @@ import { AllUserTicketsPage } from "../modules/tickets/pages/AllUserTicketsPage"
 import { UserClaimsPage } from "../modules/disputes/pages/UserClaimsPage"
 import { RegistUpdateFinalUser } from "../modules/public/pages/RegistUpdateFinalUserPage"
 import { ChangePasswordPage } from "../modules/auth/pages/ChangePasswordPage";
-
-
+import { JudgeResolveClaimsPage } from "../modules/judge/pages/JudgeResolveClaimsPage"
 
 // Rutas publicas
 export const routesForPublic = [
@@ -60,8 +59,8 @@ export const routesForAuthenticatedOnly = [
                 element: <TicketsRoutes />
             },
             {
-                path: "/reclamos",
-                element: <h1>CLAIMS</h1>
+                path: "/juez-reclamos",
+                element: <JudgeResolveClaimsPage/>
             },
             {
                 path: "/gestion/*",
@@ -81,6 +80,7 @@ export const routesForAuthenticatedOnly = [
                 path: "/perfil",
                 element: <RegistUpdateFinalUser />
             },
+           
         ]
     }
 ]

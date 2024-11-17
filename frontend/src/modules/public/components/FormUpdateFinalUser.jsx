@@ -182,8 +182,7 @@ export const FormUpdateFinalUser = () => {
 
                 <div className="form__button-wrapper">
                     <button className="form__button" type="submit">Actualizar datos</button>
-                </div>
-            </form>
+                </div>            </form>
         </div>
     );
 };
