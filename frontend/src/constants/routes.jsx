@@ -20,8 +20,7 @@ import { AuthProvider } from "../contexts"
 import { TicketsProvider } from "../modules/tickets/context/TicketsProvider"
 
 import { TicketsContext } from "../modules/tickets/context/TicketsContext"
-
-
+import { JudgeResolveClaimsPage } from "../modules/judge/pages/JudgeResolveClaimsPage"
 
 // Rutas publicas
 export const routesForPublic = [
@@ -66,8 +65,8 @@ export const routesForAuthenticatedOnly = [
                 element: <TicketsRoutes />
             },
             {
-                path: "/reclamos",
-                element: <h1>CLAIMS</h1>
+                path: "/juez-reclamos",
+                element: <JudgeResolveClaimsPage/>
             },
             {
                 path: "/gestion/*",
@@ -93,6 +92,7 @@ export const routesForAuthenticatedOnly = [
                 path: "/imagen",
                 element: <UploadImagePage />
             }
+           
         ]
     }
 ]

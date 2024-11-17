@@ -365,3 +365,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 ./API/appsettings.json
+
+package.g.props

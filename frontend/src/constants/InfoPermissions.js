@@ -90,7 +90,7 @@ export const InfoPermissions = {
         icon: faCircleExclamation,
         title: 'Resolver reclamos',
         description: 'Gestionar las quejas o inconformidades presentadas por los usuarios.',
-        link: '/reclamos'
+        link: '/juez-reclamos'
     },
 
     //generales
