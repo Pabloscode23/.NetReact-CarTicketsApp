@@ -11,23 +11,6 @@ namespace DataAccess.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "UserDTO",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IdNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProfilePicture = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserDTO", x => x.UserId);
-                });
 
             migrationBuilder.CreateTable(
                 name: "Claims",
@@ -44,59 +27,12 @@ namespace DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Claims", x => x.ClaimId);
                     table.ForeignKey(
-                        name: "FK_Claims_UserDTO_JudgeId",
+                        name: "FK_Claims_User_JudgeId",
                         column: x => x.JudgeId,
-                        principalTable: "UserDTO",
+                        principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateTable(
-                name: "Appeals",
-                columns: table => new
-                {
-                    AppealId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TicketId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Appeals", x => x.AppealId);
-                    table.ForeignKey(
-                        name: "FK_Appeals_Claims_ClaimId",
-                        column: x => x.ClaimId,
-                        principalTable: "Claims",
-                        principalColumn: "ClaimId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Appeals_Tickets_TicketId",
-                        column: x => x.TicketId,
-                        principalTable: "Tickets",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Appeals_UserDTO_UserId",
-                        column: x => x.UserId,
-                        principalTable: "UserDTO",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Appeals_ClaimId",
-                table: "Appeals",
-                column: "ClaimId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Appeals_TicketId",
-                table: "Appeals",
-                column: "TicketId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Appeals_UserId",
-                table: "Appeals",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Claims_JudgeId",
@@ -107,14 +43,9 @@ namespace DataAccess.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Appeals");
 
             migrationBuilder.DropTable(
                 name: "Claims");
-
-            migrationBuilder.DropTable(
-                name: "UserDTO");
         }
     }
 }

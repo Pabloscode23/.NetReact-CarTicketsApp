@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241117210015_AgregarTablaClaims")]
+    partial class AgregarTablaClaims
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,7 +24,7 @@ namespace DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DataAccess.Models.Claim", b =>
+            modelBuilder.Entity("DTO.ClaimDTO", b =>
                 {
                     b.Property<string>("ClaimId")
                         .HasColumnType("nvarchar(450)");
@@ -39,8 +42,7 @@ namespace DataAccess.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TicketId")
                         .IsRequired()
@@ -53,10 +55,103 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("JudgeId");
 
-                    b.HasIndex("TicketId")
-                        .IsUnique();
+                    b.HasIndex("TicketId");
 
                     b.ToTable("Claims");
+                });
+
+            modelBuilder.Entity("DTO.RoleDTO", b =>
+                {
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("RoleId");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("DTO.Ticket", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("OfficerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tickets");
+                });
+
+            modelBuilder.Entity("DTO.UserDTO", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfilePicture")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("UserDTO");
                 });
 
             modelBuilder.Entity("DataAccess.Models.Payment", b =>
@@ -97,62 +192,6 @@ namespace DataAccess.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("DataAccess.Models.Role", b =>
-                {
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("RoleDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("RoleId");
-
-                    b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("DataAccess.Models.Ticket", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Latitude")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Longitude")
-                        .HasColumnType("float");
-
-                    b.Property<string>("OfficerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tickets");
-                });
-
             modelBuilder.Entity("DataAccess.Models.User", b =>
                 {
                     b.Property<string>("UserId")
@@ -191,17 +230,17 @@ namespace DataAccess.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("DataAccess.Models.Claim", b =>
+            modelBuilder.Entity("DTO.ClaimDTO", b =>
                 {
-                    b.HasOne("DataAccess.Models.User", "Judge")
-                        .WithMany("ClaimsAsJudge")
+                    b.HasOne("DTO.UserDTO", "Judge")
+                        .WithMany("Claims")
                         .HasForeignKey("JudgeId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DataAccess.Models.Ticket", "Ticket")
-                        .WithOne("Claim")
-                        .HasForeignKey("DataAccess.Models.Claim", "TicketId")
+                    b.HasOne("DTO.Ticket", "Ticket")
+                        .WithMany()
+                        .HasForeignKey("TicketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -212,7 +251,7 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("DataAccess.Models.Payment", b =>
                 {
-                    b.HasOne("DataAccess.Models.Ticket", "Ticket")
+                    b.HasOne("DTO.Ticket", "Ticket")
                         .WithMany()
                         .HasForeignKey("TicketId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -229,15 +268,9 @@ namespace DataAccess.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DataAccess.Models.Ticket", b =>
+            modelBuilder.Entity("DTO.UserDTO", b =>
                 {
-                    b.Navigation("Claim")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("DataAccess.Models.User", b =>
-                {
-                    b.Navigation("ClaimsAsJudge");
+                    b.Navigation("Claims");
                 });
 #pragma warning restore 612, 618
         }

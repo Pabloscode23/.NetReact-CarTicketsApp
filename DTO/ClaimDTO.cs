@@ -23,8 +23,13 @@ namespace DTO
         [ForeignKey("Judge")] // Nombre de la propuedad de navegación
         public string JudgeId { get; set; }
 
+
+        [ForeignKey("Ticket")] // Nombre de la propuedad de navegación
+        public string TicketId { get; set; }
+
         // Propiedad de navegación
         public UserDTO Judge { get; set; }
+        public TicketDTO Ticket { get; set; }
 
     }
 }

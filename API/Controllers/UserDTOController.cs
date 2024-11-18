@@ -29,12 +29,37 @@ namespace API.Controllers
             _configuration = configuration;
         }
 
+
         // GET: api/UserDTO
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .Include(u => u.ClaimsAsJudge) // Suponiendo que haya una relación Claims con el usuario
+                .ToListAsync();
+
+            // Mapeamos los usuarios a un DTO para no exponer directamente el modelo de la base de datos
+            var userDtos = users.Select(u => new UserDTO
+            {
+                UserId = u.UserId,
+                Name = u.Name,
+                Email = u.Email,
+                Role = u.Role,
+                Claims = u.ClaimsAsJudge.Select(c => new ClaimDTO
+                {
+                    ClaimId = c.ClaimId,
+                    ClaimDocument = c.ClaimDocument,
+                    Status = c.Status,
+                    CreatedAt = c.CreatedAt,
+                    UpdatedAt = c.UpdatedAt,
+                    TicketId = c.TicketId,
+                }).ToList()
+                .ToList()
+            }).ToList();
+
+            return Ok(userDtos);
         }
+
 
         // GET: api/UserDTO/5
         [HttpGet("{id}")]
@@ -120,16 +145,29 @@ namespace API.Controllers
 
         // POST: api/UserDTO
         [HttpPost]
-        public async Task<ActionResult<object>> PostUser(User user)
+        public async Task<ActionResult<object>> PostUser(CreateUserDTO user)
         {
-            _context.Users.Add(user);
+
+            var newUser = new User
+            {
+                IdNumber = user.IdNumber,
+                Name = user.Name,
+                Email = user.Email,
+                Password = user.Password,
+                PhoneNumber = user.PhoneNumber,
+                Role = user.Role,
+                ProfilePicture = user.ProfilePicture,
+                UserId = user.IdNumber
+            };
+
+            _context.Users.Add(newUser);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (UserExists(user.UserId))
+                if (UserExists(newUser.UserId))
                 {
                     return Conflict();
                 }
@@ -271,4 +309,18 @@ namespace API.Controllers
     {
         public string newPassword { get; set; }
     }
-}
+
+    public class CreateUserDTO
+    {
+        public string UserId { get; set; }
+        public string Name { get; set; }
+
+        public string IdNumber { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Role { get; set; }
+        public string ProfilePicture { get; set; }
+
+    }
+ }
