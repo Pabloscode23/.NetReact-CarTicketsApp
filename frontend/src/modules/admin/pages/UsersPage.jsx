@@ -22,7 +22,7 @@ export const UsersPage = () => {
 
     // Open the CreateUserForm and pass the closeModal function as a prop
     const handleOpenCreateUserForm = () => {
-        openModal(<CreateUserForm closeModal={closeModal} />);
+        openModal(<CreateUserForm refetch={usersCall} closeModal={closeModal} />);
     };
 
     const handleFilter = (e) => {
@@ -120,7 +120,7 @@ export const UsersPage = () => {
                             <GlobalTable columns={columns}>
                                 {filteredUsers.map((user) => (
                                     <UserTableRow
-                                        key={user.id}
+                                        key={user.idNumber}
                                         user={user}
                                         onDelete={handleDeleteUser}
                                         onEdit={handleEditUser} // Pasar la función onEdit

@@ -83,7 +83,7 @@ export const InfoPermissions = {
         icon: faClockRotateLeft,
         title: 'Multa automática',
         description: 'Sube una imagen para generar una multa automática.',
-        link:'/imagen'
+        link: '/imagen'
     },
     //juez
     "respond_claims": {

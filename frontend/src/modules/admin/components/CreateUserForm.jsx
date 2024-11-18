@@ -12,7 +12,7 @@ const roles = [
     { value: "juez", label: "Juez" },
 ];
 
-export const CreateUserForm = ({ closeModal }) => {
+export const CreateUserForm = ({ closeModal, refetch }) => {
 
     const {
         register,
@@ -37,6 +37,9 @@ export const CreateUserForm = ({ closeModal }) => {
     password.current = watch("password", "");
 
     const onSubmit = async (data) => {
+        console.log("Data:", data);
+
+
         // Create the user object based on the provided structure
         const userData = {
             userId: data.idNumber,
@@ -81,6 +84,7 @@ export const CreateUserForm = ({ closeModal }) => {
             showSuccessAlert('Usuario creado exitosamente', 'El usuario ha sido registrado correctamente.');
             // Navigate to the users page
             reset();
+            refetch();
             closeModal();
             // Handle successful response (e.g., show a success message, redirect, etc.)
         } catch (error) {

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using DataAccess.Models;
+using BusinessLogic.FileUploadService;
 
 namespace API.Controllers
 {
@@ -13,11 +14,13 @@ namespace API.Controllers
     {
         private readonly AppDbContext _context;
         private readonly ClaimService _claimService;
+        private readonly IFileUploadService _fileUploadService;
 
-        public ClaimController(AppDbContext context, ClaimService claimService)
+        public ClaimController(AppDbContext context, ClaimService claimService, IFileUploadService fileUploadService)
         {
             _context = context;
             _claimService = claimService;
+            _fileUploadService = fileUploadService;
         }
 
         // GET: api/<ClaimController>
@@ -51,15 +54,15 @@ namespace API.Controllers
 
         // POST api/<ClaimController>
         [HttpPost]
-        public async Task<IActionResult> CreateClaim([FromBody] CreateClaimDTO createClaimDTO)
+        public async Task<IActionResult> CreateClaim([FromForm] string ticketId, [FromForm] string status, [FromForm] IFormFile claimDocument)
         {
-            if (!ModelState.IsValid)
+            if (claimDocument == null || claimDocument.Length == 0)
             {
-                return BadRequest(ModelState);
+                return BadRequest("Debe proporcionar un archivo PDF.");
             }
 
             // Verificar si el tiquete existe
-            var ticketExists = await _context.Tickets.AnyAsync(t => t.Id == createClaimDTO.TicketId);
+            var ticketExists = await _context.Tickets.AnyAsync(t => t.Id == ticketId);
             if (!ticketExists)
             {
                 return NotFound("Tiquete no encontrado.");
@@ -74,17 +77,30 @@ namespace API.Controllers
 
             var judge = judgeResult;
 
+            // Ruta destino para guardar el archivo
+            var destinationPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "claims");
+
+            // Usar el servicio para subir el archivo y obtener la URL pública
+            string filePath;
+            try
+            {
+                filePath = await _fileUploadService.UploadFileAsync(claimDocument, destinationPath, Request);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
             // Crear el reclamo
             var claim = new Claim
             {
-                ClaimId = createClaimDTO.ClaimId,
-                ClaimDocument = createClaimDTO.ClaimDocument,
-                Status = createClaimDTO.Status,
+                ClaimId = "claim" + Guid.NewGuid().ToString(),
+                ClaimDocument = filePath, // Guardar la URL pública generada
+                Status = status,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
-                JudgeId = judge.UserId, // Asignar el ID del juez
-                TicketId = createClaimDTO.TicketId
+                JudgeId = judge.UserId,
+                TicketId = ticketId
             };
 
             // Guardar el reclamo en la base de datos
@@ -93,6 +109,9 @@ namespace API.Controllers
 
             return CreatedAtAction("GetClaim", new { id = claim.ClaimId }, claim);
         }
+
+
+
 
         // PUT api/<ClaimController>/5
         [HttpPut("{id}")]
@@ -106,7 +125,6 @@ namespace API.Controllers
 
             // Actualizar propiedades del reclamo
             claim.Status = updateClaimDTO.Status;
-            claim.ClaimDocument = updateClaimDTO.ClaimDocument;
             claim.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -135,8 +153,6 @@ namespace API.Controllers
 
     public class CreateClaimDTO
     {
-        [Required]
-        public string ClaimId { get; set; }
 
         [Required]
         public string ClaimDocument { get; set; }
@@ -152,7 +168,6 @@ namespace API.Controllers
     public class UpdateClaimDTO
     {
         public string Status { get; set; }
-        public string ClaimDocument { get; set; }
     }
 
 }

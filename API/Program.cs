@@ -9,6 +9,7 @@ using BusinessLogic.AuthService;
 using System.Net.WebSockets;
 using BusinessLogic.ClaimService;
 using System.Text.Json.Serialization;
+using BusinessLogic.FileUploadService;
 
 
 
@@ -53,6 +54,9 @@ namespace API
             // Registra AuthService
             builder.Services.AddTransient<AuthService>();
 
+            // Registra FileUploadService
+            builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+            
             // Registra PaymentService
             builder.Services.AddScoped<PaymentService>();
 
@@ -133,6 +137,8 @@ namespace API
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseStaticFiles(); // Habilita la carpeta wwwroot como recurso público
 
             // Habilitar WebSockets
             app.UseWebSockets();

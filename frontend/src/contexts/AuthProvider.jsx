@@ -35,6 +35,15 @@ export const AuthProvider = memo(({ children }) => {
         }
     };
 
+    const fetchUser = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/UserDTO/details`);
+            setUser(response.data);
+        } catch (error) {
+            console.error("Failed to fetch user:", error);
+        }
+    };
+
     // Update Axios authorization headers whenever the token changes
     useEffect(() => {
         if (token) {
@@ -46,11 +55,7 @@ export const AuthProvider = memo(({ children }) => {
 
         // Simulate setting the user based on the current token
         if (token) {
-            axios.get(`${API_URL}/UserDTO/details`).then(response => {
-                setUser(response.data);
-            }).catch(error => {
-                console.error("Failed to set user:", error);
-            });
+            fetchUser();
         }
 
     }, [token]);
@@ -65,9 +70,10 @@ export const AuthProvider = memo(({ children }) => {
             token,
             setToken,
             user: userWithPermissions, // Provide the user with permissions
-            setUser
+            setUser,
+            fetchUser,
         }),
-        [token, userWithPermissions]
+        [token, userWithPermissions, fetchUser]
     );
 
     return (

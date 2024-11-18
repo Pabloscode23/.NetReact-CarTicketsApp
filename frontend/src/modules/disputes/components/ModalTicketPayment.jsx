@@ -18,12 +18,34 @@ export const ModalTicketPayment = ({ onClose, ticket, isClaimed, refetchTickets,
         setSelectedFile(file);
     };
 
-    const handleFileUpload = async () => {
+    const createClaim = async () => {
         if (!selectedFile) {
-            showErrorAlert('Por favor, selecciona un archivo antes de aplicar.');
+            showErrorAlert('Debe seleccionar un archivo.');
             return;
         }
 
+        const formData = new FormData();
+        formData.append('claimDocument', selectedFile);
+        formData.append('ticketId', ticket.id);
+        formData.append('status', 'Pendiente');
+
+        try {
+            const res = await axios.post(`${API_URL}/Claim`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+
+            if (res.status === 201) {
+                updateTicketState();
+                showSuccessAlert('Reclamo creado exitosamente');
+                onClose(true);
+            }
+        } catch (error) {
+            console.error('Error al crear el reclamo:', error);
+            showErrorAlert('Error al crear el reclamo');
+        }
+    };
+
+    const updateTicketState = async () => {
         try {
             // Realizar la actualización del ticket en el backend
             await axios.put(`${API_URL}/TicketDTO/${ticket.id}/status`, { status: "En disputa" }, {
@@ -39,11 +61,19 @@ export const ModalTicketPayment = ({ onClose, ticket, isClaimed, refetchTickets,
 
             refetchTickets();  // Refrescar los tickets desde el backend
             setFileUploaded(true);  // Indicar que el archivo se subió exitosamente
-            showSuccessAlert("Reclamo realizado con éxito");
-            onClose(true); // Cerrar el modal después de aplicar cambios
         } catch (error) {
             console.error("Error actualizando el ticket:", error);
         }
+    };
+
+    const handleFileUpload = async () => {
+        if (!selectedFile) {
+            showErrorAlert('Por favor, selecciona un archivo antes de aplicar.');
+            return;
+        }
+
+        createClaim();
+
     };
 
     const handleCloseWithoutApplying = () => {
