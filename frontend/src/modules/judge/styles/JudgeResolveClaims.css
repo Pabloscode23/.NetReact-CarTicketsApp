@@ -1,0 +1,66 @@
+.ticket-table{
+    width: 80%;
+  } 
+
+.ticket-table tr .button-cell{
+  text-align: right;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+  .btn-view{
+    height: 35px;
+    width: 150px;
+    padding: 5px 10px;
+    background-color:rgb(51,117,105);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 200ms ease-in-out;
+  }
+  .aceptar{
+    height: 35px;
+    width: 100px;
+    padding: 5px 10px;
+    background-color:rgb(51,117,105);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 200ms ease-in-out;
+  }
+  .denegar-btn{
+    height: 35px;
+    width: 100px;
+    padding: 5px 10px;
+    background-color:rgb(51,117,105);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 200ms ease-in-out;
+  }
+  .ticket-table tr .ver-documento{
+    text-align: right;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+  }
+  .ticket-table tr .aceptar{
+    text-align: right;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+  }
+  .ticket-table tr .deneg{
+    text-align: right;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+  }
