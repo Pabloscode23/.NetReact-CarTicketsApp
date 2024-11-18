@@ -8,12 +8,12 @@ namespace BusinessLogic.FileUploadService
 {
     public interface IFileUploadService
     {
-        Task<string> UploadFileAsync(IFormFile file, string destinationPath, HttpRequest request);
+        Task<string> UploadFileAsync(IFormFile file, string destinationPath, string folderName, HttpRequest request);
     }
 
     public class FileUploadService : IFileUploadService
     {
-        public async Task<string> UploadFileAsync(IFormFile file, string destinationPath, HttpRequest request)
+        public async Task<string> UploadFileAsync(IFormFile file, string destinationPath, string folderName, HttpRequest request)
         {
             if (file == null || file.Length == 0)
             {
@@ -43,7 +43,7 @@ namespace BusinessLogic.FileUploadService
 
             // Construir la URL pública
             var baseUrl = UriHelper.BuildAbsolute(request.Scheme, request.Host); // "http://localhost:5000"
-            var publicUrl = $"{baseUrl}/claims/{fileName}";
+            var publicUrl = $"{baseUrl}/${folderName}/{fileName}";
 
             return publicUrl;
         }
