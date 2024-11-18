@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DTO;
+using DataAccess.Models;
 //using DataAccess.EF;
 
 namespace API.Controllers
@@ -25,21 +26,38 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RoleDTO>>> GetRoles()
         {
-            return await _context.Roles.ToListAsync();
+            var roles = await _context.Roles.ToListAsync();
+
+            var roleDTOs = roles.Select(r => new RoleDTO
+            {
+                RoleId = r.RoleId,
+                RoleDescription = r.RoleDescription,
+                RoleName = r.RoleName
+            }).ToList();
+
+
+            return roleDTOs;
         }
 
         // GET: api/RoleDTO/5
         [HttpGet("{id}")]
         public async Task<ActionResult<RoleDTO>> GetRoleDTO(string id)
         {
-            var roleDTO = await _context.Roles.FindAsync(id);
+            var role = await _context.Roles.FindAsync(id);
 
-            if (roleDTO == null)
+            if (role == null)
             {
                 return NotFound();
             }
 
-            return roleDTO;
+            var newRole = new RoleDTO
+            {
+                RoleId = role.RoleId,
+                RoleDescription = role.RoleDescription,
+                RoleName = role.RoleName
+            };
+
+            return newRole;
         }
 
         // PUT: api/RoleDTO/5
@@ -78,7 +96,14 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<RoleDTO>> PostRoleDTO(RoleDTO roleDTO)
         {
-            _context.Roles.Add(roleDTO);
+            var newRole = new Role
+            {
+                RoleId = roleDTO.RoleId,
+                RoleDescription = roleDTO.RoleDescription,
+                RoleName = roleDTO.RoleName
+            };
+
+            _context.Roles.Add(newRole);
             try
             {
                 await _context.SaveChangesAsync();

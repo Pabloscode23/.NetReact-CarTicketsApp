@@ -1,52 +1,52 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../styles/JudgeResolveClaims.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import "../../../modules/tickets/styles/AllUserTickets.css";
+import { useAuth } from '../../../hooks';
+import { API_URL } from '../../../constants/Api';
+import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 
-const reclamos = [
-  { id: 1234, date: '28/10/2024', reason: 'Exceso de velocidad', status: "Pendiente", documentUrl: '/documents/doc1234.pdf' },
-  { id: 5678, date: '20/09/2024', reason: 'Manejo sin uso del cinturón de seguridad', status: "Pendiente", documentUrl: '/documents/doc5678.pdf' },
-  { id: 4658, date: '19/02/2024', reason: 'Exceso velocidad', status: "Pendiente", documentUrl: '/documents/doc4658.pdf' },
-  { id: 3456, date: '15/06/2024', reason: 'Manejo sin uso del cinturón de seguridad', status: "Pendiente", documentUrl: '/documents/doc3456.pdf' },
-  { id: 4823, date: '29/05/2024', reason: 'Exceso velocidad', status: "Pendiente", documentUrl: '/documents/doc4823.pdf' },
-];
+
 
 export const JudgeResolveClaims = () => {
-  const [claims,setClaims]=useState(reclamos)
-  const [filteredClaims,setFilteredClaims]=useState(reclamos)
+  const { user, fetchUser: refetch } = useAuth();
+  const [claims, setClaims] = useState(null);
+  const [filteredClaims, setFilteredClaims] = useState(null);
 
-  // Función para manejar la descarga de documentos
-  const handleViewDocuments = (documentUrl) => {
-    const link = document.createElement('a');
-    link.href = documentUrl;
-    link.download = `documento.pdf`; // Nombre del archivo al descargar
-    link.click();
-    alert(`Descargando documento: ${documentUrl}`);
-  };
 
   //Para aceptar un reclamo
-  const handleAccept = async (id) => {
+  const handleAccept = async (id, ticketId) => {
     try {
-      await axios.post(`/api/claims/${id}/accept`);
-      alert(`Reclamo aceptado.`);
+      await axios.put(`${API_URL}/Claim/${id}`, { status: 'Con Lugar' });
+      await axios.put(`${API_URL}/TicketDTO/${ticketId}/status`, { status: 'Absuelta' });
+      showSuccessAlert('Reclamo aceptado exitosamente');
+      refetch();
     } catch (error) {
       console.error(error);
-      alert(`Error al aceptar el reclamo con ID ${id}`);
+      showErrorAlert(`Error al aceptar el reclamo con ID ${id}`);
     }
   };
 
   // Para denegar un reclamo
-  const handleDeny = async (id) => {
+  const handleDeny = async (id, ticketId) => {
     try {
-      await axios.post(`/api/claims/${id}/deny`);
-      alert(`Reclamo con ID ${id} denegado.`);
+      await axios.put(`${API_URL}/Claim/${id}`, { status: 'Sin Lugar' });
+      await axios.put(`${API_URL}/TicketDTO/${ticketId}/status`, { status: 'Pendiente' });
+      showSuccessAlert('Reclamo denegado exitosamente');
+      refetch();
     } catch (error) {
       console.error(error);
-      alert(`Error al denegar el reclamo con ID ${id}`);
+      showErrorAlert(`Error al denegar el reclamo con ID ${id}`);
     }
   };
+
+  useEffect(() => {
+    setClaims(user.claims);
+    setFilteredClaims(user.claims);
+
+  }, [user.claims]);
 
   return (
     <div className="container__tickets">
@@ -55,71 +55,79 @@ export const JudgeResolveClaims = () => {
       <div className="search__container">
         <FontAwesomeIcon icon={faMagnifyingGlass} className="search__icon" />
         <input
-        onInput={(e)=>{ 
-          if (e.target.value == "") {
-            setFilteredClaims(claims)
-          } else{
-            const filtered=claims.filter((c)=>c.id==e.target.value)
-            setFilteredClaims(filtered)
-          }
-        }}
+          onInput={(e) => {
+            if (e.target.value == "") {
+              setFilteredClaims(claims)
+            } else {
+              const filtered = claims.filter((c) => c.id == e.target.value)
+              setFilteredClaims(filtered)
+            }
+          }}
           type="text"
           placeholder="Buscar reclamo"
           className="search__ticket"
         />
       </div>
-      <table className="ticket-table">
-        <thead>
-          <tr className='table__head'>
-            <th>ID multa</th>
-            <th>Fecha</th>
-            <th>Razón de multa</th>
-            <th>Estado</th>
-            <th>Documentos asociados</th>
-            <th>Acción</th>
-            <th></th>
+      {
+        !filteredClaims || filteredClaims.length === 0 ? <div className='table__empty'>No hay multas disponibles.</div> : <table className="ticket-table">
+          <thead>
+            <tr className='table__head'>
+              <th>ID multa</th>
+              <th>Fecha</th>
+              <th>Razón de multa</th>
+              <th>Estado</th>
+              <th>Documentos</th>
+              <th colSpan={2}>Acción</th>
 
-          </tr>
-        </thead>
-        <tbody className='table__children'>
-          {filteredClaims.map((claim) => (
-            <tr key={claim.id}>
-              <td>{claim.id}</td>
-              <td>{claim.date}</td>
-              <td>{claim.reason}</td>
-              <td>{claim.status}</td>
-              <td>
-                <div className='ver-documento'><button
-                  onClick={() => handleViewDocuments(claim.documentUrl)}
-                  className="btn-view"
-                >
-                  Ver Documentos
-                </button>  </div>
-              </td>
-              <td>
-                <div className='aceptar'>
-                <button
-                  onClick={() => handleAccept(claim.id)}
-                  className="aceptar"
-                >
-                  Aceptar
-                </button>
-                </div>
-              </td>
-              <td>
-                <div className='denegar'>
-                <button
-                  onClick={() => handleDeny(claim.id)}
-                  className="denegar-btn "
-                >
-                  Denegar
-                </button>
-                </div>
-              </td>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className='table__children'>
+            {filteredClaims.map((claim) => (
+              <tr key={claim.claimId}>
+                <td>{claim.ticketId}</td>
+                <td>{claim.createdAt}</td>
+                <td>{claim.ticket.description}</td>
+                <td>{claim.status}</td>
+                <td>
+                  <div className='ver-documento'>
+                    <button className="btn-view">
+                      <a
+                        href={claim.claimDocument}
+                        download={`Reclamo-${claim.claimId}.pdf`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Ver
+                      </a>
+                    </button>
+                  </div>
+
+                </td>
+                <td>
+                  <div className='aceptar'>
+                    <button
+                      onClick={() => handleAccept(claim.claimId, claim.ticketId)}
+                      className="aceptar"
+                    >
+                      Aceptar
+                    </button>
+                  </div>
+                </td>
+                <td>
+                  <div className='denegar'>
+                    <button
+                      onClick={() => handleDeny(claim.claimId, claim.ticketId)}
+                      className="denegar-btn "
+                    >
+                      Denegar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      }
     </div>
   );
 };

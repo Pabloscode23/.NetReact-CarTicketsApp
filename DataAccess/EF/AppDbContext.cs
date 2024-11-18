@@ -1,14 +1,14 @@
 ﻿using DataAccess.Models;  // Para la entidad Payment
-using DTO;                // Para el DTO PaymentDTO
+          // Para el DTO PaymentDTO
 using Microsoft.EntityFrameworkCore;
 
 public class AppDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
-    public DbSet<RoleDTO> Roles { get; set; }
+    public DbSet<Role> Roles { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<Payment> Payments { get; set; } // Aquí es donde se mapea la entidad Payment
-    public DbSet<ClaimDTO> Claims { get; set; }
+    public DbSet<Claim> Claims { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -30,8 +30,16 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(p => p.TicketId);
 
-        modelBuilder.Entity<UserDTO>()
-            .HasMany(p => p.Claims);
+        modelBuilder.Entity<Claim>()
+            .HasOne(c => c.Ticket)
+            .WithOne(t => t.Claim)
+            .HasForeignKey<Claim>(c => c.TicketId)
+            .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<Claim>()
+            .HasOne(c => c.Judge)
+            .WithMany(u => u.ClaimsAsJudge)
+            .HasForeignKey(c => c.JudgeId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

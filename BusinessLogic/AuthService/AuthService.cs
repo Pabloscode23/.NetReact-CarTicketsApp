@@ -142,9 +142,9 @@ namespace BusinessLogic.AuthService
 
             var claims = new[]
             {
-            new Claim(JwtRegisteredClaimNames.Sub, user.IdNumber.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new System.Security.Claims.Claim(JwtRegisteredClaimNames.Sub, user.IdNumber.ToString()),
+            new System.Security.Claims.Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new System.Security.Claims.Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
             var token = new JwtSecurityToken(

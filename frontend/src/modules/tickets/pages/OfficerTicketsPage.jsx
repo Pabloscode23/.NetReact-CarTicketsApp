@@ -5,14 +5,12 @@ import { EditTicketModal } from '../../../modules/disputes/components/EditTicket
 import '../styles/AllUserTickets.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { useAuth } from '../../../hooks';
 import { API_URL } from '../../../constants/Api';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
 import { showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 import { TicketsContext } from '../context/TicketsContext';
 
 export const OfficerTicketsPage = () => {
-    const { user } = useAuth();
     const { tickets, setTickets, refetchTickets } = useContext(TicketsContext);
     const [filteredTickets, setFilteredTickets] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");

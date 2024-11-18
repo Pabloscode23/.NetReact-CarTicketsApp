@@ -7,6 +7,9 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using BusinessLogic.AuthService;
 using System.Net.WebSockets;
+using BusinessLogic.ClaimService;
+using System.Text.Json.Serialization;
+using BusinessLogic.FileUploadService;
 
 
 
@@ -35,6 +38,7 @@ namespace API
             builder.Services.AddTransient<NotificationService>();
 
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<ClaimService>(); 
 
             // Configura JwtSettings desde appsettings.json
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
@@ -43,9 +47,16 @@ namespace API
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
 
+            builder.Services.AddControllers().AddJsonOptions(x =>
+            x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
+
             // Registra AuthService
             builder.Services.AddTransient<AuthService>();
 
+            // Registra FileUploadService
+            builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+            
             // Registra PaymentService
             builder.Services.AddScoped<PaymentService>();
 
@@ -126,6 +137,8 @@ namespace API
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseStaticFiles(); // Habilita la carpeta wwwroot como recurso público
 
             // Habilitar WebSockets
             app.UseWebSockets();

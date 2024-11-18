@@ -1,4 +1,6 @@
 ﻿
+using System.Security.Claims;
+
 namespace DataAccess.Models 
 {
     public class User
@@ -12,5 +14,8 @@ namespace DataAccess.Models
         public string PhoneNumber { get; set; }
         public string Role { get; set; }
         public string ProfilePicture { get; set; }
+
+        // Relación de uno a muchos con Claims
+        public ICollection<Claim> ClaimsAsJudge { get; set; }
     }
 }

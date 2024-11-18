@@ -34,7 +34,7 @@ export const TicketUser = ({ id, date, reason, amount, status, onReclamar, isCla
 };
 
 TicketUser.propTypes = {
-    id: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
     reason: PropTypes.string.isRequired,
     amount: PropTypes.string.isRequired,

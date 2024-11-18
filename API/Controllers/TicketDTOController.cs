@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DTO;
+using DataAccess.Models;
 
 namespace API.Controllers
 {
@@ -22,14 +23,30 @@ namespace API.Controllers
 
         // GET: api/TicketDTO
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets()
+        public async Task<ActionResult<List<TicketDTO>>> GetTickets()
         {
-            return await _context.Tickets.ToListAsync();
+            var tickets = await _context.Tickets.ToListAsync();
+
+            // Mapeo manual de Ticket a TicketDTO
+            var ticketDTOs = tickets.Select(t => new TicketDTO
+            {
+                Id = t.Id,
+                UserId = t.UserId,
+                Latitude = t.Latitude,
+                Longitude = t.Longitude,
+                Description = t.Description,
+                Amount = t.Amount,
+                Date = t.Date,
+                Status = t.Status,
+                OfficerId = t.OfficerId
+            }).ToList();
+
+            return Ok(ticketDTOs);
         }
 
         // GET: api/TicketDTO/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Ticket>> GetTicket(string id)
+        public async Task<ActionResult<TicketDTO>> GetTicket(string id)
         {
             var ticket = await _context.Tickets.FindAsync(id);
 
@@ -38,7 +55,20 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            return ticket;
+            var ticketDTO = new TicketDTO
+            {
+                Id = ticket.Id,
+                UserId = ticket.UserId,
+                Latitude = ticket.Latitude,
+                Longitude = ticket.Longitude,
+                Description = ticket.Description,
+                Amount = ticket.Amount,
+                Date = ticket.Date,
+                Status = ticket.Status,
+                OfficerId = ticket.OfficerId
+            };
+
+            return ticketDTO;
         }
 
         // PUT: api/TicketDTO/{id}/status
@@ -135,9 +165,23 @@ namespace API.Controllers
 
         // POST: api/TicketDTO
         [HttpPost]
-        public async Task<ActionResult<Ticket>> PostTicket(Ticket ticket)
+        public async Task<ActionResult<CreateTicketDTO>> PostTicket(CreateTicketDTO ticket)
         {
-            _context.Tickets.Add(ticket);
+
+            var ticketDTO = new Ticket
+            {
+                Id = ticket.Id,
+                UserId = ticket.UserId,
+                Latitude = ticket.Latitude,
+                Longitude = ticket.Longitude,
+                Description = ticket.Description,
+                Amount = ticket.Amount,
+                Date = ticket.Date,
+                Status = ticket.Status,
+                OfficerId = ticket.OfficerId
+            };
+
+            _context.Tickets.Add(ticketDTO);
             try
             {
                 await _context.SaveChangesAsync();
@@ -177,5 +221,20 @@ namespace API.Controllers
         {
             return _context.Tickets.Any(e => e.Id == id);
         }
+    }
+
+
+    public class CreateTicketDTO
+    {
+        public string Id { get; set; }
+        public string UserId { get; set; }
+        public DateTime Date { get; set; }
+        public Double Latitude { get; set; }
+        public Double Longitude { get; set; }
+        public string Description { get; set; }
+        public string Status { get; set; }
+        public string OfficerId { get; set; }
+        public double Amount { get; set; }
+
     }
 }

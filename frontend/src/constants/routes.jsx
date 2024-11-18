@@ -1,6 +1,5 @@
 import { HomePublic } from "../modules/public/pages/HomePublicPage"
 import { MainLayout } from "../layouts"
-import { AuthLayout } from "../layouts/AuthLayout"
 import { AdminRoutes } from "../modules/admin/routes/"
 import { LoginPage } from "../modules/auth/pages"
 import { TicketsRoutes } from "../modules/tickets/routes/"
@@ -15,11 +14,8 @@ import { UserClaimsPage } from "../modules/disputes/pages/UserClaimsPage"
 import { RegistUpdateFinalUser } from "../modules/public/pages/RegistUpdateFinalUserPage"
 import { ChangePasswordPage } from "../modules/auth/pages/ChangePasswordPage";
 import UploadImagePage from "../modules/tickets/pages/UploadImagePage";
-import { AuthProvider } from "../contexts"
 
 import { TicketsProvider } from "../modules/tickets/context/TicketsProvider"
-
-import { TicketsContext } from "../modules/tickets/context/TicketsContext"
 import { JudgeResolveClaimsPage } from "../modules/judge/pages/JudgeResolveClaimsPage"
 
 // Rutas publicas
@@ -66,7 +62,7 @@ export const routesForAuthenticatedOnly = [
             },
             {
                 path: "/juez-reclamos",
-                element: <JudgeResolveClaimsPage/>
+                element: <JudgeResolveClaimsPage />
             },
             {
                 path: "/gestion/*",
@@ -92,7 +88,7 @@ export const routesForAuthenticatedOnly = [
                 path: "/imagen",
                 element: <UploadImagePage />
             }
-           
+
         ]
     }
 ]

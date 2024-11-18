@@ -3,7 +3,6 @@ import { PropTypes } from 'prop-types';
 
 
 export const DesktopNav = ({ ByteDevLogo, navItems, user, logout }) => {
-    console.log(user);
 
     return (
         <nav className="navbar navbar-desktop">

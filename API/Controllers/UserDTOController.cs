@@ -29,34 +29,108 @@ namespace API.Controllers
             _configuration = configuration;
         }
 
+
         // GET: api/UserDTO
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .Include(u => u.ClaimsAsJudge) // Suponiendo que haya una relación Claims con el usuario
+                .ToListAsync();
+
+            // Mapeamos los usuarios a un DTO para no exponer directamente el modelo de la base de datos
+            var userDtos = users.Select(u => new UserDTO
+            {
+                UserId = u.UserId,
+                IdNumber = u.IdNumber,
+                Name = u.Name,
+                Email = u.Email,
+                Role = u.Role,
+                Password = u.Password,
+                ProfilePicture = u.ProfilePicture,
+                PhoneNumber = u.PhoneNumber,
+                Claims = u.ClaimsAsJudge.Select(c => new ClaimDTO
+                {
+                    ClaimId = c.ClaimId,
+                    ClaimDocument = c.ClaimDocument,
+                    Status = c.Status,
+                    CreatedAt = c.CreatedAt,
+                    UpdatedAt = c.UpdatedAt,
+                    TicketId = c.TicketId,
+                }).ToList()
+                .ToList()
+            }).ToList();
+
+            return Ok(userDtos);
         }
+
 
         // GET: api/UserDTO/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(string id)
+        public async Task<ActionResult<UserDTO>> GetUser(string id)
         {
-            var user = await _context.Users.FindAsync(id);
+            // Buscar al usuario por ID
+            var u = await _context.Users
+                .Include(u => u.ClaimsAsJudge) // Incluir la navegación para evitar lazy loading
+                .FirstOrDefaultAsync(u => u.UserId == id);
 
-            if (user == null)
+            if (u == null)
             {
                 return NotFound();
             }
 
-            return user;
+            // Construir el objeto UserDTO
+            var userDTO = new UserDTO
+            {
+                UserId = u.UserId,
+                IdNumber = u.IdNumber,
+                Name = u.Name,
+                Email = u.Email,
+                Role = u.Role,
+                Password = u.Password,
+                ProfilePicture = u.ProfilePicture,
+                PhoneNumber = u.PhoneNumber,
+                Claims = u.ClaimsAsJudge?
+                    .Select(c => new ClaimDTO
+                    {
+                        ClaimId = c.ClaimId,
+                        ClaimDocument = c.ClaimDocument,
+                        Status = c.Status,
+                        CreatedAt = c.CreatedAt,
+                        UpdatedAt = c.UpdatedAt,
+                        TicketId = c.TicketId,
+                    })
+                    .ToList() 
+            };
+
+            return userDTO;
         }
+
 
         // PUT: api/UserDTO/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(string id, User user)
+        public async Task<IActionResult> PutUser(string id, UpdateUserDTO userDto)
         {
-            if (id != user.UserId)
+            if (id != userDto.UserId)
             {
-                return BadRequest();
+                return BadRequest(new { message = "El ID en la URL no coincide con el ID del cuerpo de la solicitud." });
+            }
+
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound(new { message = "Usuario no encontrado." });
+            }
+
+            user.Name = userDto.Name;
+            user.Email = userDto.Email;
+            user.IdNumber = userDto.IdNumber;
+            user.PhoneNumber = userDto.PhoneNumber;
+            user.ProfilePicture = userDto.ProfilePicture;
+
+            if (!string.IsNullOrEmpty(userDto.Password))
+            {
+                user.Password = userDto.Password;
             }
 
             _context.Entry(user).State = EntityState.Modified;
@@ -69,7 +143,7 @@ namespace API.Controllers
             {
                 if (!UserExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new { message = "Conflicto de concurrencia: Usuario no existe." });
                 }
                 else
                 {
@@ -79,6 +153,12 @@ namespace API.Controllers
 
             return NoContent();
         }
+
+        private string HashPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
+
 
         // PUT: api/UserDTO/ChangePassword/5
         [HttpPut("ChangePassword/{token}")]
@@ -120,16 +200,29 @@ namespace API.Controllers
 
         // POST: api/UserDTO
         [HttpPost]
-        public async Task<ActionResult<object>> PostUser(User user)
+        public async Task<ActionResult<object>> PostUser(CreateUserDTO user)
         {
-            _context.Users.Add(user);
+
+            var newUser = new User
+            {
+                IdNumber = user.IdNumber,
+                Name = user.Name,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Role = user.Role,
+                ProfilePicture = user.ProfilePicture,
+                UserId = user.IdNumber,
+                Password = user.Password
+            };
+
+            _context.Users.Add(newUser);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (UserExists(user.UserId))
+                if (UserExists(newUser.UserId))
                 {
                     return Conflict();
                 }
@@ -223,41 +316,72 @@ namespace API.Controllers
                 ValidIssuer = _configuration["JwtSettings:Issuer"],
                 ValidateAudience = true,
                 ValidAudience = _configuration["JwtSettings:Audience"],
-                ClockSkew = TimeSpan.Zero // Remove delay of token when expired
+                ClockSkew = TimeSpan.Zero
             };
 
             try
             {
+                // Validar el token
                 var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
-                var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Or whichever claim you need
+                var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                // Fetch user information from your database using userId
-                var user = await _context.Users.FindAsync(userId);
-
-                if (user != null)
+                if (string.IsNullOrEmpty(userId))
                 {
-                    return Ok(new
-                    {
-                        user.IdNumber,
-                        user.PhoneNumber,
-                        user.Role,
-                        user.Email,
-                        user.Name,
-                        user.ProfilePicture
-                    });
+                    return Unauthorized("Invalid token: User ID not found.");
                 }
 
-                return NotFound("User not found.");
+                // Cargar al usuario con las relaciones necesarias
+                var user = await _context.Users
+                    .Include(u => u.ClaimsAsJudge) // Incluir la relación de reclamos
+                    .ThenInclude(c => c.Ticket)   // Incluir la relación de tickets
+                    .FirstOrDefaultAsync(u => u.UserId == userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                // Preparar los claims si existen
+                var claims = user.ClaimsAsJudge?
+                    .Select(c => new ClaimDTO
+                    {
+                        ClaimId = c.ClaimId,
+                        ClaimDocument = c.ClaimDocument,
+                        Status = c.Status,
+                        CreatedAt = c.CreatedAt,
+                        UpdatedAt = c.UpdatedAt,
+                        TicketId = c.TicketId,
+                        Ticket = c.Ticket == null ? null : new TicketDTO
+                        {
+                            Description = c.Ticket.Description // Ajusta según los atributos de tu modelo de Ticket
+                        }
+                    })
+                    .ToList();
+
+                // Retornar información del usuario
+                return Ok(new
+                {
+                    user.IdNumber,
+                    user.PhoneNumber,
+                    user.Role,
+                    user.Email,
+                    user.Name,
+                    user.ProfilePicture,
+                    Claims = claims // Devolver la lista de claims
+                });
             }
             catch (SecurityTokenExpiredException)
             {
                 return Unauthorized("Token has expired.");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.Error.WriteLine(ex.Message); // Loguear el error para diagnóstico
                 return Unauthorized("Invalid token.");
             }
         }
+
+
     }
 
     // Create a simple DTO for login requests
@@ -271,4 +395,30 @@ namespace API.Controllers
     {
         public string newPassword { get; set; }
     }
-}
+
+    public class UpdateUserDTO
+    {
+        public string UserId { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string IdNumber { get; set; }
+        public string Password { get; set; }    
+        public string PhoneNumber { get; set; }
+        public string ProfilePicture { get; set; }
+
+    }
+
+        public class CreateUserDTO
+    {
+        public string UserId { get; set; }
+        public string Name { get; set; }
+
+        public string IdNumber { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Role { get; set; }
+        public string ProfilePicture { get; set; }
+
+    }
+ }
