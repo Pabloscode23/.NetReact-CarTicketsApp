@@ -1,23 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
 import '../styles/JudgeResolveClaims.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import axios from 'axios';
-import "../../../modules/tickets/styles/AllUserTickets.css";
 import { useAuth } from '../../../hooks';
 import { API_URL } from '../../../constants/Api';
 import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 
 export const JudgeResolveClaims = () => {
   const { user, fetchUser: refetch } = useAuth();
+
   const [claims, setClaims] = useState([]);
   const [filteredClaims, setFilteredClaims] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(""); // Estado para el valor del input de búsqueda
+  const [searchTerm, setSearchTerm] = useState(""); // Para capturar el texto del input
 
-  // Para aceptar un reclamo
+  // Función para aceptar reclamos
   const handleAccept = async (id, ticketId) => {
     try {
-      await axios.put(`${API_URL}/Claim/${id}`, { status: 'Con Lugar' });
+      await axios.put(`${API_URL}/Claim/${id}`, { status: 'Con lugar' });
       await axios.put(`${API_URL}/TicketDTO/${ticketId}/status`, { status: 'Absuelta' });
       showSuccessAlert('Reclamo aceptado exitosamente');
       refetch();
@@ -30,7 +30,7 @@ export const JudgeResolveClaims = () => {
   // Para denegar un reclamo
   const handleDeny = async (id, ticketId) => {
     try {
-      await axios.put(`${API_URL}/Claim/${id}`, { status: 'Sin Lugar' });
+      await axios.put(`${API_URL}/Claim/${id}`, { status: 'Sin lugar' });
       await axios.put(`${API_URL}/TicketDTO/${ticketId}/status`, { status: 'En firme' });
       showSuccessAlert('Reclamo denegado exitosamente');
       refetch();
@@ -40,99 +40,106 @@ export const JudgeResolveClaims = () => {
     }
   };
 
-  // Filtrado de los reclamos
+  // Cargar los reclamos del usuario
   useEffect(() => {
     setClaims(user.claims);
     setFilteredClaims(user.claims);
   }, [user.claims]);
 
+  // Filtrar reclamos según el texto ingresado en el input
   useEffect(() => {
-    // Filtrado en tiempo real de los reclamos basados en el searchTerm
-    const filtered = claims.filter((ticket) =>
-      ticket.id?.toString()?.includes(searchTerm) ||
-      ticket.date?.includes(searchTerm) ||
-      (ticket.description && ticket.description?.toLowerCase()?.includes(searchTerm.toLowerCase())) ||
-      (ticket.amount !== undefined && ticket.amount?.toString()?.includes(searchTerm)) ||
-      (ticket.status && ticket.status?.toLowerCase()?.includes(searchTerm.toLowerCase()))
+    const filtered = claims.filter((claim) =>
+      claim.ticketId?.toString().includes(searchTerm) || // Filtrar por ID del ticket
+      claim.status?.toLowerCase().includes(searchTerm.toLowerCase()) || // Filtrar por estado
+      claim.ticket?.description?.toLowerCase().includes(searchTerm.toLowerCase()) // Filtrar por descripción
     );
     setFilteredClaims(filtered);
-  }, [searchTerm, claims]); // Actualiza el filtro cada vez que cambian searchTerm o claims
+  }, [searchTerm, claims]);
 
+  const buttonStyle = (disabled) => ({
+    backgroundColor: disabled ? '#6C757D' : '', // Cambia el fondo a gris si está deshabilitado
+    cursor: disabled ? 'not-allowed' : 'pointer', // Cambia el cursor a no permitido si está deshabilitado
+  });
   return (
     <div className="container__tickets">
-      <h1 className='main__ticket-title'>Resolver reclamos</h1>
-      <h2 className='main__ticket-subtitle'>Aquí el juez puede resolver el reclamo y ver el documento del reclamo.</h2>
+      <h1 className="main__ticket-title">Resolver Reclamos</h1>
+      <h2 className="main__ticket-subtitle">
+        Aquí puedes resolver los reclamos y ver los documentos asociados
+      </h2>
+      {/* Input de búsqueda */}
       <div className="search__container">
         <FontAwesomeIcon icon={faMagnifyingGlass} className="search__icon" />
         <input
           type="text"
           placeholder="Buscar reclamo"
           className="search__ticket"
-          value={searchTerm} // Vinculando el input con el estado
-          onChange={(e) => setSearchTerm(e.target.value)} // Actualizando el estado searchTerm
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)} // Actualizar el estado
         />
       </div>
-
-      {
-        !filteredClaims || filteredClaims.length === 0 ?
-          <div className='table__empty'>No hay reclamos disponibles.</div> :
-          <table className="ticket-table">
-            <thead>
-              <tr className='table__head'>
-                <th>ID multa</th>
-                <th>Fecha</th>
-                <th>Razón de multa</th>
-                <th>Estado</th>
-                <th>Documentos</th>
-                <th colSpan={2}>Acción</th>
-              </tr>
-            </thead>
-            <tbody className='table__children'>
-              {filteredClaims.map((claim) => (
-                <tr key={claim.claimId}>
-                  <td>{claim.ticketId}</td>
-                  <td>{claim.createdAt}</td>
-                  <td>{claim.ticket?.description}</td>
-                  <td>{claim.status}</td>
+      {/* Tabla de reclamos */}
+      {filteredClaims.length === 0 ? (
+        <div className="table__empty">No hay reclamos disponibles.</div>
+      ) : (
+        <table className="ticket-table">
+          <thead>
+            <tr className="table__head">
+              <th>ID Multa</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+              <th>Documentos</th>
+              <th colSpan={2}>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredClaims.map((claim) => (
+              <tr key={claim.ticketId}>
+                <td>{claim.ticketId}</td>
+                <td>{claim.ticket?.description}</td>
+                <td>{claim.status}</td>
+                <td>
+                  <a
+                    className='btn-view-judge'
+                    href={claim.claimDocument}
+                    download={`Reclamo-Ticket-${claim.ticketId}.pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Ver
+                  </a>
+                </td>
+                <div className='decision__btns'>
                   <td>
-                    <div className='ver-documento'>
-                      <button className="btn-view">
-                        <a
-                          href={claim.claimDocument}
-                          download={`Reclamo-${claim.claimId}.pdf`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Ver
-                        </a>
-                      </button>
-                    </div>
-                  </td>
-                  <td>
-                    <div className='aceptar'>
+                    <div>
                       <button
+                        className="accept__btn"
                         onClick={() => handleAccept(claim.claimId, claim.ticketId)}
-                        className="aceptar"
+                        disabled={claim.status !== "Pendiente"}
+                        style={buttonStyle(claim.status !== "Pendiente")}
                       >
                         Aceptar
                       </button>
                     </div>
                   </td>
                   <td>
-                    <div className='denegar'>
+                    <div>
                       <button
+                        className="deny__btn"
                         onClick={() => handleDeny(claim.claimId, claim.ticketId)}
-                        className="denegar-btn "
+                        disabled={claim.status !== "Pendiente"} // Deshabilitar si el estado no es "Pendiente"
+                        style={buttonStyle(claim.status !== "Pendiente")}
+
                       >
                         Denegar
                       </button>
                     </div>
                   </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-      }
+                </div>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
