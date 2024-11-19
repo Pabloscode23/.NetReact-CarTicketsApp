@@ -3,20 +3,23 @@ import axios from 'axios';
 import '../styles/UploadImagePage.css';
 import { API_URL } from '../../../constants/Api';
 import { useAuth } from '../../../hooks';
+import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
+import { useNavigate } from 'react-router-dom';
+import { TicketsInfo } from '../../../constants/TicketsInfo';
 
 const UploadImagePage = () => {
     const [image, setImage] = useState(null);
     const [message, setMessage] = useState('');
     const [plateNumber, setPlateNumber] = useState('');
     const [loading, setLoading] = useState(false);
-
-    const {user} = useAuth();
+    const navigate = useNavigate();
+    const { user } = useAuth();
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
     };
 
     const createAutomaticTicket = async () => {
-        
+
         const ticketData = {
             id: `ticket-${Date.now()}`, // ID único generado automáticamente
             userId: "123456789", // ID del usuario (fijo en este caso)
@@ -26,18 +29,21 @@ const UploadImagePage = () => {
             description: "Exceso de velocidad", // Motivo de la multa
             status: "Pendiente", // Estado inicial
             officerId: user.idNumber, // ID del oficial (fijo en este caso)
-            amount: 68000.0, // Monto fijo de la multa
+            amount: 68000, // Monto fijo de la multa
         };
 
         try {
             const response = await axios.post(`${API_URL}/TicketDTO`, ticketData, {
                 headers: { 'Content-Type': 'application/json' },
             });
-            setMessage('Multa creada automáticamente por exceso de velocidad.');
+            showSuccessAlert('Multa creada automáticamente por exceso de velocidad.');
+            setTimeout(() => {
+                navigate('/', { replace: true });
+            }, 5000);
             console.log('Multa creada:', response.data);
         } catch (error) {
             console.error('Error al crear la multa:', error.response?.data || error.message);
-            setMessage('Error al crear la multa automáticamente.');
+            showErrorAlert('Error al crear la multa automáticamente.');
         }
     };
 
@@ -64,7 +70,6 @@ const UploadImagePage = () => {
 
             const detectedText = response.data.text; // Asume que devuelve `{ text: "ABC123" }`
             setPlateNumber(detectedText);
-            setMessage('Placa detectada correctamente.');
 
             // Crear automáticamente la multa (independientemente de la placa)
             await createAutomaticTicket();

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { PaymentModal } from './PaymentModal';
 
-export const TicketUser = ({ id, date, reason, amount, status, onReclamar, isClaimed, isPayed }) => {
+export const ClaimsOfficer = ({ id, date, reason, amount, status, onReclamar, isClaimed, isPayed }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleOpenModal = () => setIsModalOpen(true);
@@ -26,23 +26,6 @@ export const TicketUser = ({ id, date, reason, amount, status, onReclamar, isCla
                 <td>{reason}</td>
                 <td>{amount}</td>
                 <td>{status}</td>
-                <td className='table__buttons'>
-                    <button
-                        onClick={onReclamar}
-                        disabled={isClaimed || status !== "Pendiente"}
-                        style={buttonStyle(isClaimed || status !== "Pendiente")}
-                    >
-                        Reclamar
-                    </button>
-                    <button
-                        id={id}
-                        disabled={isPayed || status === "Absuelta" || status === "Pagada" || status === "En disputa"}
-                        onClick={handleOpenModal}
-                        style={buttonStyle(isPayed || status === "Absuelta" || status === "Pagada" || status === "En disputa")}
-                    >
-                        Pagar
-                    </button>
-                </td>
             </tr>
             {isModalOpen && (
                 <PaymentModal id={id} onClose={handleCloseModal} onSelectPayment={handleSelectPayment} />
@@ -51,7 +34,7 @@ export const TicketUser = ({ id, date, reason, amount, status, onReclamar, isCla
     );
 };
 
-TicketUser.propTypes = {
+ClaimsOfficer.propTypes = {
     id: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
     reason: PropTypes.string.isRequired,

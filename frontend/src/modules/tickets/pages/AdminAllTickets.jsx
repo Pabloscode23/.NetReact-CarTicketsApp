@@ -16,6 +16,7 @@ import { showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 export const AdminAllTickets = () => {
     const { user } = useAuth();
     const { tickets, setTickets, refetchTickets } = useContext(TicketsContext);
+    const [userTickets, setUserTickets] = useState([]);
 
     const [filteredTickets, setFilteredTickets] = useState([]);
     const [isFiltered, setIsFiltered] = useState(false);
@@ -25,14 +26,21 @@ export const AdminAllTickets = () => {
     const searchInputRef = useRef(null);
 
     // Función para formatear los tickets
-    // Función para formatear los tickets
     const formatUserTicket = (tickets) => {
         console.log("Tickets originales:", tickets);
         return tickets.map(ticket => {
-            const amount = TicketsInfo[ticket.description] !== undefined ? TicketsInfo[ticket.description] : ticket.amount;
-            return { ...ticket, amount };
+            return { ...ticket };
         });
     };
+
+    useEffect(() => {
+        if (tickets.length > 0) {
+            setUserTickets(formatUserTicket(tickets));
+        } else {
+            console.log("No hay tickets");
+
+        }
+    }, [tickets]);
 
     // Función para filtrar tickets
     const filterTickets = (searchTerm) => {

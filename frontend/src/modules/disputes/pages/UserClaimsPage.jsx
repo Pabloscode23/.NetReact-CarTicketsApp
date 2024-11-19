@@ -19,7 +19,7 @@ export const UserClaimsPage = () => {
                 const response = await axios.get(`${API_URL}/TicketDTO`);
 
                 const claims = response.data
-                    .filter(claim => claim.userId === user.idNumber && claim.status !== "Pendiente") // Use strict equality
+                    .filter(claim => claim.userId === user.idNumber && (claim.status !== "Pendiente" && claim.status !== "Pagada"))
                     .map(claim => {
                         console.log("Ticket Description:", claim.description);
 

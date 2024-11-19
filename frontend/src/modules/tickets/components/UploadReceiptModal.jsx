@@ -20,13 +20,13 @@ export const UploadReceiptModal = ({ onClose, id }) => {
             setFile(selectedFile); // Establecer el archivo si es válido
         } else {
             setFile(null); // Restablecer el archivo si no es válido
-            alert("Por favor, seleccione un archivo PDF.");
+            showErrorAlert("Por favor, seleccione un archivo PDF.");
         }
     };
 
     const handleUpload = async () => {
         if (!file) {
-            alert("Por favor, seleccione un archivo PDF");
+            showErrorAlert("Por favor, seleccione un archivo PDF");
             return;
         }
 

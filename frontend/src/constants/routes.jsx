@@ -58,7 +58,7 @@ export const routesForAuthenticatedOnly = [
             },
             {
                 path: "/multas/*",
-                element: <TicketsRoutes />
+                element: <TicketsProvider><TicketsRoutes /></TicketsProvider>
             },
             {
                 path: "/juez-reclamos",
@@ -66,7 +66,7 @@ export const routesForAuthenticatedOnly = [
             },
             {
                 path: "/gestion/*",
-                element: <AdminRoutes />
+                element: <TicketsProvider> <AdminRoutes /></TicketsProvider>
             },
             {
                 path: "/caja-de-pago",

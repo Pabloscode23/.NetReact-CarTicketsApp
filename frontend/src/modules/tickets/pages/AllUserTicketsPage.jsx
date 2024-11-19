@@ -24,11 +24,9 @@ export const AllUserTicketsPage = () => {
         const userTickets = tickets
             .filter(ticket => ticket.userId === user.idNumber)
             .map(ticket => {
-                const amount = TicketsInfo[ticket.description] || 0;
                 return {
                     ...ticket,
                     status: ticket.status || "Pendiente",
-                    amount,
                     claimed: ticket.status === "En disputa",
                 };
             });
@@ -41,10 +39,7 @@ export const AllUserTicketsPage = () => {
         }
     }, [tickets]);
 
-    // Función para manejar el filtro de los tickets
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value); // Actualizamos el término de búsqueda
-    };
+
 
     // Filtrar tickets con base en el searchTerm
     const filteredTickets = userTickets.filter((ticket) =>

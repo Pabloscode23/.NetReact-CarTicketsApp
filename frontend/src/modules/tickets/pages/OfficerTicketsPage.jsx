@@ -41,26 +41,18 @@ export const OfficerTicketsPage = () => {
     };
 
     const handleSave = async (updatedTicket) => {
+        console.log("Ticket a actualizar:", updatedTicket); // Verifica que id no sea undefined
+
         setTickets((prevTickets) =>
             prevTickets.map((ticket) =>
                 ticket.id === updatedTicket.id ? { ...ticket, date: updatedTicket.date, description: updatedTicket.description } : ticket
             )
         );
 
-        try {
-            showSuccessAlert("Multa actualizada correctamente.");
-            const response = await axios.put(`${API_URL}/TicketDTO/${updatedTicket.id}`, updatedTicket);
-            setTickets((prevTickets) =>
-                prevTickets.map((ticket) =>
-                    ticket.id === response.data.id ? response.data : ticket
-                )
-            );
-        } catch (error) {
-            console.error("Error updating ticket:", error);
-        }
 
         setIsModalOpen(false);
     };
+
 
     // Filtrar tickets sin afectar el valor original de 'amount'
     const filterTickets = (searchTerm) => {
@@ -142,6 +134,7 @@ export const OfficerTicketsPage = () => {
             )}
             <EditTicketModal
                 isOpen={isModalOpen}
+                id={tickets.id}
                 onClose={() => setIsModalOpen(false)}
                 ticket={selectedTicket}
                 onSave={handleSave}
