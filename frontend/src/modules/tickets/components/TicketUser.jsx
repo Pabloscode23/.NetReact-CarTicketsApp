@@ -13,6 +13,11 @@ export const TicketUser = ({ id, date, reason, amount, status, onReclamar, isCla
         handleCloseModal();
     };
 
+    const buttonStyle = (disabled) => ({
+        backgroundColor: disabled ? '#6C757D' : '', // Cambia el fondo a gris si está deshabilitado
+        cursor: disabled ? 'not-allowed' : 'pointer', // Cambia el cursor a no permitido si está deshabilitado
+    });
+
     return (
         <>
             <tr>
@@ -22,8 +27,21 @@ export const TicketUser = ({ id, date, reason, amount, status, onReclamar, isCla
                 <td>{amount}</td>
                 <td>{status}</td>
                 <td className='table__buttons'>
-                    <button onClick={onReclamar} disabled={isClaimed || status == "Pagada"}>Reclamar</button>
-                    <button id={id} disabled={isPayed} onClick={handleOpenModal}>Pagar</button>
+                    <button
+                        onClick={onReclamar}
+                        disabled={isClaimed || status === "Pagada"}
+                        style={buttonStyle(isClaimed || status === "Pagada")}
+                    >
+                        Reclamar
+                    </button>
+                    <button
+                        id={id}
+                        disabled={isPayed || status !== "Pendiente"}
+                        onClick={handleOpenModal}
+                        style={buttonStyle(isPayed || status !== "Pendiente")}
+                    >
+                        Pagar
+                    </button>
                 </td>
             </tr>
             {isModalOpen && (

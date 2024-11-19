@@ -23,6 +23,7 @@ export const CreateTicketsPage = () => {
       description: data.reason, // Usar el motivo de la multa como descripción
       status: "Pendiente", // Estado inicial
       officerId: user.idNumber, //
+      amount: TicketsInfo[data.reason], // Monto de la multa según el motivo
     };
 
     try {
@@ -36,7 +37,7 @@ export const CreateTicketsPage = () => {
       if ((infractor.name) == (data.nombre + " " + data.apellidos)) {
         console.log('Creando ticket:', ticketData);
         const response = await axios.post(`${API_URL}/TicketDTO`, ticketData);
-        showSuccessAlert('Ticket creado exitosamente');
+        showSuccessAlert('Multa creada exitosamente');
         console.log('Ticket creado:', response.data);
         navigate('/', { replace: true });
       } else {

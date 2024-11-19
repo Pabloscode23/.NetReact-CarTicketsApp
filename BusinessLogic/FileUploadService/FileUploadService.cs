@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions; 
+using Microsoft.AspNetCore.Http.Extensions;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -43,7 +43,7 @@ namespace BusinessLogic.FileUploadService
 
             // Construir la URL pública
             var baseUrl = UriHelper.BuildAbsolute(request.Scheme, request.Host); // "http://localhost:5000"
-            var publicUrl = $"{baseUrl}/${folderName}/{fileName}";
+            var publicUrl = $"{baseUrl}/{folderName}/{fileName}";
 
             return publicUrl;
         }

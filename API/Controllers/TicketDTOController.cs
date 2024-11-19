@@ -119,15 +119,19 @@ namespace API.Controllers
                 return BadRequest("Invalid ticket update request.");
             }
 
+            // Find the ticket by its ID
             var ticket = await _context.Tickets.FindAsync(id);
             if (ticket == null)
             {
                 return NotFound();
             }
 
-            // Update the Description and Date fields
+            // Map the Description and Date fields
             ticket.Description = ticketUpdate.Description;
             ticket.Date = ticketUpdate.Date;
+
+            // Calculate the amount based on the Description using TicketsInfo
+            ticket.Amount = (double)GetAmountForDescription(ticketUpdate.Description);
 
             _context.Entry(ticket).State = EntityState.Modified;
 
@@ -149,6 +153,28 @@ namespace API.Controllers
 
             return NoContent();
         }
+
+        private decimal GetAmountForDescription(string description)
+        {
+            // Dictionary that maps Description to Amount
+            var ticketsInfo = new Dictionary<string, decimal>
+    {
+        { "Exceso de velocidad", 68000 },
+        { "Mal estacionamiento", 52000 },
+        { "Conducir en estado de ebriedad", 240000 },
+        { "Conducir sin licencia", 27000 }
+    };
+
+            // If the description exists in the dictionary, return the corresponding amount
+            if (ticketsInfo.ContainsKey(description))
+            {
+                return ticketsInfo[description];
+            }
+
+            // Default amount if description is not found
+            return 0;
+        }
+
 
         // DTO class for status update
         public class TicketStatusUpdateDto

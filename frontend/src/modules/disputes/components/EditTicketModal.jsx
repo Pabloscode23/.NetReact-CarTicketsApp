@@ -18,17 +18,29 @@ export const EditTicketModal = ({ isOpen, onClose, ticket, onSave, refetchTicket
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setEditableTicket((prev) => ({ ...prev, [name]: value }));
+
+        if (name === "reason") {
+            // Actualizar automáticamente el amount según la razón seleccionada
+            const newAmount = TicketsInfo[value] || 0;  // Asignar 0 si no existe el reason
+            setEditableTicket((prev) => ({
+                ...prev,
+                [name]: value,
+                amount: newAmount,  // Actualizamos el amount
+            }));
+        } else {
+            setEditableTicket((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSave = async () => {
         try {
             const response = await axios.put(`${API_URL}/TicketDTO/${editableTicket.id}`, {
-                description: editableTicket.reason, // Updated field name
+                description: editableTicket.reason,  // Razón de la multa
                 date: editableTicket.date,
+                amount: editableTicket.amount,  // Enviamos el amount calculado
             });
 
-            // Call onSave with the updated ticket data
+            // Llamar a onSave con los datos actualizados
             onSave(response.data);
             showSuccessAlert("Multa actualizada correctamente");
             refetchTickets();
@@ -63,7 +75,6 @@ export const EditTicketModal = ({ isOpen, onClose, ticket, onSave, refetchTicket
                     value={editableTicket.reason || ''}
                     onChange={handleChange}
                     disabled={!isEditable}
-
                 >
                     <option value="">Seleccione...</option>
                     {Object.entries(TicketsInfo).map(([description], index) => (

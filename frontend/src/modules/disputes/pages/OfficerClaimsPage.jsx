@@ -66,7 +66,7 @@ export const OfficerClaimsPage = () => {
                             <UserClaims key={claim.claimId}
                                 id={claim.claimId}
                                 date={claim.createdAt}
-                                reason={claim.ticket.description}
+                                reason={claim.ticket?.description}
                                 status={claim.status}
                             />
                         ))}
