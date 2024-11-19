@@ -26,8 +26,12 @@ export const OfficerClaimsPage = () => {
 
     useEffect(() => {
         if (tickets.length > 0) {
-            const formattedTickets = formatUserTicket(tickets);
-            setFilteredTickets(formattedTickets);  // Se mantiene el amount tal cual es
+            // Filtrar tickets con status diferente de "Pendiente"
+            const nonPendingTickets = tickets.filter(ticket => ticket.status !== "Pendiente");
+
+            // Formatear los tickets filtrados
+            const formattedTickets = formatUserTicket(nonPendingTickets);
+            setFilteredTickets(formattedTickets);  // Actualizar con los tickets filtrados y formateados
         } else {
             setFilteredTickets([]);
         }
@@ -47,10 +51,8 @@ export const OfficerClaimsPage = () => {
             )
         );
 
-
         setIsModalOpen(false);
     };
-
 
     // Filtrar tickets sin afectar el valor original de 'amount'
     const filterTickets = (searchTerm) => {

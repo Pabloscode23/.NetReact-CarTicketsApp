@@ -70,7 +70,6 @@ const UploadImagePage = () => {
 
             const detectedText = response.data.text; // Asume que devuelve `{ text: "ABC123" }`
             setPlateNumber(detectedText);
-            setMessage('Placa detectada correctamente.');
 
             // Crear automáticamente la multa (independientemente de la placa)
             await createAutomaticTicket();

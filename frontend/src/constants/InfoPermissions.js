@@ -70,7 +70,7 @@ export const InfoPermissions = {
     "history_tickets": {
         icon: faFolderOpen,
         title: 'Historial de multas',
-        description: 'Aquí podrá vel el historial de multas creadas.',
+        description: 'Aquí podrá ver el historial de multas creadas.',
         link: '/multas/historial'
     },
     "history_claims": {
