@@ -19,7 +19,7 @@ export const TicketsRoutes = () => {
             {/* Ruta para crear tipos de multas */}
             <Route path="/tipos" element={<h1>Types</h1>} />
 
-            <Route path="/historial" element={<TicketsProvider><OfficerTicketsPage /></TicketsProvider>} />
+            <Route path="/historial" element={<OfficerTicketsPage />} />
 
             <Route path="/reclamos" element={<OfficerClaimsPage />} />
 
