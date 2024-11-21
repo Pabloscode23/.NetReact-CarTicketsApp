@@ -3,6 +3,7 @@ import { CreateTicketsPage } from "../pages"
 import { OfficerTicketsPage } from "../pages/OfficerTIcketsPage"
 import { OfficerClaimsPage } from "../../disputes/pages/OfficerClaimsPage"
 import { TicketsProvider } from "../context/TicketsProvider"
+import { JudgeClaimsPage } from "../../disputes/pages/JudgeClaimsPage"
 export const TicketsRoutes = () => {
     return (
         // Rutas para el módulo de tickets
@@ -21,7 +22,7 @@ export const TicketsRoutes = () => {
 
             <Route path="/historial" element={<OfficerTicketsPage />} />
 
-            <Route path="/reclamos" element={<OfficerClaimsPage />} />
+            <Route path="/reclamos" element={<JudgeClaimsPage />} />
 
 
 

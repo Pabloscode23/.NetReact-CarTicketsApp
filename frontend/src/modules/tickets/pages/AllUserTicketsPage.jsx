@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAuth } from '../../../hooks';
 import { API_URL } from '../../../constants/Api';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
-import { ModalTicketPayment } from '../../../modules/disputes/components/ModalTicketPayment';
+import { ModalTicketClaim } from '../../disputes/components/ModalTicketClaim';
 import { TicketsContext } from '../context/TicketsContext';
 
 export const AllUserTicketsPage = () => {
@@ -118,7 +118,7 @@ export const AllUserTicketsPage = () => {
 
             {/* Modal para reclamar la multa */}
             {modalOpen && (
-                <ModalTicketPayment
+                <ModalTicketClaim
                     onClose={closeModal}
                     ticket={selectedTicket}
                     isClaimed={selectedTicket?.claimed}
