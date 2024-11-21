@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/JudgeResolveClaims.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

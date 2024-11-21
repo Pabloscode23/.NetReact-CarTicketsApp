@@ -66,7 +66,7 @@ export const routesForAuthenticatedOnly = [
             },
             {
                 path: "/gestion/*",
-                element: <TicketsProvider> <AdminRoutes /></TicketsProvider>
+                element: <TicketsProvider><AdminRoutes /></TicketsProvider>
             },
             {
                 path: "/caja-de-pago",

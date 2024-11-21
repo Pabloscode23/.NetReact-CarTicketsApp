@@ -84,7 +84,7 @@ namespace API.Controllers
             string filePath;
             try
             {
-                filePath = await _fileUploadService.UploadFileAsync(claimDocument, destinationPath, "claims", Request);
+                filePath = await _fileUploadService.UploadFileAsync(claimDocument, destinationPath, Request);
             }
             catch (ArgumentException ex)
             {

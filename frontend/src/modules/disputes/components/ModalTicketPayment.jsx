@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import '../styles/ModalTicketPayment.css';
 import PropTypes from 'prop-types';
 import axios from 'axios';

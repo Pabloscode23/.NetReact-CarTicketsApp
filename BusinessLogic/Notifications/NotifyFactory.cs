@@ -109,6 +109,40 @@ namespace Notifications
                 throw;
             }
         }
+
+        public async Task SendEmailWithPdfAsync(string subject, string message, string recipient, byte[] pdfContent)
+        {
+            try
+            {
+                using (var client = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    client.Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password);
+                    client.EnableSsl = true;
+
+                    var mailMessage = new MailMessage
+                    {
+                        From = new MailAddress(_emailSettings.SenderEmail),
+                        Subject = subject,
+                        Body = message,
+                        IsBodyHtml = false
+                    };
+
+                    mailMessage.To.Add(recipient);
+
+                    // Adjuntar el archivo PDF
+                    mailMessage.Attachments.Add(new Attachment(pdfPath));
+
+                    await client.SendMailAsync(mailMessage);
+
+                    Console.WriteLine($"Correo con PDF enviado a {recipient} con el asunto: {subject}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al enviar el correo con PDF: {ex.Message}");
+                throw;
+            }
+        }
     }
 
 }
