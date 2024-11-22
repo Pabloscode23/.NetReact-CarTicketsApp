@@ -24,6 +24,7 @@ export const CreateTicketsPage = () => {
       status: "Pendiente", // Estado inicial
       officerId: user.idNumber, //
       amount: TicketsInfo[data.reason], // Monto de la multa según el motivo
+      plate: data.placa, // Número de placa
     };
 
     try {
