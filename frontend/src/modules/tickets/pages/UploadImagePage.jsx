@@ -5,7 +5,6 @@ import { API_URL } from '../../../constants/Api';
 import { useAuth } from '../../../hooks';
 import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 import { useNavigate } from 'react-router-dom';
-import { TicketsInfo } from '../../../constants/TicketsInfo';
 
 const UploadImagePage = () => {
     const [image, setImage] = useState(null);
@@ -14,23 +13,31 @@ const UploadImagePage = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { user } = useAuth();
+
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
     };
 
-    const createAutomaticTicket = async () => {
+    const createAutomaticTicket = async (detectedPlate) => {
+        if (!detectedPlate) {
+            showErrorAlert('El número de placa no fue detectado. Por favor intente de nuevo.');
+            return;
+        }
 
         const ticketData = {
             id: `ticket-${Date.now()}`, // ID único generado automáticamente
-            userId: "123456789", // ID del usuario (fijo en este caso)
+            userId: "812345678", // ID del usuario
             date: new Date().toISOString(), // Fecha actual
             latitude: 1, // Coordenadas ficticias
             longitude: 1, // Coordenadas ficticias
             description: "Exceso de velocidad", // Motivo de la multa
             status: "Pendiente", // Estado inicial
-            officerId: user.idNumber, // ID del oficial (fijo en este caso)
+            officerId: user.idNumber, // ID del oficial
             amount: 68000, // Monto fijo de la multa
+            plate: detectedPlate, // Número de placa detectado
         };
+
+        console.log('Datos del ticket enviados:', ticketData); // Log para depurar
 
         try {
             const response = await axios.post(`${API_URL}/TicketDTO`, ticketData, {
@@ -50,7 +57,6 @@ const UploadImagePage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-
         if (!image) {
             setMessage('Por favor suba una imagen.');
             return;
@@ -68,11 +74,13 @@ const UploadImagePage = () => {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
 
-            const detectedText = response.data.text; // Asume que devuelve `{ text: "ABC123" }`
+            console.log('Respuesta del backend:', response.data); // Log para depurar
+
+            const detectedText = response.data.text; // Verifica que el backend devuelve la clave correcta
             setPlateNumber(detectedText);
 
-            // Crear automáticamente la multa (independientemente de la placa)
-            await createAutomaticTicket();
+            // Crear automáticamente la multa con la placa detectada
+            await createAutomaticTicket(detectedText);
         } catch (error) {
             console.error('Error al detectar la placa:', error.response?.data || error.message);
             setMessage('Error al detectar la placa, intente de nuevo por favor.');

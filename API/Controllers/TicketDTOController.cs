@@ -27,7 +27,6 @@ namespace API.Controllers
         {
             var tickets = await _context.Tickets.ToListAsync();
 
-            // Mapeo manual de Ticket a TicketDTO
             var ticketDTOs = tickets.Select(t => new TicketDTO
             {
                 Id = t.Id,
@@ -38,7 +37,8 @@ namespace API.Controllers
                 Amount = t.Amount,
                 Date = t.Date,
                 Status = t.Status,
-                OfficerId = t.OfficerId
+                OfficerId = t.OfficerId,
+                Plate = t.Plate // Incluir Plate aquí
             }).ToList();
 
             return Ok(ticketDTOs);
@@ -65,7 +65,8 @@ namespace API.Controllers
                 Amount = ticket.Amount,
                 Date = ticket.Date,
                 Status = ticket.Status,
-                OfficerId = ticket.OfficerId
+                OfficerId = ticket.OfficerId,
+                Plate = ticket.Plate // Incluir Plate aquí
             };
 
             return ticketDTO;
@@ -86,7 +87,7 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            ticket.Status = statusUpdate.Status; // Update the status to the new value
+            ticket.Status = statusUpdate.Status; // Actualizar estado
 
             _context.Entry(ticket).State = EntityState.Modified;
 
@@ -109,7 +110,6 @@ namespace API.Controllers
             return NoContent();
         }
 
-        // New PUT method to update Description and Date
         // PUT: api/TicketDTO/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTicket(string id, [FromBody] TicketUpdateDto ticketUpdate)
@@ -119,19 +119,15 @@ namespace API.Controllers
                 return BadRequest("Invalid ticket update request.");
             }
 
-            // Find the ticket by its ID
             var ticket = await _context.Tickets.FindAsync(id);
             if (ticket == null)
             {
                 return NotFound();
             }
 
-            // Map the Description and Date fields
             ticket.Description = ticketUpdate.Description;
             ticket.Date = ticketUpdate.Date;
-
-            // Calculate the amount based on the Description using TicketsInfo
-            ticket.Amount = (double)GetAmountForDescription(ticketUpdate.Description);
+            ticket.Plate = ticketUpdate.Plate; // Actualizar Plate
 
             _context.Entry(ticket).State = EntityState.Modified;
 
@@ -156,45 +152,22 @@ namespace API.Controllers
 
         private decimal GetAmountForDescription(string description)
         {
-            // Dictionary that maps Description to Amount
             var ticketsInfo = new Dictionary<string, decimal>
-    {
-        { "Exceso de velocidad", 68000 },
-        { "Mal estacionamiento", 52000 },
-        { "Conducir en estado de ebriedad", 240000 },
-        { "Conducir sin licencia", 27000 }
-    };
-
-            // If the description exists in the dictionary, return the corresponding amount
-            if (ticketsInfo.ContainsKey(description))
             {
-                return ticketsInfo[description];
-            }
+                { "Exceso de velocidad", 68000 },
+                { "Mal estacionamiento", 52000 },
+                { "Conducir en estado de ebriedad", 240000 },
+                { "Conducir sin licencia", 27000 }
+            };
 
-            // Default amount if description is not found
-            return 0;
-        }
-
-
-        // DTO class for status update
-        public class TicketStatusUpdateDto
-        {
-            public string Status { get; set; }
-        }
-
-        // DTO class for ticket update
-        public class TicketUpdateDto
-        {
-            public string Description { get; set; }
-            public DateTime Date { get; set; }
+            return ticketsInfo.ContainsKey(description) ? ticketsInfo[description] : 0;
         }
 
         // POST: api/TicketDTO
         [HttpPost]
         public async Task<ActionResult<CreateTicketDTO>> PostTicket(CreateTicketDTO ticket)
         {
-
-            var ticketDTO = new Ticket
+            var ticketEntity = new Ticket
             {
                 Id = ticket.Id,
                 UserId = ticket.UserId,
@@ -204,10 +177,11 @@ namespace API.Controllers
                 Amount = ticket.Amount,
                 Date = ticket.Date,
                 Status = ticket.Status,
-                OfficerId = ticket.OfficerId
+                OfficerId = ticket.OfficerId,
+                Plate = ticket.Plate // Incluir Plate aquí
             };
 
-            _context.Tickets.Add(ticketDTO);
+            _context.Tickets.Add(ticketEntity);
             try
             {
                 await _context.SaveChangesAsync();
@@ -249,18 +223,29 @@ namespace API.Controllers
         }
     }
 
+    public class TicketStatusUpdateDto
+    {
+        public string Status { get; set; }
+    }
+
+    public class TicketUpdateDto
+    {
+        public string Description { get; set; }
+        public DateTime Date { get; set; }
+        public string Plate { get; set; } // Incluir aquí
+    }
 
     public class CreateTicketDTO
     {
         public string Id { get; set; }
         public string UserId { get; set; }
         public DateTime Date { get; set; }
-        public Double Latitude { get; set; }
-        public Double Longitude { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
         public string Description { get; set; }
         public string Status { get; set; }
         public string OfficerId { get; set; }
         public double Amount { get; set; }
-
+        public string Plate { get; set; } // Incluir aquí
     }
 }

@@ -31,8 +31,9 @@ namespace DataAccess.Models
         [Required]
         public string OfficerId { get; set; }
         public double Amount { get; set; }
+        public string Plate { get; set; }
 
-       // La relación con Claim es opcional
+        // La relación con Claim es opcional
         public virtual Claim Claim { get; set; }
 
     }
