@@ -14,9 +14,9 @@ import { UserClaimsPage } from "../modules/disputes/pages/UserClaimsPage"
 import { RegistUpdateFinalUser } from "../modules/public/pages/RegistUpdateFinalUserPage"
 import { ChangePasswordPage } from "../modules/auth/pages/ChangePasswordPage";
 import UploadImagePage from "../modules/tickets/pages/UploadImagePage";
-
 import { TicketsProvider } from "../modules/tickets/context/TicketsProvider"
 import { JudgeResolveClaimsPage } from "../modules/judge/pages/JudgeResolveClaimsPage"
+import HeatMapPage from "../modules/public/pages/HeatMapPage"
 
 // Rutas publicas
 export const routesForPublic = [
@@ -26,7 +26,7 @@ export const routesForPublic = [
     },
     {
         path: "/mapa-de-calor",
-        element: <MainLayout><h1>HEATMAP</h1></MainLayout>
+        element: <MainLayout><HeatMapPage /></MainLayout>
     },
     {
         path: "/consulta-publica",

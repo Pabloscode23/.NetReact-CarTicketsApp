@@ -13,51 +13,74 @@ export const CreateTicketsPage = () => {
   const { user } = useAuth();
 
   const onSubmit = async (data) => {
+    let geolocation;
+
+    // Obtener coordenadas reales
+    try {
+      geolocation = await new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+          reject("Geolocalización no soportada por el navegador");
+        }
+        navigator.geolocation.getCurrentPosition(
+          (position) => resolve(position.coords),
+          (error) => reject(error.message)
+        );
+      });
+    } catch (geoError) {
+      console.error("Error obteniendo geolocalización:", geoError);
+      showErrorAlert(`Error obteniendo ubicación: ${geoError}`);
+      return; // Detener ejecución si falla la geolocalización
+    }
+
+    // Crear el objeto del ticket
     const uniqueID = `ticket-${Date.now()}`;
     const ticketData = {
       id: uniqueID,
-      userId: data.idNumber, // Usar el número de cédula como userId
-      date: new Date().toISOString(), // Fecha actual
-      latitude: 0, // Placeholder, ajusta según tu necesidad
-      longitude: 0, // Placeholder, ajusta según tu necesidad
-      description: data.reason, // Usar el motivo de la multa como descripción
-      status: "Pendiente", // Estado inicial
-      officerId: user.idNumber, //
-      amount: TicketsInfo[data.reason], // Monto de la multa según el motivo
-      plate: data.placa, // Número de placa
+      userId: data.idNumber,
+      date: new Date().toISOString(),
+      latitude: geolocation.latitude,
+      longitude: geolocation.longitude,
+      description: data.reason,
+      status: "Pendiente",
+      officerId: user.idNumber,
+      amount: TicketsInfo[data.reason],
+      plate: data.placa,
     };
 
     try {
       // Llamada a la API para verificar los datos del infractor
       const infractorResponse = await axios.get(`${API_URL}/UserDTO/${data.idNumber}`);
+      console.log("Respuesta del infractor:", infractorResponse);
       const infractor = infractorResponse.data;
-      console.log(infractor);
-      console.log(data.nombre + " " + data.apellidos);
 
-      // Verifica si el nombre y apellidos del infractor coinciden con los datos ingresados
-      if ((infractor.name) == (data.nombre + " " + data.apellidos)) {
-        console.log('Creando ticket:', ticketData);
-        const response = await axios.post(`${API_URL}/TicketDTO`, ticketData);
-        showSuccessAlert('Multa creada exitosamente');
-        console.log('Ticket creado:', response.data);
-        navigate('/', { replace: true });
+      // Verifica si el nombre y apellidos coinciden
+      if (infractor.name === `${data.nombre} ${data.apellidos}`) {
+        console.log("Creando ticket:", ticketData);
+
+        // Llamada a la API para crear el ticket
+        try {
+          const response = await axios.post(`${API_URL}/TicketDTO`, ticketData);
+          console.log("Ticket creado:", response.data);
+          showSuccessAlert('Multa creada exitosamente');
+          navigate('/', { replace: true });
+        } catch (postError) {
+          console.error("Error creando ticket:", postError);
+          showErrorAlert(`Error al crear ticket: ${postError.response?.data?.message || "Algo salió mal"}`);
+        }
       } else {
         showErrorAlert('El nombre y apellidos no coinciden con la identificación del infractor');
       }
-    } catch (error) {
-      if (error.response) {
-        console.error('Server response error:', error.response.data);
-        showErrorAlert(`Error: ${error.response.data.message || 'Algo salió mal!'}`);
-      } else if (error.request) {
-        console.error('No response received:', error.request);
-        showErrorAlert('No se recibió respuesta del servidor. Por favor, inténtalo de nuevo.');
+    } catch (infractorError) {
+      console.error("Error en la llamada al infractor:", infractorError);
+      if (infractorError.response) {
+        showErrorAlert(`Error: ${infractorError.response.data.message || 'Datos del infractor no encontrados'}`);
+      } else if (infractorError.request) {
+        showErrorAlert('No se recibió respuesta del servidor al verificar el infractor.');
       } else {
-        console.error('Error setting up request:', error.message);
-        showErrorAlert('Hubo un error configurando la solicitud.');
+        showErrorAlert('Hubo un error configurando la solicitud al servidor.');
       }
     }
   };
-
 
   return (
     <section className="container" style={{ color: "#4B4B4E" }}>
@@ -68,9 +91,7 @@ export const CreateTicketsPage = () => {
         <h1 className="form__header-center main-title">Crear Multa</h1>
         <p className="text-left">Aquí el oficial de tránsito podrá crear la multa.</p>
 
-        {/* Caja de Inputs */}
         <div className="form__content">
-          {/* Row 1 */}
           <div className="row">
             <div className="input__container">
               <label>Nombre de infractor:</label>
@@ -103,7 +124,6 @@ export const CreateTicketsPage = () => {
             </div>
           </div>
 
-          {/* Row 2 */}
           <div className="row">
             <div className="input__container">
               <label>Número cédula:</label>
@@ -134,7 +154,6 @@ export const CreateTicketsPage = () => {
             </div>
           </div>
 
-          {/* Row 3 */}
           <div className="input__container full-width">
             <label>Multa por:</label>
             <select

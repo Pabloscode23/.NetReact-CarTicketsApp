@@ -18,28 +18,49 @@ const UploadImagePage = () => {
         setImage(e.target.files[0]);
     };
 
+    const getCurrentPosition = () => {
+        return new Promise((resolve, reject) => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        resolve({ latitude, longitude });
+                    },
+                    (error) => {
+                        console.error('Error al obtener geolocalización:', error.message);
+                        reject('No se pudo obtener la ubicación actual.');
+                    }
+                );
+            } else {
+                reject('La geolocalización no está disponible en este navegador.');
+            }
+        });
+    };
+
     const createAutomaticTicket = async (detectedPlate) => {
         if (!detectedPlate) {
             showErrorAlert('El número de placa no fue detectado. Por favor intente de nuevo.');
             return;
         }
 
-        const ticketData = {
-            id: `ticket-${Date.now()}`, // ID único generado automáticamente
-            userId: "812345678", // ID del usuario
-            date: new Date().toISOString(), // Fecha actual
-            latitude: 1, // Coordenadas ficticias
-            longitude: 1, // Coordenadas ficticias
-            description: "Exceso de velocidad", // Motivo de la multa
-            status: "Pendiente", // Estado inicial
-            officerId: user.idNumber, // ID del oficial
-            amount: 68000, // Monto fijo de la multa
-            plate: detectedPlate, // Número de placa detectado
-        };
-
-        console.log('Datos del ticket enviados:', ticketData); // Log para depurar
-
         try {
+            const position = await getCurrentPosition(); // Obtener coordenadas en tiempo real
+
+            const ticketData = {
+                id: `ticket-${Date.now()}`, // ID único generado automáticamente
+                userId: "812345678", // ID del usuario
+                date: new Date().toISOString(), // Fecha actual
+                latitude: position.latitude, // Coordenadas reales
+                longitude: position.longitude, // Coordenadas reales
+                description: "Exceso de velocidad", // Motivo de la multa
+                status: "Pendiente", // Estado inicial
+                officerId: user.idNumber, // ID del oficial
+                amount: 68000, // Monto fijo de la multa
+                plate: detectedPlate, // Número de placa detectado
+            };
+
+            console.log('Datos del ticket enviados:', ticketData); // Log para depurar
+
             const response = await axios.post(`${API_URL}/TicketDTO`, ticketData, {
                 headers: { 'Content-Type': 'application/json' },
             });
@@ -49,8 +70,12 @@ const UploadImagePage = () => {
             }, 5000);
             console.log('Multa creada:', response.data);
         } catch (error) {
-            console.error('Error al crear la multa:', error.response?.data || error.message);
-            showErrorAlert('Error al crear la multa automáticamente.');
+            if (typeof error === 'string') {
+                showErrorAlert(error); // Mensaje de error de geolocalización
+            } else {
+                console.error('Error al crear la multa:', error.response?.data || error.message);
+                showErrorAlert('Error al crear la multa automáticamente.');
+            }
         }
     };
 

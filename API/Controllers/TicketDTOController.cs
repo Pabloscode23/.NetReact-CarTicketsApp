@@ -163,6 +163,24 @@ namespace API.Controllers
             return ticketsInfo.ContainsKey(description) ? ticketsInfo[description] : 0;
         }
 
+        // GET: api/TicketDTO/heatmap
+        [HttpGet("heatmap")]
+        public async Task<ActionResult<List<HeatMapData>>> GetHeatMapData()
+        {
+            // Obtenemos todos los tickets
+            var tickets = await _context.Tickets.ToListAsync();
+
+            // Extraemos solo las coordenadas (latitud, longitud) de los tickets
+            var heatMapData = tickets.Select(t => new HeatMapData
+            {
+                Latitude = t.Latitude,
+                Longitude = t.Longitude
+            }).ToList();
+
+            return Ok(heatMapData);
+        }
+
+
         // POST: api/TicketDTO
         [HttpPost]
         public async Task<ActionResult<CreateTicketDTO>> PostTicket(CreateTicketDTO ticket)
@@ -222,6 +240,8 @@ namespace API.Controllers
             return _context.Tickets.Any(e => e.Id == id);
         }
     }
+
+
 
     public class TicketStatusUpdateDto
     {
