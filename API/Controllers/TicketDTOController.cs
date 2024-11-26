@@ -38,13 +38,13 @@ namespace API.Controllers
                 Date = t.Date,
                 Status = t.Status,
                 OfficerId = t.OfficerId,
-                Plate = t.Plate // Incluir Plate aquí
+                Plate = t.Plate
             }).ToList();
 
             return Ok(ticketDTOs);
         }
 
-        // GET: api/TicketDTO/5
+        // GET: api/TicketDTO/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<TicketDTO>> GetTicket(string id)
         {
@@ -66,10 +66,47 @@ namespace API.Controllers
                 Date = ticket.Date,
                 Status = ticket.Status,
                 OfficerId = ticket.OfficerId,
-                Plate = ticket.Plate // Incluir Plate aquí
+                Plate = ticket.Plate
             };
 
             return ticketDTO;
+        }
+
+        // GET: api/TicketDTO/search
+        [HttpGet("search")]
+        public async Task<ActionResult<List<TicketDTO>>> GetTicketsByPlate([FromQuery] string placa)
+        {
+            if (string.IsNullOrEmpty(placa))
+            {
+                return BadRequest("El parámetro placa es requerido.");
+            }
+
+            // Realizar la consulta sin usar StringComparison
+            var tickets = await _context.Tickets
+                .Where(t => t.Plate != null && EF.Functions.Like(t.Plate, placa))
+                .ToListAsync();
+
+            if (!tickets.Any())
+            {
+                return NotFound("No se encontraron multas asociadas a esta placa.");
+            }
+
+            // Mapear a DTO
+            var ticketDTOs = tickets.Select(t => new TicketDTO
+            {
+                Id = t.Id,
+                UserId = t.UserId,
+                Latitude = t.Latitude,
+                Longitude = t.Longitude,
+                Description = t.Description,
+                Amount = t.Amount,
+                Date = t.Date,
+                Status = t.Status,
+                OfficerId = t.OfficerId,
+                Plate = t.Plate
+            }).ToList();
+
+            return Ok(ticketDTOs);
         }
 
         // PUT: api/TicketDTO/{id}/status
@@ -87,7 +124,7 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            ticket.Status = statusUpdate.Status; // Actualizar estado
+            ticket.Status = statusUpdate.Status;
 
             _context.Entry(ticket).State = EntityState.Modified;
 
@@ -127,7 +164,7 @@ namespace API.Controllers
 
             ticket.Description = ticketUpdate.Description;
             ticket.Date = ticketUpdate.Date;
-            ticket.Plate = ticketUpdate.Plate; // Actualizar Plate
+            ticket.Plate = ticketUpdate.Plate;
 
             _context.Entry(ticket).State = EntityState.Modified;
 
@@ -180,7 +217,6 @@ namespace API.Controllers
             return Ok(heatMapData);
         }
 
-
         // POST: api/TicketDTO
         [HttpPost]
         public async Task<ActionResult<CreateTicketDTO>> PostTicket(CreateTicketDTO ticket)
@@ -196,7 +232,7 @@ namespace API.Controllers
                 Date = ticket.Date,
                 Status = ticket.Status,
                 OfficerId = ticket.OfficerId,
-                Plate = ticket.Plate // Incluir Plate aquí
+                Plate = ticket.Plate
             };
 
             _context.Tickets.Add(ticketEntity);
@@ -219,7 +255,7 @@ namespace API.Controllers
             return CreatedAtAction("GetTicket", new { id = ticket.Id }, ticket);
         }
 
-        // DELETE: api/TicketDTO/5
+        // DELETE: api/TicketDTO/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTicket(string id)
         {
@@ -252,7 +288,7 @@ namespace API.Controllers
     {
         public string Description { get; set; }
         public DateTime Date { get; set; }
-        public string Plate { get; set; } // Incluir aquí
+        public string Plate { get; set; }
     }
 
     public class CreateTicketDTO
@@ -266,6 +302,6 @@ namespace API.Controllers
         public string Status { get; set; }
         public string OfficerId { get; set; }
         public double Amount { get; set; }
-        public string Plate { get; set; } // Incluir aquí
+        public string Plate { get; set; }
     }
 }
