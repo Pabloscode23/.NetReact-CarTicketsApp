@@ -22,7 +22,8 @@ export const TicketsProvider = memo(({ children }) => {
     const fetchTickets = async () => {
         try {
             const response = await axios.get(`${API_URL}/TicketDTO`);
-            setTickets(response.data);
+            const sortedTickets = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
+            setTickets(sortedTickets);
         } catch (error) {
             console.error("Error fetching tickets:", error);
         }

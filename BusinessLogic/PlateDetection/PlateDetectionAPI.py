@@ -11,7 +11,7 @@ CORS(app)
 logging.basicConfig(level=logging.DEBUG)
 
 # Set up Google Application Credentials
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:/Users/kcord/OneDrive/Desktop/RepoProyecto/SistemaMultas/BusinessLogic/PlateDetection/deteccion-de-placas-6cd7e2f2b265.json'
+#os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:/Users/kcord/OneDrive/Desktop/RepoProyecto/SistemaMultas/BusinessLogic/PlateDetection/deteccion-de-placas-6cd7e2f2b265.json'
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/Users/Pablo/Desktop/ReactNetProyect/SistemaMultas/BusinessLogic/PlateDetection/deteccion-de-placas-6cd7e2f2b265.json'
 
 # Initialize Google Vision API client

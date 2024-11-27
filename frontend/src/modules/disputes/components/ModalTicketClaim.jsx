@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import '../styles/ModalTicketPayment.css';
+
+import React, { useState } from 'react';
+import '../styles/ModalTicketClaim.css';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 import { API_URL } from '../../../constants/Api';
 
-export const ModalTicketPayment = ({ onClose, ticket, isClaimed, refetchTickets, setTickets }) => {
+export const ModalTicketClaim = ({ onClose, ticket, isClaimed, refetchTickets, setTickets }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileUploaded, setFileUploaded] = useState(false); // Estado para verificar si el archivo se subió exitosamente
 
@@ -107,7 +108,7 @@ export const ModalTicketPayment = ({ onClose, ticket, isClaimed, refetchTickets,
     );
 };
 
-ModalTicketPayment.propTypes = {
+ModalTicketClaim.propTypes = {
     onClose: PropTypes.func.isRequired,
     ticket: PropTypes.object.isRequired,
     isClaimed: PropTypes.bool,

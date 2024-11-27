@@ -1,17 +1,18 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import axios from 'axios';
-import { TicketUser } from '../components/TicketUser';
+
 import '../styles/AllUserTickets.css';
-import { faMagnifyingGlass, faRotateRight } from '@fortawesome/free-solid-svg-icons';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAuth } from '../../../hooks';
 import { API_URL } from '../../../constants/Api';
-import { TicketsInfo } from '../../../constants/TicketsInfo';
-import { ModalTicketPayment } from '../../../modules/disputes/components/ModalTicketPayment';
+
+
 import { TicketAdmin } from '../components/TicketAdmin';
 import { AdminEditTicketModal } from '../../disputes/components/AdminEditTicketModal';
 import { TicketsContext } from '../context/TicketsContext';
 import { showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
+import { faRotateRight } from '@fortawesome/free-solid-svg-icons';
 
 export const AdminAllTickets = () => {
     const { user } = useAuth();
@@ -115,15 +116,36 @@ export const AdminAllTickets = () => {
     // Eliminar ticket
     const handleDelete = async (ticket) => {
         try {
+            console.log("Intentando eliminar el claim asociado al ticket:", ticket.id);
+
+            // Obtener el claim asociado al ticket
+            const response = await axios.get(`${API_URL}/Claim`);
+            const claims = response.data;
+            const claim = claims.find(c => c.ticketId === ticket.id); // Buscar manualmente si no hay filtro en la API
+
+            if (claim && claim.claimId) {
+                // Eliminar el claim asociado
+                await axios.delete(`${API_URL}/Claim/${claim.claimId}`);
+                console.log(`Claim asociado al ticket ${ticket.id} eliminado correctamente.`);
+            } else {
+                console.log(`No se encontró ningún claim asociado al ticket ${ticket.id}.`);
+            }
+
+            // Eliminar el ticket
             await axios.delete(`${API_URL}/TicketDTO/${ticket.id}`);
+            console.log(`Ticket ${ticket.id} eliminado correctamente.`);
+
+            // Mostrar alerta de éxito
             showSuccessAlert("Multa eliminada correctamente");
 
+            // Actualizar estado para reflejar los cambios en la UI
             setTickets(prevTickets => prevTickets.filter(t => t.id !== ticket.id));
             setFilteredTickets(prevTickets => prevTickets.filter(t => t.id !== ticket.id));
         } catch (error) {
-            console.error("Error deleting ticket:", error);
+            console.error("Error eliminando el ticket o el claim asociado:", error);
         }
     };
+
 
     return (
         <div className="container__tickets">

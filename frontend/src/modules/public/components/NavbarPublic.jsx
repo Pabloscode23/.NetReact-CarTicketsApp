@@ -1,34 +1,34 @@
 import '../styles/NavbarPublic.css';
 import { useNavigate } from 'react-router-dom';
 import ByteDevLogo from '../../../assets/img/ByteDevLogo.png';
-import { useAuth } from '../../../../src/hooks';  // Make sure this is your correct useAuth hook import
+import { useAuth } from '../../../../src/hooks';  // Asegúrate de que este es el hook correcto
 import { InfoPermissions } from '../../../constants/InfoPermissions';
 import { DesktopNav } from './DesktopNav';
 import { MobileNavbar } from './MobileNavbar';
 import { useEffect, useState } from 'react';
 import { RolePermissions } from '../../../constants/RolePermissions';
+
 // Default permissions for non-authenticated users
 const defaultPermissions = ["regist", "login", "public-request", "heat-map"];
 
-
 export const NavbarPublic = () => {
-    const { user, setToken, setUser } = useAuth();  // Get the token and user from useAuth hook
+    const { user, setToken, setUser } = useAuth();  // Obtener el token y usuario del hook useAuth
     const [permissions, setPermissions] = useState(defaultPermissions);
     const navigate = useNavigate();
 
     useEffect(() => {
-        {
-            if (user) {
-                setPermissions(RolePermissions[user.role]);
-            }
+        if (user) {
+            setPermissions(RolePermissions[user.role] || defaultPermissions);  // Asegúrate de que si no existe el rol, se utilicen los permisos por defecto
+        } else {
+            setPermissions(defaultPermissions);  // Restablecer permisos cuando el usuario esté deslogueado
         }
-    }, [user]);
+    }, [user]);  // Dependemos del estado 'user', por lo que se actualizará cuando cambie
 
-    // Handle logout: clear token, clear user, and navigate to login
+    // Manejar logout: borrar token, usuario y redirigir
     const handleLogout = () => {
-        setToken(null);  // Clear the token
-        setUser(null);   // Clear the user state
-        navigate('/');   // Redirect to home or login page
+        setToken(null);  // Limpiar el token
+        setUser(null);   // Limpiar el usuario
+        navigate('/');   // Redirigir a la página de inicio o login
     };
 
     const findNavItems = () => {
