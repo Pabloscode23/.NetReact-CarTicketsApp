@@ -72,42 +72,42 @@ namespace API.Controllers
             return ticketDTO;
         }
 
-     // GET: api/TicketDTO/search
-[HttpGet("search")]
-public async Task<ActionResult<List<TicketDTO>>> GetTicketsByPlate([FromQuery] string placa)
-{
-    if (string.IsNullOrEmpty(placa))
-    {
-        return BadRequest("El parámetro placa es requerido.");
-    }
+        // GET: api/TicketDTO/search
+        [HttpGet("search")]
+        public async Task<ActionResult<List<TicketDTO>>> GetTicketsByPlate([FromQuery] string placa)
+        {
+            if (string.IsNullOrEmpty(placa))
+            {
+                return BadRequest("El parámetro placa es requerido.");
+            }
 
-    // Realizar la consulta sin usar StringComparison
-    var tickets = await _context.Tickets
-        .Where(t => t.Plate != null && EF.Functions.Like(t.Plate, placa))
-        .ToListAsync();
+            // Realizar la consulta sin usar StringComparison
+            var tickets = await _context.Tickets
+                .Where(t => t.Plate != null && EF.Functions.Like(t.Plate, placa))
+                .ToListAsync();
 
-    if (!tickets.Any())
-    {
-        return NotFound("No se encontraron multas asociadas a esta placa.");
-    }
+            if (!tickets.Any())
+            {
+                return NotFound("No se encontraron multas asociadas a esta placa.");
+            }
 
-    // Mapear a DTO
-    var ticketDTOs = tickets.Select(t => new TicketDTO
-    {
-        Id = t.Id,
-        UserId = t.UserId,
-        Latitude = t.Latitude,
-        Longitude = t.Longitude,
-        Description = t.Description,
-        Amount = t.Amount,
-        Date = t.Date,
-        Status = t.Status,
-        OfficerId = t.OfficerId,
-        Plate = t.Plate
-    }).ToList();
+            // Mapear a DTO
+            var ticketDTOs = tickets.Select(t => new TicketDTO
+            {
+                Id = t.Id,
+                UserId = t.UserId,
+                Latitude = t.Latitude,
+                Longitude = t.Longitude,
+                Description = t.Description,
+                Amount = t.Amount,
+                Date = t.Date,
+                Status = t.Status,
+                OfficerId = t.OfficerId,
+                Plate = t.Plate
+            }).ToList();
 
-    return Ok(ticketDTOs);
-}
+            return Ok(ticketDTOs);
+        }
 
         // PUT: api/TicketDTO/{id}/status
         [HttpPut("{id}/status")]
@@ -187,6 +187,36 @@ public async Task<ActionResult<List<TicketDTO>>> GetTicketsByPlate([FromQuery] s
             return NoContent();
         }
 
+        private decimal GetAmountForDescription(string description)
+        {
+            var ticketsInfo = new Dictionary<string, decimal>
+            {
+                { "Exceso de velocidad", 68000 },
+                { "Mal estacionamiento", 52000 },
+                { "Conducir en estado de ebriedad", 240000 },
+                { "Conducir sin licencia", 27000 }
+            };
+
+            return ticketsInfo.ContainsKey(description) ? ticketsInfo[description] : 0;
+        }
+
+        // GET: api/TicketDTO/heatmap
+        [HttpGet("heatmap")]
+        public async Task<ActionResult<List<HeatMapData>>> GetHeatMapData()
+        {
+            // Obtenemos todos los tickets
+            var tickets = await _context.Tickets.ToListAsync();
+
+            // Extraemos solo las coordenadas (latitud, longitud) de los tickets
+            var heatMapData = tickets.Select(t => new HeatMapData
+            {
+                Latitude = t.Latitude,
+                Longitude = t.Longitude
+            }).ToList();
+
+            return Ok(heatMapData);
+        }
+
         // POST: api/TicketDTO
         [HttpPost]
         public async Task<ActionResult<CreateTicketDTO>> PostTicket(CreateTicketDTO ticket)
@@ -246,6 +276,8 @@ public async Task<ActionResult<List<TicketDTO>>> GetTicketsByPlate([FromQuery] s
             return _context.Tickets.Any(e => e.Id == id);
         }
     }
+
+
 
     public class TicketStatusUpdateDto
     {
