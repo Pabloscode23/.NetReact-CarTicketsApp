@@ -1,36 +1,42 @@
 ﻿using PuppeteerSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLogic.PdfGenerationService
 {
-
     public interface IPdfGenerator
     {
-        void GeneratePdf();
+        Task<byte[]> GeneratePdfAsync(string html);
     }
-    public class PdfGenerator
+
+    public class PdfGenerator : IPdfGenerator
     {
-        public PdfGenerator() { }
-        public async Task<byte[]> GeneratePdf()
+        public PdfGenerator()
+        {
+           
+            var browserFetcher = new BrowserFetcher();
+            browserFetcher.DownloadAsync().Wait();
+        }
+
+        public async Task<byte[]> GeneratePdfAsync(string html)
         {
             var browser = await Puppeteer.LaunchAsync(new LaunchOptions
             {
                 Headless = true
             });
-            using ( var page = await browser.NewPageAsync())
+
+            try
             {
-                await page.SetContentAsync("<h1>PDF Report</h1>");
-                var result = await page.GetContentAsync();
-                
-                var pdfContent = await page.PdfDataAsync();
+                using (var page = await browser.NewPageAsync())
+                {
+                    await page.SetContentAsync(html);
+                    var pdfContent = await page.PdfDataAsync();
 
+                    return pdfContent;
+                }
+            }
+            finally
+            {
                 await browser.CloseAsync();
-
-                return pdfContent;
             }
         }
     }
