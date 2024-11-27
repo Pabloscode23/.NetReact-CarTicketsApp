@@ -1,5 +1,3 @@
-// constants/rolePermissions.js
-
 export const RolePermissions = {
     admin: ["create_users", "view_tickets", "view_roles", "create_reports", "plate_detection", "edit_profile"], // Add all admin permissions
     usuario: ["view_user-tickets", "view_claims", "edit_profile"], // Add user permissions
