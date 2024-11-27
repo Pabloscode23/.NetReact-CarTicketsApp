@@ -62,6 +62,129 @@ namespace Notifications
             Console.WriteLine("Notificación de reclamación enviada.");
         }
 
+         public void AutomaticacionUserNotification(string totalAmount, string recipient, string ticketId,string description,string date)
+        {
+            string message = $"Se le notifica que se ha generado una multa por un monto de {totalAmount} con el IVA incluido.\n\n" +
+                    $"Detalles de la multa:\n" +
+                    $"- ID: {ticketId}\n" +
+                    $"- Número de placa: {ticketId}\n" +
+                    $"- Detalle: {description}\n" +
+                    $"- Fecha: {date}\n" +
+                    $"- Monto: {totalAmount}\n\n";
+
+
+            Console.WriteLine("Mensaje de notificación antes de enviar el correo:");
+            Console.WriteLine(message); // Verifica el contenido del mensaje
+            Console.WriteLine("Contenido del mensaje de correo:");
+            Console.WriteLine(message);
+
+            _notification.Send("Notificación enviada", message, recipient);
+            Console.WriteLine("Notificación enviada con exito.");
+        }
+        public void StatusChangesNotification(string status, string recipient, string ticketId, string changeReason)
+        {
+            string message = $"Se le notifica el cambio de estado de su multa. \n\n" +
+                    $"Detalles de la multa:\n" +
+                    $"- ID: {ticketId}\n" +
+                    $"- Nuevo estado: {status}\n" +
+                    $"- Razon del cambio:{changeReason}\n\n";
+
+
+            Console.WriteLine("Mensaje de notificación antes de enviar el correo:");
+            Console.WriteLine(message); // Verifica el contenido del mensaje
+            Console.WriteLine("Contenido del mensaje de correo:");
+            Console.WriteLine(message);
+
+            _notification.Send("Notificación enviada", message, recipient);
+            Console.WriteLine("Notificación enviada con exito.");
+        }
+        public void ClaimResolutionNotification(string recipient, string ticketId,string resolution)
+        {
+            string message = $"Se le notifica que su multa ha sido: \n\n" +
+                    $"Detalles de la multa:\n" +
+                    $"- ID: {ticketId}\n" +
+                    $"- Resolución:{resolution}\n";
+
+
+            Console.WriteLine("Mensaje de notificación antes de enviar el correo:");
+            Console.WriteLine(message); // Verifica el contenido del mensaje
+            Console.WriteLine("Contenido del mensaje de correo:");
+            Console.WriteLine(message);
+
+            _notification.Send("Notificación enviada", message, recipient);
+            Console.WriteLine("Notificación enviada con exito.");
+        }
+        public void JudgeNewClaimsNotification( string recipient, string ticketId, string description,string pdfUrl)
+        {
+            string message = $"Se le asigno un nuevo reclamo: \n\n" +
+                    $"Detalles de la multa:\n" +
+                    $"- ID: {ticketId}\n" +
+                    $"- Detalle: {description}\n";
+                    
+            Console.WriteLine("Mensaje de notificación antes de enviar el correo:");
+            Console.WriteLine(message); // Verifica el contenido del mensaje
+            Console.WriteLine("Contenido del mensaje de correo:");
+            Console.WriteLine(message);
+
+            _notification.SendFilePDF("Notificación enviada", message, recipient,pdfUrl);
+            Console.WriteLine("Notificación enviada con exito.");
+
+        }
+
+
+
+        public void OfficialDisputesNotification(string recipient, string ticketId, string description)
+        {
+            string message = $"Se creo un nuevo reclamo por una multa creada por usted.\n\n" +
+                    $"Detalles de la multa:\n" +
+                    $"- ID: {ticketId}\n" +
+                    $"- Detalle: {description}\n";
+
+
+            Console.WriteLine("Mensaje de notificación antes de enviar el correo:");
+            Console.WriteLine(message); // Verifica el contenido del mensaje
+            Console.WriteLine("Contenido del mensaje de correo:");
+            Console.WriteLine(message);
+
+            _notification.Send("Notificacion enviada", message, recipient);
+            Console.WriteLine("Notificación enviada con exito.");
+        }
+    
+        public void AutomaticTicketNotification(string totalAmount, string recipient, string ticketId,string date,string description)
+        {
+            string message = $"Se le notifica que se ha generado una multa automatica por un monto de {totalAmount} con el IVA incluido.\n\n" +
+                    $"Detalles de la multa:\n" +
+                    $"- ID: {ticketId}\n" +
+                    $"- Número de placa: {ticketId}\n" +
+                    $"- Detalle: {description}\n" +
+                    $"- Fecha y hora: {date}\n" +
+                    $"- Monto: {totalAmount}\n\n";
+
+            Console.WriteLine("Mensaje de notificación antes de enviar el correo:");
+            Console.WriteLine(message); // Verifica el contenido del mensaje
+            Console.WriteLine("Contenido del mensaje de correo:");
+            Console.WriteLine(message);
+
+            _notification.Send("Notificación enviada", message, recipient);
+            Console.WriteLine("Notificación enviada con exito.");
+        }
+
+         public void UserClaimsNotification(string recipient, string ticketId, string description)
+        {
+            string message = $"Se ha creado un nuevo reclamo: \n\n" +
+                    $"Detalles de la multa:\n" +
+                    $"- ID: {ticketId}\n" +
+                    $"- Detalle: {description}\n";
+
+            Console.WriteLine("Mensaje de notificación antes de enviar el correo:");
+            Console.WriteLine(message); // Verifica el contenido del mensaje
+            Console.WriteLine("Contenido del mensaje de correo:");
+            Console.WriteLine(message);
+
+            _notification.Send("Notificación enviada", message, recipient);
+            Console.WriteLine("Notificación enviada con exito.");
+        }
+
     }
 
 

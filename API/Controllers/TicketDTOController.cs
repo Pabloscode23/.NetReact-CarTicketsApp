@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DTO;
+using Notifications;
 using DataAccess.Models;
 
 namespace API.Controllers
@@ -15,10 +16,12 @@ namespace API.Controllers
     public class TicketDTOController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly NotificationService _notification;
 
-        public TicketDTOController(AppDbContext context)
+        public TicketDTOController(AppDbContext context,NotificationService notification)
         {
             _context = context;
+            _notification=notification;
         }
 
         // GET: api/TicketDTO
@@ -251,7 +254,6 @@ namespace API.Controllers
                     throw;
                 }
             }
-
             return CreatedAtAction("GetTicket", new { id = ticket.Id }, ticket);
         }
 
