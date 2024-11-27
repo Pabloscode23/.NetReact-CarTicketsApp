@@ -17,6 +17,7 @@ const UploadImagePage = () => {
     const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
     const mapRef = useRef(null); // Reference for the map container
     const mapInstance = useRef(null); // Reference for the map instance
+    const currentMarker = useRef(null); // Reference for the current marker
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -25,8 +26,8 @@ const UploadImagePage = () => {
     };
 
     useEffect(() => {
-        // Initialize the map if it doesn't exist
-        if (!mapInstance.current) {
+        // Initialize the map only when an image is uploaded
+        if (image && !mapInstance.current) {
             mapInstance.current = L.map(mapRef.current, {
                 attributionControl: false, // Disable the attribution control
             }).setView([9.7489, -83.7534], 7);
@@ -40,6 +41,11 @@ const UploadImagePage = () => {
                 const { lat, lng } = event.latlng;
                 setCoordinates({ latitude: lat, longitude: lng });
 
+                // If there is already a marker, remove it
+                if (currentMarker.current) {
+                    mapInstance.current.removeLayer(currentMarker.current);
+                }
+
                 // Create a Font Awesome icon for the marker
                 const arrowIcon = L.divIcon({
                     html: '<i class="fas fa-location-dot fa-2x" style="color: red;"></i>',
@@ -48,8 +54,9 @@ const UploadImagePage = () => {
                     iconAnchor: [16, 16], // Position of the anchor
                 });
 
-                // Add the marker to the map with the custom icon
-                L.marker([lat, lng], { icon: arrowIcon }).addTo(mapInstance.current);
+                // Add the new marker and store the reference
+                const marker = L.marker([lat, lng], { icon: arrowIcon }).addTo(mapInstance.current);
+                currentMarker.current = marker; // Store the reference to the current marker
             });
         }
 
@@ -60,7 +67,7 @@ const UploadImagePage = () => {
                 mapInstance.current = null;
             }
         };
-    }, []);
+    }, [image]); // This will run only when `image` changes
 
     const createAutomaticTicket = async (detectedPlate) => {
         if (!detectedPlate) {
@@ -107,7 +114,7 @@ const UploadImagePage = () => {
         e.preventDefault();
 
         if (!image) {
-            setMessage('Por favor suba una imagen.');
+            showErrorAlert('Por favor suba una imagen.');
             return;
         }
 
@@ -151,14 +158,16 @@ const UploadImagePage = () => {
                         onChange={handleImageChange}
                     />
                 </div>
-                <div className="upload-image__map-container">
-                    <h2>Seleccione una ubicación en el mapa</h2>
-                    <div
-                        id="map"
-                        ref={mapRef}
-                        style={{ height: '400px', width: '100%', margin: '10px 0' }}
-                    />
-                </div>
+                {image && (
+                    <div className="upload-image__map-container">
+                        <h2>Seleccione una ubicación en el mapa</h2>
+                        <div
+                            id="map"
+                            ref={mapRef}
+                            style={{ height: '400px', width: '100%', margin: '10px 0' }}
+                        />
+                    </div>
+                )}
                 <div className="upload-image__actions">
                     <button className="upload-image__button" type="submit" disabled={loading}>
                         {loading ? 'Procesando...' : 'Crear multa'}
