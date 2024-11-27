@@ -36,3 +36,4 @@ export const showErrorAlert = (title = 'Error', text = '') => {
         iconColor: '#e53e3e' // Customize error icon color
     });
 };
+

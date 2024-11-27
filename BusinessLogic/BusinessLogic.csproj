@@ -9,7 +9,6 @@
   <ItemGroup>
     <PackageReference Include="IronOcr" Version="2024.10.3" />
     <PackageReference Include="PuppeteerSharp" Version="20.0.5" />
-    <PackageReference Include="RazorEngine" Version="3.10.0" />
   </ItemGroup>
 
   <ItemGroup>

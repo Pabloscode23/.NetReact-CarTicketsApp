@@ -20,11 +20,19 @@ namespace API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> GenerateReport([FromQuery] string email)
+        public async Task<IActionResult> GenerateReport(ReportDTO reportInfo)
         {
-            await _reportService.GenerateReportAsync(email, "Tickets");
+
+            await _reportService.GenerateReportAsync(reportInfo.email, reportInfo.reportType);
             return Ok();
         }
 
     }
+
+    public class ReportDTO
+    {
+        public string email { get; set; }
+        public string reportType { get; set; }
+    }
+
 }

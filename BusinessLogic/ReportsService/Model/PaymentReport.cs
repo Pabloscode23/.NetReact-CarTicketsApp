@@ -7,26 +7,25 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.ReportsService.Model
 {
-    public class TicketReport: IReportData
+    public class PaymentReport : IReportData
     {
-        public string Title => "Reporte de Multas";
+        public string Title => "Reporte de Pagos";
 
-        public List<string> Headers => new List<string> { "Id", "Usuario", "Oficial", "Fecha", "Tipo de Multa", "Precio", "Estado", };
+        public List<string> Headers => new List<string> { "Id", "Id Multa", "Usuario", "Método de Pago", "Subtotal", "Impuesto" };
 
         public List<List<string>> Rows { get; private set; } = new List<List<string>>();
 
         public async Task LoadDataAsync(AppDbContext dbContext)
         {
-            Rows = await dbContext.Tickets
+            Rows = await dbContext.Payments
                 .Select(t => new List<string>
                 {
                     t.Id.ToString(),
+                    t.TicketId.ToString(),
                     t.UserId.ToString(),
-                    t.OfficerId.ToString(),
-                    t.Date.ToString("yyyy-MM-dd"),
-                    t.Description,
-                    t.Amount.ToString("C", new System.Globalization.CultureInfo("es-CR")),
-                    t.Status
+                    t.PaymentMethod,
+                    "₡" + t.Amount,
+                    "₡" + t.Tax
                 })
                 .ToListAsync();
         }

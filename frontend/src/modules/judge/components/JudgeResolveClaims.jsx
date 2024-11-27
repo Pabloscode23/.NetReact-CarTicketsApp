@@ -6,6 +6,7 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../../hooks';
 import { API_URL } from '../../../constants/Api';
 import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
+import { formatDate } from '../../../utils/formatDates';
 
 export const JudgeResolveClaims = () => {
   const { user, fetchUser: refetch } = useAuth();
@@ -60,6 +61,9 @@ export const JudgeResolveClaims = () => {
     backgroundColor: disabled ? '#6C757D' : '', // Cambia el fondo a gris si está deshabilitado
     cursor: disabled ? 'not-allowed' : 'pointer', // Cambia el cursor a no permitido si está deshabilitado
   });
+
+
+
   return (
     <div className="container__tickets">
       <h1 className="main__ticket-title">Resolver Reclamos</h1>
@@ -85,16 +89,20 @@ export const JudgeResolveClaims = () => {
           <thead>
             <tr className="table__head">
               <th>ID Multa</th>
-              <th>Descripción</th>
+              <th>Fecha</th>
+              <th>Tipo de multa</th>
               <th>Estado</th>
               <th>Documentos</th>
               <th colSpan={2}>Acción</th>
             </tr>
           </thead>
           <tbody>
-            {filteredClaims.map((claim) => (
+            {filteredClaims.sort((a, b) => {
+              return new Date(b.createdAt) - new Date(a.createdAt);
+            }).map((claim) => (
               <tr key={claim.ticketId}>
                 <td>{claim.ticketId}</td>
+                <td>{formatDate(claim.createdAt)}</td>
                 <td>{claim.ticket?.description}</td>
                 <td>{claim.status}</td>
                 <td>

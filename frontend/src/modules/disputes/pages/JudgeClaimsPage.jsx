@@ -7,6 +7,7 @@ import { TicketsContext } from "../../tickets/context/TicketsContext";
 import { TicketsInfo } from "../../../constants/TicketsInfo";
 import { TicketUser } from "../../tickets/components/TicketUser";
 import { ClaimsOfficer } from "../../tickets/components/ClaimsOfficer";
+import { formatDate } from "../../../utils/formatDates";
 
 export const JudgeClaimsPage = () => {
     const { tickets, setTickets, refetchTickets } = useContext(TicketsContext);
@@ -115,11 +116,13 @@ export const JudgeClaimsPage = () => {
                         </tr>
                     </thead>
                     <tbody className='table__children'>
-                        {filteredTickets.map(ticket => (
+                        {filteredTickets.sort((a, b) => {
+                            return new Date(b.date) - new Date(a.date);
+                        }).map(ticket => (
                             <ClaimsOfficer
                                 key={ticket.id}
                                 id={ticket.id}
-                                date={ticket.date}
+                                date={formatDate(ticket.date)}
                                 reason={ticket.description}
                                 amount={ticket.amount}
                                 status={ticket.status}

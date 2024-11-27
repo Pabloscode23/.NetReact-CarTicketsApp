@@ -11,16 +11,17 @@ namespace BusinessLogic.ReportsService.Factory
 
         // Constructor que recibe las diferentes fábricas
         public ReportGeneratorFactory(
-            TicketReportFactory ticketFactory
-        //ClaimReportFactory claimFactory // Agrega más fábricas si es necesario
+            TicketReportFactory ticketFactory,
+            PaymentReportFactory paymentFactory,
+            ClaimReportFactory claimFactory
         )
         {
             // Inicializa el diccionario con las fábricas disponibles
             _factories = new Dictionary<string, IReportDataFactory>
             {
                 { "Tickets", ticketFactory },
-                //{ "Claims", claimFactory }
-                // Agrega más tipos de reportes aquí
+                { "Payments", paymentFactory },
+                { "Claims", claimFactory }
             };
         }
 

@@ -30,6 +30,10 @@ namespace API
             var connectionString2 = builder.Configuration.GetConnectionString("SecondaryConnection");
             builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(connectionString2));
 
+            // Cloudinary setup
+            builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+
             // Configura Email Settings desde appsettings.json
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
@@ -68,10 +72,15 @@ namespace API
             builder.Services.AddScoped<PaymentService>();
 
             // Registra las fábricas de reportes
-            builder.Services.AddTransient<TicketReportFactory>();  
+            builder.Services.AddTransient<TicketReportFactory>();
+            builder.Services.AddTransient<PaymentReportFactory>();
+            builder.Services.AddTransient<ClaimReportFactory>();
 
 
             builder.Services.AddTransient<IReportDataFactory, TicketReportFactory>();
+            builder.Services.AddTransient<IReportDataFactory, PaymentReportFactory>();
+            builder.Services.AddTransient<IReportDataFactory, ClaimReportFactory>();
+
 
             // Registra ReportGeneratorFactory
             builder.Services.AddTransient<ReportGeneratorFactory>();
