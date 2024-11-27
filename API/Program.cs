@@ -10,6 +10,8 @@ using System.Net.WebSockets;
 using BusinessLogic.ClaimService;
 using System.Text.Json.Serialization;
 using BusinessLogic.FileUploadService;
+using BusinessLogic.ReportsService.Factory;
+using BusinessLogic.ReportsService;
 
 
 
@@ -27,6 +29,10 @@ namespace API
 
             var connectionString2 = builder.Configuration.GetConnectionString("SecondaryConnection");
             builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(connectionString2));
+
+            // Cloudinary setup
+            builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
 
             // Configura Email Settings desde appsettings.json
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
@@ -50,6 +56,11 @@ namespace API
             builder.Services.AddControllers().AddJsonOptions(x =>
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
+            // Registra el servicio de generación de PDF
+            builder.Services.AddTransient<BusinessLogic.PdfGenerationService.PdfGenerator>();
+
+            // Registra el servicio de generación de Reportes
+            builder.Services.AddTransient<BusinessLogic.ReportsService.ReportService>();
 
             // Registra AuthService
             builder.Services.AddTransient<AuthService>();
@@ -59,6 +70,30 @@ namespace API
             
             // Registra PaymentService
             builder.Services.AddScoped<PaymentService>();
+
+            // Registra las fábricas de reportes
+            builder.Services.AddTransient<TicketReportFactory>();
+            builder.Services.AddTransient<PaymentReportFactory>();
+            builder.Services.AddTransient<ClaimReportFactory>();
+
+
+            builder.Services.AddTransient<IReportDataFactory, TicketReportFactory>();
+            builder.Services.AddTransient<IReportDataFactory, PaymentReportFactory>();
+            builder.Services.AddTransient<IReportDataFactory, ClaimReportFactory>();
+
+
+            // Registra ReportGeneratorFactory
+            builder.Services.AddTransient<ReportGeneratorFactory>();
+
+
+            // Report HTMLBuilder
+            builder.Services.AddTransient<ReportHTMLBuilder>(sp =>
+            {
+                var configuration = sp.GetRequiredService<IConfiguration>();
+                var templatePath = configuration["ReportTemplatePath"];
+                return new ReportHTMLBuilder(templatePath);
+            });
+
 
             // Add services to the container
             builder.Services.AddControllers();

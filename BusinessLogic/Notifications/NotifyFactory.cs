@@ -9,6 +9,7 @@ namespace Notifications
     public interface INotification
     {
         void Send(string subject, string message, string recipient);
+        Task SendEmailWithPdfAsync(string subject, string message, string recipient, byte[] pdfContent);
     }
 
     // Servicio de notificación
@@ -52,8 +53,6 @@ namespace Notifications
             Console.WriteLine("Notificación de pago exitoso enviada.");
         }
 
-
-
         public void SendClaimNotification(string claimId, string claimDocument, string recipient)
         {
             string message = $"Se ha generado una nueva reclamación con el ID {claimId} y el documento {claimDocument}";
@@ -61,8 +60,11 @@ namespace Notifications
             _notification.Send("Nueva reclamación", message, recipient);
             Console.WriteLine("Notificación de reclamación enviada.");
         }
+
     }
 
+
+    //
     public class EmailSettings
     {
         public string SenderEmail { get; set; }
@@ -106,6 +108,41 @@ namespace Notifications
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al enviar el correo: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task SendEmailWithPdfAsync(string subject, string message, string recipient, byte[] pdfContent)
+        {
+            try
+            {
+                using (var client = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    client.Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password);
+                    client.EnableSsl = true;
+
+                    var mailMessage = new MailMessage
+                    {
+                        From = new MailAddress(_emailSettings.SenderEmail),
+                        Subject = subject,
+                        Body = message,
+                        IsBodyHtml = false
+                    };
+
+                    mailMessage.To.Add(recipient);
+
+                    using (var memoryStream = new System.IO.MemoryStream(pdfContent))
+                    {
+                        mailMessage.Attachments.Add(new Attachment(memoryStream, subject + ".pdf"));
+
+                        await client.SendMailAsync(mailMessage);
+                    }
+                    Console.WriteLine($"Correo con PDF enviado a {recipient} con el asunto: {subject}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al enviar el correo con PDF: {ex.Message}");
                 throw;
             }
         }

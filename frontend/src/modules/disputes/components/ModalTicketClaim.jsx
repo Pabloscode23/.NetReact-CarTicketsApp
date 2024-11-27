@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import '../styles/ModalTicketClaim.css';
 import PropTypes from 'prop-types';
