@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura Electrónica</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .invoice-container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .invoice-header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .invoice-header p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .invoice-details,
+        .client-details,
+        .payment-details {
+            margin-bottom: 30px;
+        }
+
+        .invoice-details table,
+        .client-details table,
+        .payment-details table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            padding: 8px 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            margin-top: 20px;
+        }
+
+        .total-amount {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="invoice-container">
+        <!-- Header -->
+        <div class="invoice-header">
+            <h1>Factura Electrónica</h1>
+            <p>Fecha de emisión: <strong>{{fecha_emision}}</strong></p>
+            <p>Factura N°: <strong>{{numero_factura}}</strong></p>
+        </div>
+
+        <!-- Client Details -->
+        <div class="client-details">
+            <h2>Datos del Cliente</h2>
+            <table>
+                <tr>
+                    <th>Nombre</th>
+                    <td>{{cliente_nombre}}</td>
+                </tr>
+                <tr>
+                    <th>Número de cédula</th>
+                    <td>{{cliente_rfc}}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Invoice Details -->
+        <div class="invoice-details">
+            <h2>Detalles de la Multa</h2>
+            <table>
+                <tr>
+                    <th>ID de la multa</th>
+                    <td>{{ticketId}}</td>
+                </tr>
+                <tr>
+                    <th>Descripción de la multa</th>
+                    <td>{{descripcion_multa}}</td>
+                </tr>
+                <tr>
+                    <th>Monto sin IVA</th>
+                    <td>{{amount}} USD</td>
+                </tr>
+                <tr>
+                    <th>IVA ({{iva_porcentaje}}%)</th>
+                    <td>{{iva}} USD</td>
+                </tr>
+                <tr>
+                    <th>Total con IVA</th>
+                    <td>{{totalAmount}} USD</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Payment Details -->
+        <div class="payment-details">
+            <h2>Detalles de Pago</h2>
+            <table>
+                <tr>
+                    <th>Método de Pago</th>
+                    <td>{{paymentMethod}}</td>
+                </tr>
+                <tr>
+                    <th>Fecha de Pago</th>
+                    <td>{{fecha_pago}}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Total Amount -->
+        <div class="total-amount">
+            <p><strong>Total a Pagar: {{totalAmount}} USD</strong></p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Gracias por su pago.</p>
+            <p>Para cualquier consulta, no dude en ponerse en contacto con nosotros.</p>
+        </div>
+    </div>
+</body>
+
+</html>
