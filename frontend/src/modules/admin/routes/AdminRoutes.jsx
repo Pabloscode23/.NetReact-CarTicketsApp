@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom"
 import { UsersPage } from "../pages"
 import { AdminAllTickets } from "../../tickets/pages/AdminAllTickets"
-import { TicketsProvider } from "../../tickets/context/TicketsProvider"
 import UploadImagePage from "../../tickets/pages/UploadImagePage"
+import { ReportsPage } from "../pages/ReportsPage"
 
 export const AdminRoutes = () => {
     return (
@@ -15,11 +15,11 @@ export const AdminRoutes = () => {
             <Route path="/usuarios" element={<UsersPage />} />
 
             {/* Ruta para control de informes */}
-            <Route path="/informes" element={<h1>Reports</h1>} />
+            <Route path="/informes" element={<ReportsPage />} />
             {/* Ruta para control de pagos */}
             <Route path="/multas" element={<AdminAllTickets />} />
 
-            
+
             {/* Ruta para subir imagen */}
             <Route path="/imagen" element={<UploadImagePage />} />
         </Routes>

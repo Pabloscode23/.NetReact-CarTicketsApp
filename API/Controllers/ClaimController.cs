@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using DataAccess.Models;
 using BusinessLogic.FileUploadService;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 
 namespace API.Controllers
 {
@@ -15,12 +17,22 @@ namespace API.Controllers
         private readonly AppDbContext _context;
         private readonly ClaimService _claimService;
         private readonly IFileUploadService _fileUploadService;
+        private readonly IConfiguration _configuration;
+        private Cloudinary _cloudinary;
 
-        public ClaimController(AppDbContext context, ClaimService claimService, IFileUploadService fileUploadService)
+        public ClaimController(AppDbContext context, ClaimService claimService, IFileUploadService fileUploadService, IConfiguration configuration)
         {
             _context = context;
             _claimService = claimService;
             _fileUploadService = fileUploadService;
+            _configuration = configuration;
+
+            // Configuración de Cloudinary
+            var cloudName = _configuration["Cloudinary:CloudName"];
+            var apiKey = _configuration["Cloudinary:ApiKey"];
+            var apiSecret = _configuration["Cloudinary:ApiSecret"];
+            var account = new CloudinaryDotNet.Account(cloudName, apiKey, apiSecret);
+            _cloudinary = new Cloudinary(account);
         }
 
         // GET: api/<ClaimController>
@@ -77,19 +89,35 @@ namespace API.Controllers
 
             var judge = judgeResult;
 
-            // Ruta destino para guardar el archivo
-            var destinationPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "claims");
+            // Configuración de Cloudinary
+            var cloudName = _configuration["Cloudinary:CloudName"];
+            var apiKey = _configuration["Cloudinary:ApiKey"];
+            var apiSecret = _configuration["Cloudinary:ApiSecret"];
 
-            // Usar el servicio para subir el archivo y obtener la URL pública
-            string filePath;
-            try
+
+
+            var fileStream = claimDocument.OpenReadStream();
+            var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss"); // Formato: AñoMesDíaHoraMinutoSegundo
+            var fileName = Path.GetFileNameWithoutExtension(claimDocument.FileName) + "_" + timestamp + Path.GetExtension(claimDocument.FileName);
+            var publicId = Guid.NewGuid().ToString();
+
+            var uploadParams = new RawUploadParams
             {
-                filePath = await _fileUploadService.UploadFileAsync(claimDocument, destinationPath, "claims", Request);
-            }
-            catch (ArgumentException ex)
+                File = new FileDescription(fileName, fileStream),
+                PublicId = publicId,
+                Folder = "proy2_claims"
+            };  
+
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+            if ( uploadResult.StatusCode != System.Net.HttpStatusCode.OK)
             {
-                return BadRequest(ex.Message);
+                return BadRequest("Hubo un error al subir el archivo a Cloudinary.");
             }
+
+            
+            var filePath = uploadResult.SecureUrl.ToString();
+
 
             // Crear el reclamo
             var claim = new Claim
@@ -108,6 +136,7 @@ namespace API.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetClaim", new { id = claim.ClaimId }, claim);
+            
         }
 
 

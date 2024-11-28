@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{ReportTitle}</title>
+
+    <!-- Add Bootstrap CSS for styling -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+     
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            color: #2E8EB1;
+            width: 100vw;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+            .header img {
+                width: 150px;
+                height: auto;
+            }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #333B7B;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: #506579;
+        }
+
+        .table th, .table td {
+            text-align: center;
+            padding: 12px;
+            vertical-align: middle;
+            color: #384553;
+        }
+
+        .table th {
+            background-color: #72E2FE;
+            color: #384553;
+            font-weight: bold;
+        }
+
+        .table thead {
+            background-color: #72E2FE;
+        }
+
+        .table tbody tr:nth-child(odd) {
+            background-color: #DFF5FC;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #BCD6DE;
+        }
+
+        .table tbody tr:hover {
+            background-color: #9CA0D3;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #506579;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-end py-3 mb-4 border-bottom h-25">
+            <img width="70" height="70" class="d-inline-block align-top" src="https://res.cloudinary.com/dgwwambrx/image/upload/v1732682863/ByteDevLogo_y2ywio.png" alt="Logo" />
+            <h1>{ReportTitle}</h1>
+            <p class="text-right"><strong>Fecha:</strong> {ReportDate}</p>
+        </div>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    {TableHeaders}
+                </tr>
+            </thead>
+            <tbody>
+                {TableRows}
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <p>Generado por ByteDev y Cosevi</p>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

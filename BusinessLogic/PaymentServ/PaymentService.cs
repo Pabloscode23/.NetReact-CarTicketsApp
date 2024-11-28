@@ -1,3 +1,4 @@
+using BusinessLogic.PdfGenerationService;
 using DataAccess.Models;
 using DTO;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ public class PaymentService
 {
     private readonly AppDbContext _context;
     private readonly NotificationService _notificationService;
+    //private readonly PdfGenerator _pdfGenerator;
 
     public PaymentService(AppDbContext context, NotificationService notificationService)
     {
@@ -81,6 +83,26 @@ public class PaymentService
             })
             .ToListAsync();
     }
+
+    // generar html de factura electronica
+
+    // public string htmlCreatePayment(PaymentDTO payment)
+    //{
+    //    string template = "<h1>";
+
+    //    string paymentInfoHTML = $"<h2>Multa: payment.id</h2>";
+
+    //}
+
+    // enviar pdf de factura electronica
+
+    //public async Task SendPaymentInvoice(string email, invoice)
+    //{
+    //    var html = _paymentGenerator.htmlCreatePayment(invoice);
+    //    var pdfContent = await _pdfGenerator(html);
+    //
+    //    await _notification.SendEmailWithPdfAsync("Factura Electronica del Pago", "Factura electronica adjunta", email, pdfContent);
+    //}
 
     // Obtener un pago por ID
     public async Task<PaymentDTO> GetPaymentByIdAsync(string id)
