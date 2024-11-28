@@ -1,77 +1,260 @@
 using BusinessLogic.PdfGenerationService;
 using DataAccess.Models;
 using DTO;
-using Microsoft.EntityFrameworkCore;
 using Notifications;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
-public class PaymentService
+namespace BusinessLogic
 {
-    private readonly AppDbContext _context;
-    private readonly NotificationService _notificationService;
-    //private readonly PdfGenerator _pdfGenerator;
-
-    public PaymentService(AppDbContext context, NotificationService notificationService)
+    public class PaymentService
     {
-        _context = context;
-        _notificationService = notificationService;
-    }
+        private readonly AppDbContext _context;
+        private readonly INotification _notification;
+        private readonly PdfGenerator _pdfGenerator;
+        private readonly UserService _userService;
 
-    // POST: Agregar un nuevo pago
-    public async Task<PaymentDTO> AddPaymentAsync(PaymentDTO paymentDto)
-    {
-        // Validar el ID y el email
-        if (string.IsNullOrEmpty(paymentDto.Id))
+        // Updated constructor to inject PdfGenerator and UserService directly
+        public PaymentService(AppDbContext context, INotification notification, PdfGenerator pdfGenerator, UserService userService)
         {
-            throw new Exception("Payment ID is required.");
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _notification = notification ?? throw new ArgumentNullException(nameof(notification));
+            _pdfGenerator = pdfGenerator ?? throw new ArgumentNullException(nameof(pdfGenerator));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
-        if (string.IsNullOrEmpty(paymentDto.UserEmail))
+        // POST: Add a new payment
+        public async Task<PaymentDTO> AddPaymentAsync(PaymentDTO paymentDto)
         {
-            throw new Exception("User email is required for notification.");
+            // Validate the ID and email
+            if (string.IsNullOrEmpty(paymentDto.Id))
+            {
+                throw new Exception("Payment ID is required.");
+            }
+
+            if (string.IsNullOrEmpty(paymentDto.UserEmail))
+            {
+                throw new Exception("User email is required for notification.");
+            }
+
+            // Create and save the payment
+            var payment = new Payment
+            {
+                Id = paymentDto.Id,
+                Amount = paymentDto.Amount,
+                Tax = paymentDto.Tax,
+                TotalAmount = paymentDto.TotalAmount,
+                PaymentMethod = paymentDto.PaymentMethod,
+                UserId = paymentDto.UserId,
+                TicketId = paymentDto.TicketId
+            };
+
+            _context.Payments.Add(payment);
+            await _context.SaveChangesAsync();
+
+            // Map to DTO after saving
+            paymentDto.Id = payment.Id;
+
+            // Get ticket details for the notification
+            var ticket = await _context.Tickets.FindAsync(paymentDto.TicketId);
+            if (ticket == null)
+            {
+                throw new Exception("Ticket not found.");
+            }
+
+            // Fetch the user by UserId to get the name
+            var userId = (paymentDto.UserId);
+            var user = await _userService.GetUserByIdAsync(userId); // Get user by UserId
+
+            // Create the HTML for the invoice with the user's name
+            string htmlContent = await GenerateInvoiceHtml(paymentDto, ticket, user.Name); // Pass the user name to the HTML generator
+
+            // Convert HTML to PDF using PdfGenerator
+            byte[] pdfContent = await _pdfGenerator.GeneratePdfAsync(htmlContent);
+
+            // Send the email with the PDF attached
+            await _notification.SendEmailWithPdfAsync(
+                "Factura Electrónica del Pago",
+                "Factura electrónica adjunta.",
+                paymentDto.UserEmail,
+                pdfContent
+            );
+
+            return paymentDto;
+        }
+        // Generate the HTML for the invoice
+        private async Task<string> GenerateInvoiceHtml(PaymentDTO paymentDto, Ticket ticket, string userName)
+        {
+            return $@"
+    <html>
+        <head>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 0;
+                    background-color: #f4f4f4;
+                }}
+
+                .invoice-container {{
+                    width: 80%;
+                    margin: 20px auto;
+                    padding: 20px;
+                    background-color: #fff;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                }}
+
+                .invoice-header {{
+                    text-align: center;
+                    margin-bottom: 20px;
+                }}
+
+                .invoice-header h1 {{
+                    font-size: 24px;
+                    margin: 0;
+                }}
+
+                .invoice-header p {{
+                    font-size: 16px;
+                    color: #555;
+                }}
+
+                .invoice-details,
+                .client-details,
+                .payment-details {{
+                    margin-bottom: 30px;
+                }}
+
+                .invoice-details table,
+                .client-details table,
+                .payment-details table {{
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 20px;
+                }}
+
+                th,
+                td {{
+                    padding: 8px 12px;
+                    text-align: left;
+                    border: 1px solid #ddd;
+                }}
+
+                th {{
+                    background-color: #f2f2f2;
+                }}
+
+                .footer {{
+                    text-align: center;
+                    font-size: 14px;
+                    color: #777;
+                    margin-top: 20px;
+                }}
+
+                .total-amount {{
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: #4CAF50;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class='invoice-container'>
+                <!-- Header -->
+                <div class='invoice-header'>
+                    <h1>Factura Electrónica</h1>
+                    <p>Fecha de emisión: <strong>{DateTime.Now.ToString("dd/MM/yyyy")}</strong></p>
+                    <p>Factura N°: <strong>{paymentDto.Id}</strong></p>
+                </div>
+
+                <!-- Client Details -->
+                <div class='client-details'>
+                    <h2>Datos del Cliente</h2>
+                    <table>
+                        <tr>
+                            <th>Nombre</th>
+                            <td>{userName}</td> <!-- Displaying user's name -->
+                        </tr>
+                        <tr>
+                            <th>Número de cédula</th>
+                            <td>{ticket.UserId}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Invoice Details -->
+                <div class='invoice-details'>
+                    <h2>Detalles de la Multa</h2>
+                    <table>
+                        <tr>
+                            <th>ID de la multa</th>
+                            <td>{ticket.Id}</td>
+                        </tr>
+                        <tr>
+                            <th>Descripción de la multa</th>
+                            <td>{ticket.Description}</td>
+                        </tr>
+                        <tr>
+                            <th>Monto sin IVA</th>
+                            <td>₡{paymentDto.Amount}</td>
+                        </tr>
+                        <tr>
+                            <th>IVA</th>
+                            <td>{paymentDto.Tax}</td>
+                        </tr>
+                        <tr>
+                            <th>Total con IVA</th>
+                            <td>₡{paymentDto.TotalAmount}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Payment Details -->
+                <div class='payment-details'>
+                    <h2>Detalles de Pago</h2>
+                    <table>
+                        <tr>
+                            <th>Método de Pago</th>
+                            <td>{paymentDto.PaymentMethod}</td>
+                        </tr>
+                        <tr>
+                            <th>Fecha de Pago</th>
+                            <td>{DateTime.Now}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Total Amount -->
+                <div class='total-amount'>
+                    <p><strong>Total a Pagar: ₡{paymentDto.TotalAmount}</strong></p>
+                </div>
+
+                <!-- Footer -->
+                <div class='footer'>
+                    <p>Gracias por su pago.</p>
+                    <p>Para cualquier consulta, no dude en ponerse en contacto con nosotros.</p>
+                </div>
+            </div>
+        </body>
+    </html>";
         }
 
-        // Crear y guardar el pago
-        var payment = new Payment
+        // GET: Retrieve a payment by its ID
+        public async Task<PaymentDTO> GetPaymentByIdAsync(string paymentId)
         {
-            Id = paymentDto.Id,
-            Amount = paymentDto.Amount,
-            Tax = paymentDto.Tax,
-            TotalAmount = paymentDto.TotalAmount,
-            PaymentMethod = paymentDto.PaymentMethod,
-            UserId = paymentDto.UserId,
-            TicketId = paymentDto.TicketId
-        };
+            // Find the payment by its ID
+            var payment = await _context.Payments.FindAsync(paymentId);
 
-        _context.Payments.Add(payment);
-        await _context.SaveChangesAsync();
+            if (payment == null)
+            {
+                throw new Exception("Payment not found.");
+            }
 
-        // Mapear a DTO después de guardar
-        paymentDto.Id = payment.Id;
-
-        // Obtener detalles del ticket para la notificación
-        var ticket = await _context.Tickets.FindAsync(paymentDto.TicketId);
-        if (ticket == null)
-        {
-            throw new Exception("Ticket not found.");
-        }
-
-        // Enviar notificación de pago exitoso con detalles del ticket
-        _notificationService.PaymentSuccessNotification(
-            paymentDto.TotalAmount,
-            paymentDto.UserEmail,
-            ticket.Id,
-            paymentDto.Amount,
-            paymentDto.PaymentMethod
-        );
-
-        return paymentDto;
-    }
-
-    // Obtener todos los pagos
-    public async Task<IEnumerable<PaymentDTO>> GetAllPaymentsAsync()
-    {
-        return await _context.Payments
-            .Select(payment => new PaymentDTO
+            // Map the Payment entity to the PaymentDTO
+            var paymentDto = new PaymentDTO
             {
                 Id = payment.Id,
                 Amount = payment.Amount,
@@ -80,48 +263,30 @@ public class PaymentService
                 PaymentMethod = payment.PaymentMethod,
                 UserId = payment.UserId,
                 TicketId = payment.TicketId
-            })
-            .ToListAsync();
-    }
+            };
 
-    // generar html de factura electronica
-
-    // public string htmlCreatePayment(PaymentDTO payment)
-    //{
-    //    string template = "<h1>";
-
-    //    string paymentInfoHTML = $"<h2>Multa: payment.id</h2>";
-
-    //}
-
-    // enviar pdf de factura electronica
-
-    //public async Task SendPaymentInvoice(string email, invoice)
-    //{
-    //    var html = _paymentGenerator.htmlCreatePayment(invoice);
-    //    var pdfContent = await _pdfGenerator(html);
-    //
-    //    await _notification.SendEmailWithPdfAsync("Factura Electronica del Pago", "Factura electronica adjunta", email, pdfContent);
-    //}
-
-    // Obtener un pago por ID
-    public async Task<PaymentDTO> GetPaymentByIdAsync(string id)
-    {
-        var payment = await _context.Payments.FindAsync(id);
-        if (payment == null)
-        {
-            return null;
+            return paymentDto;
         }
 
-        return new PaymentDTO
+        // GET: Retrieve all payments
+        public async Task<IEnumerable<PaymentDTO>> GetAllPaymentsAsync()
         {
-            Id = payment.Id,
-            Amount = payment.Amount,
-            Tax = payment.Tax,
-            TotalAmount = payment.TotalAmount,
-            PaymentMethod = payment.PaymentMethod,
-            UserId = payment.UserId,
-            TicketId = payment.TicketId
-        };
+            // Retrieve all payments from the database
+            var payments = await _context.Payments.ToListAsync();
+
+            // Map the payments to PaymentDTO
+            var paymentDtos = payments.Select(p => new PaymentDTO
+            {
+                Id = p.Id,
+                Amount = p.Amount,
+                Tax = p.Tax,
+                TotalAmount = p.TotalAmount,
+                PaymentMethod = p.PaymentMethod,
+                UserId = p.UserId,
+                TicketId = p.TicketId
+            }).ToList();
+
+            return paymentDtos;
+        }
     }
 }
