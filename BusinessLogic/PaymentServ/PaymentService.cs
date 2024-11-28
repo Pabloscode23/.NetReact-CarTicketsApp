@@ -172,7 +172,7 @@ namespace BusinessLogic
 
                 <!-- Client Details -->
                 <div class='client-details'>
-                    <h2>Datos del Cliente</h2>
+                    <h2>Datos del Usuario</h2>
                     <table>
                         <tr>
                             <th>Nombre</th>
