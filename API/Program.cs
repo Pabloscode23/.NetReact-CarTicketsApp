@@ -12,6 +12,7 @@ using System.Text.Json.Serialization;
 using BusinessLogic.FileUploadService;
 using BusinessLogic.ReportsService.Factory;
 using BusinessLogic.ReportsService;
+using BusinessLogic;
 
 
 
@@ -42,9 +43,9 @@ namespace API
 
             // Registra NotificationService, que depende de INotification
             builder.Services.AddTransient<NotificationService>();
-
+            builder.Services.AddScoped<UserService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped<ClaimService>(); 
+            builder.Services.AddScoped<ClaimService>();
 
             // Configura JwtSettings desde appsettings.json
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
@@ -67,7 +68,7 @@ namespace API
 
             // Registra FileUploadService
             builder.Services.AddScoped<IFileUploadService, FileUploadService>();
-            
+
             // Registra PaymentService
             builder.Services.AddScoped<PaymentService>();
 
