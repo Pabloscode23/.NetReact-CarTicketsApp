@@ -10,6 +10,7 @@ namespace Notifications
     {
         void Send(string subject, string message, string recipient);
         Task SendEmailWithPdfAsync(string subject, string message, string recipient, byte[] pdfContent);
+        Task SendEmailWithAttachmentsAsync(string subject, string message, string recipient, Dictionary<string, byte[]> attachments);
     }
 
     // Servicio de notificación
@@ -146,6 +147,42 @@ namespace Notifications
                 throw;
             }
         }
+        public async Task SendEmailWithAttachmentsAsync(string subject, string message, string recipient, Dictionary<string, byte[]> attachments)
+        {
+            try
+            {
+                using (var client = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    client.Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.Password);
+                    client.EnableSsl = true;
+
+                    var mailMessage = new MailMessage
+                    {
+                        From = new MailAddress(_emailSettings.SenderEmail),
+                        Subject = subject,
+                        Body = message,
+                        IsBodyHtml = false
+                    };
+
+                    mailMessage.To.Add(recipient);
+
+                    foreach (var attachment in attachments)
+                    {
+                        var memoryStream = new System.IO.MemoryStream(attachment.Value);
+                        mailMessage.Attachments.Add(new Attachment(memoryStream, attachment.Key));
+                    }
+
+                    await client.SendMailAsync(mailMessage);
+                    Console.WriteLine($"Correo enviado a {recipient} con los adjuntos.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al enviar el correo: {ex.Message}");
+                throw;
+            }
+        }
+
     }
 
 }

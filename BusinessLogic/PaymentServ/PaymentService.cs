@@ -3,9 +3,11 @@ using DataAccess.Models;
 using DTO;
 using Notifications;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
 
 namespace BusinessLogic
 {
@@ -16,7 +18,7 @@ namespace BusinessLogic
         private readonly PdfGenerator _pdfGenerator;
         private readonly UserService _userService;
 
-        // Updated constructor to inject PdfGenerator and UserService directly
+        // Constructor actualizado
         public PaymentService(AppDbContext context, INotification notification, PdfGenerator pdfGenerator, UserService userService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -25,21 +27,14 @@ namespace BusinessLogic
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
-        // POST: Add a new payment
+        // POST: Agregar un nuevo pago
         public async Task<PaymentDTO> AddPaymentAsync(PaymentDTO paymentDto)
         {
-            // Validate the ID and email
             if (string.IsNullOrEmpty(paymentDto.Id))
-            {
                 throw new Exception("Payment ID is required.");
-            }
-
             if (string.IsNullOrEmpty(paymentDto.UserEmail))
-            {
                 throw new Exception("User email is required for notification.");
-            }
 
-            // Create and save the payment
             var payment = new Payment
             {
                 Id = paymentDto.Id,
@@ -53,42 +48,38 @@ namespace BusinessLogic
 
             _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
-
-            // Map to DTO after saving
             paymentDto.Id = payment.Id;
 
-            // Get ticket details for the notification
-            var ticket = await _context.Tickets.FindAsync(paymentDto.TicketId);
-            if (ticket == null)
-            {
-                throw new Exception("Ticket not found.");
-            }
+            var ticket = await _context.Tickets.FindAsync(paymentDto.TicketId)
+                ?? throw new Exception("Ticket not found.");
 
-            // Fetch the user by UserId to get the name
-            var userId = (paymentDto.UserId);
-            var user = await _userService.GetUserByIdAsync(userId); // Get user by UserId
+            var user = await _userService.GetUserByIdAsync(paymentDto.UserId);
 
-            // Create the HTML for the invoice with the user's name
-            string htmlContent = await GenerateInvoiceHtml(paymentDto, ticket, user.Name); // Pass the user name to the HTML generator
-
-            // Convert HTML to PDF using PdfGenerator
+            string htmlContent = await GenerateInvoiceHtml(paymentDto, ticket, user.Name);
             byte[] pdfContent = await _pdfGenerator.GeneratePdfAsync(htmlContent);
 
-            // Send the email with the PDF attached
-            await _notification.SendEmailWithPdfAsync(
+            string xmlContent = GenerateInvoiceXml(paymentDto, ticket, user.Name);
+            byte[] xmlBytes = System.Text.Encoding.UTF8.GetBytes(xmlContent);
+
+            await _notification.SendEmailWithAttachmentsAsync(
                 "Factura Electrónica del Pago",
                 "Factura electrónica adjunta.",
                 paymentDto.UserEmail,
-                pdfContent
+                new Dictionary<string, byte[]>
+                {
+                    { "Factura Electrónica del Pago.pdf", pdfContent },
+                    { "Factura Electrónica del Pago.xml", xmlBytes }
+                }
             );
 
             return paymentDto;
         }
-        // Generate the HTML for the invoice
+
+        // Generar HTML para la factura
         private async Task<string> GenerateInvoiceHtml(PaymentDTO paymentDto, Ticket ticket, string userName)
         {
             return $@"
-    <html>
+      <html>
         <head>
             <style>
                 body {{
@@ -242,19 +233,38 @@ namespace BusinessLogic
     </html>";
         }
 
-        // GET: Retrieve a payment by its ID
+        // Generar XML para la factura
+        private string GenerateInvoiceXml(PaymentDTO paymentDto, Ticket ticket, string userName)
+        {
+            var xml = new XDocument(
+                new XElement("FacturaElectronica",
+                    new XElement("DatosUsuario",
+                        new XElement("Nombre", userName),
+                        new XElement("NumeroCedula", ticket.UserId)
+                    ),
+                    new XElement("DetallesMulta",
+                        new XElement("IDMulta", ticket.Id),
+                        new XElement("DescripcionMulta", ticket.Description),
+                        new XElement("MontoSinIVA", paymentDto.Amount),
+                        new XElement("IVA", paymentDto.Tax),
+                        new XElement("TotalConIVA", paymentDto.TotalAmount)
+                    ),
+                    new XElement("DetallesPago",
+                        new XElement("MetodoPago", paymentDto.PaymentMethod),
+                        new XElement("FechaPago", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"))
+                    )
+                )
+            );
+            return xml.ToString();
+        }
+
+        // GET: Recuperar pago por ID
         public async Task<PaymentDTO> GetPaymentByIdAsync(string paymentId)
         {
-            // Find the payment by its ID
-            var payment = await _context.Payments.FindAsync(paymentId);
+            var payment = await _context.Payments.FindAsync(paymentId)
+                ?? throw new Exception("Payment not found.");
 
-            if (payment == null)
-            {
-                throw new Exception("Payment not found.");
-            }
-
-            // Map the Payment entity to the PaymentDTO
-            var paymentDto = new PaymentDTO
+            return new PaymentDTO
             {
                 Id = payment.Id,
                 Amount = payment.Amount,
@@ -264,29 +274,23 @@ namespace BusinessLogic
                 UserId = payment.UserId,
                 TicketId = payment.TicketId
             };
-
-            return paymentDto;
         }
 
-        // GET: Retrieve all payments
+        // GET: Recuperar todos los pagos
         public async Task<IEnumerable<PaymentDTO>> GetAllPaymentsAsync()
         {
-            // Retrieve all payments from the database
-            var payments = await _context.Payments.ToListAsync();
-
-            // Map the payments to PaymentDTO
-            var paymentDtos = payments.Select(p => new PaymentDTO
-            {
-                Id = p.Id,
-                Amount = p.Amount,
-                Tax = p.Tax,
-                TotalAmount = p.TotalAmount,
-                PaymentMethod = p.PaymentMethod,
-                UserId = p.UserId,
-                TicketId = p.TicketId
-            }).ToList();
-
-            return paymentDtos;
+            return await _context.Payments
+                .Select(p => new PaymentDTO
+                {
+                    Id = p.Id,
+                    Amount = p.Amount,
+                    Tax = p.Tax,
+                    TotalAmount = p.TotalAmount,
+                    PaymentMethod = p.PaymentMethod,
+                    UserId = p.UserId,
+                    TicketId = p.TicketId
+                })
+                .ToListAsync();
         }
     }
 }
