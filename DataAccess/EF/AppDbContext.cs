@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<Payment> Payments { get; set; } // Aquí es donde se mapea la entidad Payment
     public DbSet<Claim> Claims { get; set; }
+    public DbSet<TicketType> TicketTypes { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -41,5 +42,12 @@ public class AppDbContext : DbContext
             .WithMany(u => u.ClaimsAsJudge)
             .HasForeignKey(c => c.JudgeId)
             .OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity<TicketType>().HasData(
+                new TicketType { Id = 1, Description = "Exceso de velocidad", Amount = 68000 },
+                new TicketType { Id = 2, Description = "Mal estacionamiento", Amount = 52000 },
+                new TicketType { Id = 3, Description = "Conducir en estado de ebriedad", Amount = 240000 },
+                new TicketType { Id = 4, Description = "Conducir sin licencia", Amount = 27000 }
+            );
+
     }
 }

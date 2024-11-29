@@ -3,6 +3,7 @@ import { UsersPage } from "../pages"
 import { AdminAllTickets } from "../../tickets/pages/AdminAllTickets"
 import UploadImagePage from "../../tickets/pages/UploadImagePage"
 import { ReportsPage } from "../pages/ReportsPage"
+import { TicketTypePage } from "../pages/TicketTypePage"
 
 export const AdminRoutes = () => {
     return (
@@ -19,6 +20,7 @@ export const AdminRoutes = () => {
             {/* Ruta para control de pagos */}
             <Route path="/multas" element={<AdminAllTickets />} />
 
+            <Route path="/catalogo-multas" element={<TicketTypePage />} />
 
             {/* Ruta para subir imagen */}
             <Route path="/imagen" element={<UploadImagePage />} />

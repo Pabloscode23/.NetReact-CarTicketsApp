@@ -6,11 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
 import { useAuth } from '../../../hooks';
 import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
+import { useEffect, useState } from 'react';
 
 export const CreateTicketsPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [ticketTypes, setTicketTypes] = useState([]);
 
   const onSubmit = async (data) => {
     let geolocation;
@@ -34,6 +36,9 @@ export const CreateTicketsPage = () => {
 
     // Crear el objeto del ticket
     const uniqueID = `ticket-${Date.now()}`;
+
+    const ticketType = ticketTypes.find((type) => type.description === data.reason).amount;
+
     const ticketData = {
       id: uniqueID,
       userId: data.idNumber,
@@ -43,7 +48,7 @@ export const CreateTicketsPage = () => {
       description: data.reason,
       status: "Pendiente",
       officerId: user.idNumber,
-      amount: TicketsInfo[data.reason],
+      amount: ticketType,
       plate: data.placa,
     };
 
@@ -81,6 +86,19 @@ export const CreateTicketsPage = () => {
       }
     }
   };
+
+  useEffect(() => {
+    axios.get(`${API_URL}/TicketType`)
+      .then((response) => {
+        setTicketTypes(response.data);
+        console.log(response);
+
+      })
+      .catch((error) => {
+        console.error("Error obteniendo tipos de multa:", error);
+      }
+      );
+  }, []);
 
   return (
     <section className="container" style={{ color: "#4B4B4E" }}>
@@ -161,8 +179,8 @@ export const CreateTicketsPage = () => {
               {...register("reason", { required: "Por favor seleccione el motivo de la multa" })}
             >
               <option value="">Seleccione...</option>
-              {Object.entries(TicketsInfo).map(([title]) => (
-                <option key={title} value={title}>{title}</option>
+              {ticketTypes && ticketTypes.map((ticketType) => (
+                <option key={ticketType.id} value={ticketType.description}>{ticketType.description}</option>
               ))}
             </select>
             {errors.reason && <p className="form__error">{errors.reason.message}</p>}

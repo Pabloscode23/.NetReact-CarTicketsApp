@@ -1,3 +1,3 @@
-const BASE_URL = 'http://localhost:5039/';
+const BASE_URL = 'https://localhost:7091/';
 export const API_URL = `${BASE_URL}api`;
 
