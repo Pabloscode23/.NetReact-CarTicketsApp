@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { PaymentModal } from './PaymentModal';
 
@@ -12,6 +12,13 @@ export const TicketUser = ({ id, date, reason, amount, status, onReclamar, isCla
         console.log(`Método de pago seleccionado: ${method}`);
         handleCloseModal();
     };
+
+    // Cerrar el modal automáticamente si el estado cambia a "Pagada"
+    useEffect(() => {
+        if (isPayed) {
+            setIsModalOpen(false);
+        }
+    }, [isPayed]);
 
     const buttonStyle = (disabled) => ({
         backgroundColor: disabled ? '#6C757D' : '', // Cambia el fondo a gris si está deshabilitado
@@ -59,4 +66,5 @@ TicketUser.propTypes = {
     status: PropTypes.string.isRequired,
     onReclamar: PropTypes.func.isRequired,
     isClaimed: PropTypes.bool.isRequired,
+    isPayed: PropTypes.bool.isRequired,
 };
