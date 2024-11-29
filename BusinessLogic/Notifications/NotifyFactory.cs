@@ -62,7 +62,7 @@ namespace Notifications
             Console.WriteLine("Notificación de reclamación enviada.");
         }
 
-         public void AutomaticacionUserNotification(string totalAmount, string recipient, string ticketId,string description,string date)
+         public void AutomaticUserNotification(string totalAmount, string recipient, string ticketId,string description,string date)
         {
             string message = $"Se le notifica que se ha generado una multa por un monto de {totalAmount} con el IVA incluido.\n\n" +
                     $"Detalles de la multa:\n" +
@@ -114,7 +114,7 @@ namespace Notifications
             _notification.Send("Notificación enviada", message, recipient);
             Console.WriteLine("Notificación enviada con exito.");
         }
-        public void JudgeNewClaimsNotification( string recipient, string ticketId, string description,string pdfUrl)
+        public async void JudgeNewClaimsNotification( string recipient, string ticketId, string description,string pdfUrl)
         {
             string message = $"Se le asigno un nuevo reclamo: \n\n" +
                     $"Detalles de la multa:\n" +
@@ -126,12 +126,17 @@ namespace Notifications
             Console.WriteLine("Contenido del mensaje de correo:");
             Console.WriteLine(message);
 
-            _notification.SendFilePDF("Notificación enviada", message, recipient,pdfUrl);
-            Console.WriteLine("Notificación enviada con exito.");
+            using (var httpClient = new HttpClient()){
+           
+                var response = await httpClient.GetAsync(pdfUrl);
+                var pdfStream = await response.Content.ReadAsStreamAsync();
 
+                using (BinaryReader br = new BinaryReader(pdfStream)){
+                    await _notification.SendEmailWithPdfAsync("Notificación enviada", message, recipient,br.ReadBytes((int)pdfStream.Length));
+                    Console.WriteLine("Notificación enviada con exito.");
+                }
+            }
         }
-
-
 
         public void OfficialDisputesNotification(string recipient, string ticketId, string description)
         {

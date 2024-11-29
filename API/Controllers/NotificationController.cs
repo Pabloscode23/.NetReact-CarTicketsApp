@@ -24,7 +24,7 @@ namespace API.Controllers
         [HttpPost("AutomaticUserNotification")]
         public IActionResult AutomaticacionUserNotification()
         {
-            _notification.AutomaticacionUserNotification("100","fmadrigalf@ucenfotec.ac.cr","123","24-10-2023","100");
+            _notification.AutomaticUserNotification("100","fmadrigalf@ucenfotec.ac.cr","123","24-10-2023","100");
             return Ok("Notificación enviada.");
 
         }
@@ -63,13 +63,5 @@ namespace API.Controllers
             return Ok("Notificación enviada.");
 
         }
-        [HttpPost("UserClaimsNotification")]
-        public IActionResult UserClaimsNotification()
-        {
-            _notification.UserClaimsNotification("fmadrigalf@ucenfotec.ac.cr","123","tengo hambre");
-            return Ok("Notificación enviada.");
-
-        }
     }
-
 }
