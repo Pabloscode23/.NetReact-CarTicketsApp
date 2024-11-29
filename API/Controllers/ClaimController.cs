@@ -7,6 +7,7 @@ using DataAccess.Models;
 using BusinessLogic.FileUploadService;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Notifications;
 
 namespace API.Controllers
 {
@@ -19,13 +20,15 @@ namespace API.Controllers
         private readonly IFileUploadService _fileUploadService;
         private readonly IConfiguration _configuration;
         private Cloudinary _cloudinary;
+        private readonly NotificationService _notification;
 
-        public ClaimController(AppDbContext context, ClaimService claimService, IFileUploadService fileUploadService, IConfiguration configuration)
+        public ClaimController(AppDbContext context, ClaimService claimService, IFileUploadService fileUploadService, IConfiguration configuration, NotificationService notificationService)
         {
             _context = context;
             _claimService = claimService;
             _fileUploadService = fileUploadService;
             _configuration = configuration;
+            _notification = notificationService;
 
             // Configuración de Cloudinary
             var cloudName = _configuration["Cloudinary:CloudName"];
@@ -135,10 +138,17 @@ namespace API.Controllers
             _context.Claims.Add(claim);
             await _context.SaveChangesAsync();
 
+            _notification.JudgeNewClaimsNotification(judge.Email,ticketId,"Nuevo reclamo asignado",filePath);
+
+            var ticket=_context.Tickets.First(t=>t.Id==ticketId);
+            var oficial=_context.Users.First(o=>o.UserId==ticket.OfficerId);
+
+            _notification.OfficialDisputesNotification(oficial.Email,ticketId,"Se creo un nuevo reclamo");
+
+           
             return CreatedAtAction("GetClaim", new { id = claim.ClaimId }, claim);
             
         }
-
 
 
 
@@ -155,8 +165,15 @@ namespace API.Controllers
             // Actualizar propiedades del reclamo
             claim.Status = updateClaimDTO.Status;
             claim.UpdatedAt = DateTime.UtcNow;
-
             await _context.SaveChangesAsync();
+
+            if (updateClaimDTO.Status== "Sin lugar" || updateClaimDTO.Status=="Con lugar")
+            {
+                var ticket = _context.Tickets.First(t=>t.Id==claim.TicketId);
+                var user = _context.Users.First(u=>u.UserId==ticket.UserId);                
+                _notification.ClaimResolutionNotification(user.Email,ticket.Id,updateClaimDTO.Status);
+            }
+
 
             return NoContent();
         }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DTO;
+using Notifications;
 using DataAccess.Models;
 
 namespace API.Controllers
@@ -15,10 +16,12 @@ namespace API.Controllers
     public class TicketDTOController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly NotificationService _notification;
 
-        public TicketDTOController(AppDbContext context)
+        public TicketDTOController(AppDbContext context,NotificationService notification)
         {
             _context = context;
+            _notification=notification;
         }
 
         // GET: api/TicketDTO
@@ -131,6 +134,10 @@ namespace API.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+
+                var user= await _context.Users.FirstAsync(u=>u.UserId==ticket.UserId);
+
+                _notification.StatusChangesNotification(ticket.Status,user.Email,ticket.Id,"Cambio de estado de multa");
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -239,6 +246,10 @@ namespace API.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+
+                 var user=_context.Users.First(u=>u.UserId==ticket.UserId);
+                _notification.AutomaticUserNotification(ticket.Amount.ToString(),user.Email,ticket.Id,"Se genero una multa",ticket.Date.ToString());
+
             }
             catch (DbUpdateException)
             {
@@ -251,7 +262,6 @@ namespace API.Controllers
                     throw;
                 }
             }
-
             return CreatedAtAction("GetTicket", new { id = ticket.Id }, ticket);
         }
 
