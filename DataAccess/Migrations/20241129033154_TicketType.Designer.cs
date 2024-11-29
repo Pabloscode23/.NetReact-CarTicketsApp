@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241129033154_TicketType")]
+    partial class TicketType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,42 +168,17 @@ namespace DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
-
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("TicketTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 68000.0,
-                            Description = "Exceso de velocidad"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Amount = 52000.0,
-                            Description = "Mal estacionamiento"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Amount = 240000.0,
-                            Description = "Conducir en estado de ebriedad"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Amount = 27000.0,
-                            Description = "Conducir sin licencia"
-                        });
                 });
 
             modelBuilder.Entity("DataAccess.Models.User", b =>

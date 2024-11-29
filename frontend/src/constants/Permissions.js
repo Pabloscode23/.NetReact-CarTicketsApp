@@ -23,4 +23,5 @@ export const Permissions = {
     "view_profile": "view_profile",
     "edit_profile": "edit_profile",
     "plate_detection": "plate_detection",
+    "view_ticket_types": "view_ticket_types",
 }

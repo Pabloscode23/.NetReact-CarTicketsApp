@@ -1,4 +1,4 @@
-import { faCamera, faCircleExclamation, faCirclePlus, faClockRotateLeft, faFileLines, faFileSignature, faFolderOpen, faMagnifyingGlass, faMapLocationDot, faPenToSquare, faRightToBracket, faUserGear, faUserPlus, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faCircleExclamation, faList, faCirclePlus, faClockRotateLeft, faFileLines, faFileSignature, faFolderOpen, faMagnifyingGlass, faMapLocationDot, faPenToSquare, faRightToBracket, faUserGear, faUserPlus, faUsers, faUserTag } from '@fortawesome/free-solid-svg-icons';
 
 export const InfoPermissions = {
 
@@ -11,9 +11,15 @@ export const InfoPermissions = {
     },
     "view_tickets": {
         icon: faFileLines,
+        title: 'Historial Multas',
+        description: 'Consulta las multas en el sistema.',
+        link: '/gestion/multas'
+    },
+    "view_ticket_types": {
+        icon: faList,
         title: 'Catálogo de multas',
         description: 'Administra el catálogo de multas del sistema.',
-        link: '/gestion/multas'
+        link: '/gestion/catalogo-multas'
     },
     "view_roles": {
         icon: faUserTag,

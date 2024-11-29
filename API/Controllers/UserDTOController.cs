@@ -96,7 +96,7 @@ namespace API.Controllers
                         ClaimId = c.ClaimId,
                         ClaimDocument = c.ClaimDocument,
                         Status = c.Status,
-                        CreatedAt = c.CreatedAt,
+                        CreatedAt =   c.CreatedAt,
                         UpdatedAt = c.UpdatedAt,
                         TicketId = c.TicketId,
                     })
