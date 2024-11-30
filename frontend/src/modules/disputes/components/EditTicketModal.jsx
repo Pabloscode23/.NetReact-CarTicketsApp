@@ -1,12 +1,26 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { TicketsInfo } from "../../../constants/TicketsInfo";
 import axios from "axios";
 import { API_URL } from "../../../constants/Api";
 import { showSuccessAlert } from "../../../constants/Swal/SwalFunctions";
 
 export const EditTicketModal = ({ isOpen, onClose, ticket, onSave, refetchTickets }) => {
     const [editableTicket, setEditableTicket] = useState({});
+    const [reasons, setReasons] = useState([]); // Almacena las razones disponibles
+
+    useEffect(() => {
+        // Cargar razones de multas desde la base de datos
+        const fetchReasons = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/TicketType`); // Ruta para obtener las razones
+                setReasons(response.data); // Suponemos que el endpoint devuelve un array de objetos
+            } catch (error) {
+                console.error("Error fetching reasons:", error);
+            }
+        };
+
+        fetchReasons();
+    }, []);
 
     useEffect(() => {
         if (ticket) {
@@ -20,12 +34,13 @@ export const EditTicketModal = ({ isOpen, onClose, ticket, onSave, refetchTicket
         const { name, value } = e.target;
 
         if (name === "reason") {
-            // Actualizar automáticamente el amount según la razón seleccionada
-            const newAmount = TicketsInfo[value] || 0;  // Asignar 0 si no existe el reason
+            // Buscar el monto correspondiente a la razón seleccionada
+            const selectedReason = reasons.find((reason) => reason.description === value);
+            const newAmount = selectedReason?.amount || 0; // Asignar 0 si no se encuentra la razón
             setEditableTicket((prev) => ({
                 ...prev,
                 [name]: value,
-                amount: newAmount,  // Actualizamos el amount
+                amount: newAmount, // Actualizar el amount
             }));
         } else {
             setEditableTicket((prev) => ({ ...prev, [name]: value }));
@@ -34,14 +49,16 @@ export const EditTicketModal = ({ isOpen, onClose, ticket, onSave, refetchTicket
 
     const handleSave = async () => {
         try {
-            const response = await axios.put(`${API_URL}/TicketDTO/${editableTicket.id}`, {
-                description: editableTicket.reason,  // Razón de la multa
-                date: editableTicket.date,
-                amount: editableTicket.amount,  // Enviamos el amount calculado
-            });
+            // Construir el objeto para enviar al backend
+            const ticketUpdate = {
+                description: editableTicket.reason, // Razón de la multa
+                amount: editableTicket.amount,     // Monto de la multa
+            };
 
-            // Llamar a onSave con los datos actualizados
-            onSave(response.data);
+            // Realizar la solicitud PUT al backend
+            await axios.put(`${API_URL}/TicketDTO/${editableTicket.id}`, ticketUpdate);
+
+            // Notificar al usuario y actualizar la interfaz
             showSuccessAlert("Multa actualizada correctamente");
             refetchTickets();
             onClose();
@@ -49,6 +66,7 @@ export const EditTicketModal = ({ isOpen, onClose, ticket, onSave, refetchTicket
             console.error("Error updating ticket:", error);
         }
     };
+
 
     const isEditable = editableTicket.status === "Pendiente";
 
@@ -61,7 +79,8 @@ export const EditTicketModal = ({ isOpen, onClose, ticket, onSave, refetchTicket
                 <input className="label-id" type="text" value={editableTicket.id || ''} readOnly />
 
                 <label>Fecha:</label>
-                <input className="label-date"
+                <input
+                    className="label-date"
                     type="datetime-local"
                     name="date"
                     value={editableTicket.date?.substring(0, 16) || ''}
@@ -77,10 +96,19 @@ export const EditTicketModal = ({ isOpen, onClose, ticket, onSave, refetchTicket
                     disabled={!isEditable}
                 >
                     <option value="">Seleccione...</option>
-                    {Object.entries(TicketsInfo).map(([description], index) => (
-                        <option key={index} value={description}>{description}</option>
+                    {reasons.map((reason) => (
+                        <option key={reason.id} value={reason.description}>
+                            {reason.description}
+                        </option>
                     ))}
                 </select>
+
+                <label>Monto:</label>
+                <input
+                    type="text"
+                    value={editableTicket.amount}
+                    readOnly
+                />
 
                 <div className="modal-buttons">
                     <button className="form__button" onClick={handleSave} disabled={!isEditable}>Guardar</button>
@@ -96,4 +124,5 @@ EditTicketModal.propTypes = {
     onClose: PropTypes.func.isRequired,
     ticket: PropTypes.object,
     onSave: PropTypes.func.isRequired,
+    refetchTickets: PropTypes.func.isRequired,
 };

@@ -24,6 +24,8 @@ export const TicketsRoutes = () => {
 
             <Route path="/reclamos" element={<JudgeClaimsPage />} />
 
+            <Route path="/oficial-reclamos" element={<OfficerClaimsPage />} />
+
 
 
             {/* Ruta para ingresar datos en el lector de imagenes */}

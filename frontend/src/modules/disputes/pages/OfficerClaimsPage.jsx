@@ -19,15 +19,14 @@ export const OfficerClaimsPage = () => {
     const formatUserTicket = (tickets) => {
         return tickets.map(ticket => {
             // Obtener amount de TicketsInfo si está disponible, o usar el valor original
-            const amount = TicketsInfo[ticket.description] || 0;
-            return { ...ticket, amount };  // Mantener el valor original de 'amount'
+            return { ...ticket };  // Mantener el valor original de 'amount'
         });
     };
 
     useEffect(() => {
         if (tickets.length > 0) {
             // Filtrar tickets con status diferente de "Pendiente"
-            const nonPendingTickets = tickets.filter(ticket => ticket.status !== "Pendiente");
+            const nonPendingTickets = tickets.filter(ticket => ticket.status !== "Pendiente" && ticket.status !== "Pagada");
 
             // Formatear los tickets filtrados
             const formattedTickets = formatUserTicket(nonPendingTickets);

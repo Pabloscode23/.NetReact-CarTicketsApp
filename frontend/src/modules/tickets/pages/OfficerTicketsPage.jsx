@@ -20,9 +20,7 @@ export const OfficerTicketsPage = () => {
     // Esta función asegura que se mantenga el valor original de amount
     const formatUserTicket = (tickets) => {
         return tickets.map(ticket => {
-            // Obtener amount de TicketsInfo si está disponible, o usar el valor original
-            const amount = TicketsInfo[ticket.description] || 0;
-            return { ...ticket, amount };  // Mantener el valor original de 'amount'
+            return { ...ticket };  // Mantener el valor original de 'amount'
         });
     };
 

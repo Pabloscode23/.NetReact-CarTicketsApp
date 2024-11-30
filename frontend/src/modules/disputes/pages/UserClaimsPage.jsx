@@ -23,12 +23,12 @@ export const UserClaimsPage = () => {
                     .map(claim => {
                         console.log("Ticket Description:", claim.description);
 
-                        const amount = TicketsInfo[claim.description] || 0;
+
 
                         return {
                             ...claim,
-                            status: claim.status,
-                            amount
+                            status: claim.status
+
                         };
                     });
                 setClaims(claims);                // Set the filtered claims in state

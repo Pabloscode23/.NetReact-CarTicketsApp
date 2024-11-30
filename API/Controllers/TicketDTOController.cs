@@ -18,10 +18,10 @@ namespace API.Controllers
         private readonly AppDbContext _context;
         private readonly NotificationService _notification;
 
-        public TicketDTOController(AppDbContext context,NotificationService notification)
+        public TicketDTOController(AppDbContext context, NotificationService notification)
         {
             _context = context;
-            _notification=notification;
+            _notification = notification;
         }
 
         // GET: api/TicketDTO
@@ -135,9 +135,9 @@ namespace API.Controllers
             {
                 await _context.SaveChangesAsync();
 
-                var user= await _context.Users.FirstAsync(u=>u.UserId==ticket.UserId);
+                var user = await _context.Users.FirstAsync(u => u.UserId == ticket.UserId);
 
-                _notification.StatusChangesNotification(ticket.Status,user.Email,ticket.Id,"Cambio de estado de multa");
+                _notification.StatusChangesNotification(ticket.Status, user.Email, ticket.Id, "Cambio de estado de multa");
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -158,7 +158,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTicket(string id, [FromBody] TicketUpdateDto ticketUpdate)
         {
-            if (ticketUpdate == null || string.IsNullOrEmpty(ticketUpdate.Description) || ticketUpdate.Date == default)
+            if (ticketUpdate == null || string.IsNullOrEmpty(ticketUpdate.Description) || ticketUpdate.Amount <= 0)
             {
                 return BadRequest("Invalid ticket update request.");
             }
@@ -169,10 +169,11 @@ namespace API.Controllers
                 return NotFound();
             }
 
+            // Actualizar los campos Description y Amount
             ticket.Description = ticketUpdate.Description;
-            ticket.Date = ticketUpdate.Date;
-            ticket.Plate = ticketUpdate.Plate;
+            ticket.Amount = ticketUpdate.Amount;
 
+            // Marcar la entidad como modificada
             _context.Entry(ticket).State = EntityState.Modified;
 
             try
@@ -247,8 +248,8 @@ namespace API.Controllers
             {
                 await _context.SaveChangesAsync();
 
-                 var user=_context.Users.First(u=>u.UserId==ticket.UserId);
-                _notification.AutomaticUserNotification(ticket.Amount.ToString(),user.Email,ticket.Id,"Se genero una multa",ticket.Date.ToString());
+                var user = _context.Users.First(u => u.UserId == ticket.UserId);
+                _notification.AutomaticUserNotification(ticket.Amount.ToString(), ticket.Plate, user.Email, ticket.Id, "", ticket.Date.ToString());
 
             }
             catch (DbUpdateException)
@@ -297,8 +298,7 @@ namespace API.Controllers
     public class TicketUpdateDto
     {
         public string Description { get; set; }
-        public DateTime Date { get; set; }
-        public string Plate { get; set; }
+        public double Amount { get; set; }
     }
 
     public class CreateTicketDTO

@@ -105,7 +105,7 @@ const HeatMap = () => {
 
     return (
         <div>
-            <div id="heatmap" ref={mapContainerRef} style={{ height: '500px', width: '100%' }}>
+            <div id="heatmap" ref={mapContainerRef} style={{ height: '490px', width: '100%' }}>
                 {isLoading ? (
                     <h2>Cargando el mapa...</h2>
                 ) : heatData.length === 0 ? (

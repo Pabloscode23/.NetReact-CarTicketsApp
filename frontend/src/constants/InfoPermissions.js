@@ -6,7 +6,7 @@ export const InfoPermissions = {
     "create_users": {
         icon: faUsers,
         title: 'Gestión de usuarios',
-        description: 'Administra los usuarios del sistema.',
+        description: 'Administre los usuarios del sistema.',
         link: '/gestion/usuarios'
     },
     "view_tickets": {
@@ -18,13 +18,13 @@ export const InfoPermissions = {
     "view_ticket_types": {
         icon: faList,
         title: 'Catálogo de multas',
-        description: 'Administra el catálogo de multas del sistema.',
+        description: 'Administre el catálogo de multas del sistema.',
         link: '/gestion/catalogo-multas'
     },
     "view_roles": {
         icon: faUserTag,
         title: 'Roles y permisos',
-        description: 'Administra los roles y permisos del sistema.',
+        description: 'Administre los roles y permisos del sistema.',
         link: '/gestion/roles'
     },
     "create_reports": {
@@ -79,13 +79,21 @@ export const InfoPermissions = {
         description: 'Aquí podrá ver el historial de multas creadas.',
         link: '/multas/historial'
     },
+    "history_officer-claims": {
+        icon: faClockRotateLeft,
+        title: 'Historial de reclamos',
+        description: 'Aquí podrá consultar los reclamos presentados en relación a las multas.',
+        link: '/multas/oficial-reclamos'
+    },
+
+    //juez
     "history_claims": {
         icon: faClockRotateLeft,
         title: 'Historial de reclamos',
         description: 'Aquí podrá consultar los reclamos presentados en relación a las multas.',
         link: '/multas/reclamos'
     },
-    //juez
+
     "respond_claims": {
         icon: faCircleExclamation,
         title: 'Resolver reclamos',
