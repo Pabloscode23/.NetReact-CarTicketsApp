@@ -5,7 +5,7 @@ import { TicketsInfo } from '../../../constants/TicketsInfo';
 
 export const TicketOfficer = ({ id, date, reason, amount, status, onEdit }) => {
     // Verificar si amount está disponible; si no lo está, tomarlo de TicketsInfo
-    const displayAmount = amount !== undefined ? amount : TicketsInfo[reason] || 0;
+
     const buttonStyle = (disabled) => ({
         backgroundColor: disabled ? '#6C757D' : '', // Cambia el fondo a gris si está deshabilitado
         cursor: disabled ? 'not-allowed' : 'pointer', // Cambia el cursor a no permitido si está deshabilitado
@@ -15,7 +15,7 @@ export const TicketOfficer = ({ id, date, reason, amount, status, onEdit }) => {
             <td>{id}</td>
             <td>{date}</td>
             <td>{reason}</td>
-            <td>{"₡" + displayAmount}</td> {/* Muestra el amount real */}
+            <td>{"₡" + amount}</td> {/* Muestra el amount real */}
             <td>{status}</td>
             <td className='table__buttons'>
                 <button onClick={onEdit} disabled={status !== "Pendiente"}

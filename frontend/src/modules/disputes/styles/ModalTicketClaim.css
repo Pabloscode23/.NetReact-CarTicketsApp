@@ -73,3 +73,7 @@
     background-color: white;
     width: 85%;
 }
+
+.modal-content p {
+    color: black;
+}

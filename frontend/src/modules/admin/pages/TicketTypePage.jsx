@@ -52,8 +52,8 @@ export const TicketTypePage = () => {
                 onSubmit={handleSubmit(onSubmit)}
                 className="formCreate flex-center flex-column border-grey p-40"
             >
-                <h1 className="form__header-center main-title">Crear Tipo de Multa</h1>
-                <p className="text-left">Aquí se pueden crear tipos de multas.</p>
+                <h1 className="form__header-center">Crear tipo de multa</h1>
+                <h2 className="main__ticket-subtitle">Aquí se pueden crear tipos de multas.</h2>
 
                 <div className="form__content">
                     <div className="row">
@@ -92,19 +92,19 @@ export const TicketTypePage = () => {
                 </div>
             </form>
             <div style={{ minWidth: "100%", marginTop: 30, display: "flex", alignItems: "center", flexDirection: "column" }}>
-                <h2 className="main-title">Tipos de Multa</h2>
+                <h2 className="main-title">Tipos de multa</h2>
                 {(ticketTypes.length < 1) ? (
-                    <div className='table__empty'>No hay reclamos disponibles.</div>
+                    <div className="table__empty-ticket-type">No hay reclamos disponibles.</div>
                 ) : (
-                    <table className="ticket-table" style={{ marginTop: "30px" }}>
+                    <table className="ticket-table-ticket-type" style={{ marginTop: "30px" }}>
                         <thead>
-                            <tr className='table__head'>
-                                <th>ID multa</th>
+                            <tr className="table__head-ticket-type">
+                                <th>ID</th>
                                 <th>Razón de la multa</th>
                                 <th>Monto de la multa</th>
                             </tr>
                         </thead>
-                        <tbody className='table__children'>
+                        <tbody className="table__children-ticket-type">
                             {ticketTypes.map(ticket => (
                                 <TicketTypeTable
                                     key={ticket.id}
@@ -115,6 +115,7 @@ export const TicketTypePage = () => {
                     </table>
                 )}
             </div>
+
         </section>
     )
 }

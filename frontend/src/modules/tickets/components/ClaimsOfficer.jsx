@@ -24,7 +24,7 @@ export const ClaimsOfficer = ({ id, date, reason, amount, status, onReclamar, is
                 <td>{id}</td>
                 <td>{date}</td>
                 <td>{reason}</td>
-                <td>{amount}</td>
+                <td>₡{amount}</td>
                 <td>{status}</td>
             </tr>
             {isModalOpen && (

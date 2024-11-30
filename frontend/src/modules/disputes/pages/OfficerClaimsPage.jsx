@@ -7,7 +7,7 @@ import { TicketsContext } from "../../tickets/context/TicketsContext";
 import { TicketsInfo } from "../../../constants/TicketsInfo";
 import { TicketUser } from "../../tickets/components/TicketUser";
 import { ClaimsOfficer } from "../../tickets/components/ClaimsOfficer";
-
+import { formatDate } from "../../../utils/formatDates";
 export const OfficerClaimsPage = () => {
     const { tickets, setTickets, refetchTickets } = useContext(TicketsContext);
     const [filteredTickets, setFilteredTickets] = useState([]);
@@ -19,15 +19,14 @@ export const OfficerClaimsPage = () => {
     const formatUserTicket = (tickets) => {
         return tickets.map(ticket => {
             // Obtener amount de TicketsInfo si está disponible, o usar el valor original
-            const amount = TicketsInfo[ticket.description] || 0;
-            return { ...ticket, amount };  // Mantener el valor original de 'amount'
+            return { ...ticket };  // Mantener el valor original de 'amount'
         });
     };
 
     useEffect(() => {
         if (tickets.length > 0) {
             // Filtrar tickets con status diferente de "Pendiente"
-            const nonPendingTickets = tickets.filter(ticket => ticket.status !== "Pendiente");
+            const nonPendingTickets = tickets.filter(ticket => ticket.status !== "Pendiente" && ticket.status !== "Pagada");
 
             // Formatear los tickets filtrados
             const formattedTickets = formatUserTicket(nonPendingTickets);
@@ -122,9 +121,9 @@ export const OfficerClaimsPage = () => {
                             <ClaimsOfficer
                                 key={ticket.id}
                                 id={ticket.id}
-                                date={ticket.date}
+                                date={formatDate(ticket.date)}
                                 reason={ticket.description}
-                                amount={ticket.amount}
+                                amount={ticket.amount.toLocaleString()}
                                 status={ticket.status}
                                 onEdit={() => handleEdit(ticket)}
                             />

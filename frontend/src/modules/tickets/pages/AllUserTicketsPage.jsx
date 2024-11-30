@@ -9,7 +9,8 @@ import { API_URL } from '../../../constants/Api';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
 import { ModalTicketClaim } from '../../disputes/components/ModalTicketClaim';
 import { TicketsContext } from '../context/TicketsContext';
-
+import { Loader } from '../../../components/Loader';
+import { formatDate } from '../../../utils/formatDates';
 export const AllUserTicketsPage = () => {
     const { user } = useAuth();
     const { tickets, setTickets, refetchTickets } = useContext(TicketsContext);
@@ -18,6 +19,7 @@ export const AllUserTicketsPage = () => {
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [fileUploaded, setFileUploaded] = useState(false); // Estado para el archivo subido
+    const [isLoading, setIsLoading] = useState(false); // Nuevo estado
 
     // Formatea y filtra los tickets según el usuario actual
     const formatUserTicket = (tickets) => {
@@ -82,39 +84,42 @@ export const AllUserTicketsPage = () => {
                     onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm on input change
                 />
             </div>
-            {filteredTickets.length === 0 ? (
-                <div className='table__empty'>No hay multas disponibles.</div>
+            {isLoading ? ( // Mostrar Loader mientras está procesando
+                <Loader />
             ) : (
-                <table className="ticket-table">
-                    <thead>
-                        <tr className='table__head'>
-                            <th>ID multa</th>
-                            <th>Fecha</th>
-                            <th>Razón de la multa</th>
-                            <th>Monto de la multa</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody className='table__children'>
-                        {
-                            filteredTickets.map((ticket) => (
-                                <TicketUser
-                                    key={ticket.id}
-                                    id={ticket.id}
-                                    date={ticket.date}
-                                    reason={ticket.description}
-                                    amount={ticket.amount.toLocaleString()}
-                                    status={ticket.status}
-                                    isClaimed={ticket.claimed}
-                                    isPayed={ticket.status === "Pagada"}
-                                    onReclamar={() => handleReclamar(ticket)}
-                                />
-                            ))
-                        }
-                    </tbody>
-                </table>
-            )}
+                filteredTickets.length === 0 ? (
+                    <div className='table__empty'>No hay multas disponibles.</div>
+                ) : (
+                    <table className="ticket-table">
+                        <thead>
+                            <tr className='table__head'>
+                                <th>ID multa</th>
+                                <th>Fecha</th>
+                                <th>Razón de la multa</th>
+                                <th>Monto de la multa</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody className='table__children'>
+                            {
+                                filteredTickets.map((ticket) => (
+                                    <TicketUser
+                                        key={ticket.id}
+                                        id={ticket.id}
+                                        date={formatDate(ticket.date)}
+                                        reason={ticket.description}
+                                        amount={ticket.amount.toLocaleString()}
+                                        status={ticket.status}
+                                        isClaimed={ticket.claimed}
+                                        isPayed={ticket.status === "Pagada"}
+                                        onReclamar={() => handleReclamar(ticket)}
+                                    />
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                ))}
 
             {/* Modal para reclamar la multa */}
             {modalOpen && (
@@ -123,7 +128,8 @@ export const AllUserTicketsPage = () => {
                     ticket={selectedTicket}
                     isClaimed={selectedTicket?.claimed}
                     refetchTickets={refetchTickets}
-                    setTickets={setTickets}  // Pasar setTickets al Modal
+                    setTickets={setTickets}
+                    setIsLoading={setIsLoading}  // Pasar setTickets al Modal
                 />
             )}
         </div>

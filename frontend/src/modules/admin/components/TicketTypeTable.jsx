@@ -8,7 +8,7 @@ export const TicketTypeTable = ({ ticketType }) => {
             <tr>
                 <td>{id}</td>
                 <td>{description}</td>
-                <td>{amount}</td>
+                <td>₡{amount.toLocaleString()}</td>
             </tr>
         </>
     )

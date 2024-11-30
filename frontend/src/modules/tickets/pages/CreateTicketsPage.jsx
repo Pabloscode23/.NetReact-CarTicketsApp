@@ -7,14 +7,18 @@ import { TicketsInfo } from '../../../constants/TicketsInfo';
 import { useAuth } from '../../../hooks';
 import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 import { useEffect, useState } from 'react';
+import { Loader } from '../../../components/Loader';
 
 export const CreateTicketsPage = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [ticketTypes, setTicketTypes] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // Nuevo estado
+
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     let geolocation;
 
     // Obtener coordenadas reales
@@ -31,6 +35,7 @@ export const CreateTicketsPage = () => {
     } catch (geoError) {
       console.error("Error obteniendo geolocalización:", geoError);
       showErrorAlert(`Error obteniendo ubicación: ${geoError}`);
+      setIsLoading(false);
       return; // Detener ejecución si falla la geolocalización
     }
 
@@ -84,6 +89,8 @@ export const CreateTicketsPage = () => {
       } else {
         showErrorAlert('Hubo un error configurando la solicitud al servidor.');
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -102,95 +109,99 @@ export const CreateTicketsPage = () => {
 
   return (
     <section className="container" style={{ color: "#4B4B4E" }}>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="formCreate flex-center flex-column border-grey p-40"
-      >
-        <h1 className="form__header-center main-title">Crear Multa</h1>
-        <p className="text-left">Aquí el oficial de tránsito podrá crear la multa.</p>
+      {isLoading ? ( // Mostrar Loader mientras está procesando
+        <Loader />
+      ) : (
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="formCreate flex-center flex-column border-grey p-40"
+        >
+          <h1 className="form__header-center main-title">Crear multa</h1>
+          <h2 className="main__ticket-subtitle">Aquí el oficial de tránsito podrá crear la multa.</h2>
 
-        <div className="form__content">
-          <div className="row">
-            <div className="input__container">
-              <label>Nombre de infractor:</label>
-              <input
-                className="form__input-grey"
-                type="text"
-                {...register("nombre", {
-                  required: "Nombre es requerido",
-                  pattern: {
-                    value: /^[a-zA-ZÀ-ÿ\s]+$/,
-                    message: "Solo se permiten letras en el nombre"
-                  }
-                })}
-              />
-              {errors.nombre && <p className="form__error">{errors.nombre.message}</p>}
+          <div className="form__content">
+            <div className="row">
+              <div className="input__container">
+                <label>Nombre de infractor:</label>
+                <input
+                  className="form__input-grey"
+                  type="text"
+                  {...register("nombre", {
+                    required: "Nombre es requerido",
+                    pattern: {
+                      value: /^[a-zA-ZÀ-ÿ\s]+$/,
+                      message: "Solo se permiten letras en el nombre"
+                    }
+                  })}
+                />
+                {errors.nombre && <p className="form__error">{errors.nombre.message}</p>}
+              </div>
+              <div className="input__container">
+                <label>Apellidos de infractor:</label>
+                <input
+                  className="form__input-grey"
+                  type="text"
+                  {...register("apellidos", {
+                    required: "Apellidos son requeridos",
+                    maxLength: { value: 50, message: "Apellidos tienen que ser menores a 50 caracteres" },
+                    minLength: { value: 2, message: "Apellidos tienen que ser al menos 2 caracteres" },
+                    pattern: { value: /^[a-zA-ZÀ-ÿ\s]+$/, message: "Apellidos solo aceptan letras y tildes" }
+                  })}
+                />
+                {errors.apellidos && <p className="form__error">{errors.apellidos.message}</p>}
+              </div>
             </div>
-            <div className="input__container">
-              <label>Apellidos de infractor:</label>
-              <input
+
+            <div className="row">
+              <div className="input__container">
+                <label>Número cédula:</label>
+                <input
+                  className="form__input-grey"
+                  type="text"
+                  {...register("idNumber", {
+                    required: "Número de cédula es requerido",
+                    pattern: { value: /^[0-9]{9}$/, message: "Número de cédula debe ser solo numérico y de 9 caracteres" }
+                  })}
+                />
+                {errors.idNumber && <p className="form__error">{errors.idNumber.message}</p>}
+              </div>
+              <div className="input__container">
+                <label>Número de placa:</label>
+                <input
+                  className="form__input-grey"
+                  type="text"
+                  {...register("placa", {
+                    required: "Número de placa es requerido",
+                    pattern: {
+                      value: /^[A-Z0-9-]+$/i,
+                      message: "Solo se permiten letras, números y guiones en el número de placa"
+                    }
+                  })}
+                />
+                {errors.placa && <p className="form__error">{errors.placa.message}</p>}
+              </div>
+            </div>
+
+            <div className="input__container full-width">
+              <label>Multa por:</label>
+              <select
                 className="form__input-grey"
-                type="text"
-                {...register("apellidos", {
-                  required: "Apellidos son requeridos",
-                  maxLength: { value: 50, message: "Apellidos tienen que ser menores a 50 caracteres" },
-                  minLength: { value: 2, message: "Apellidos tienen que ser al menos 2 caracteres" },
-                  pattern: { value: /^[a-zA-ZÀ-ÿ\s]+$/, message: "Apellidos solo aceptan letras y tildes" }
-                })}
-              />
-              {errors.apellidos && <p className="form__error">{errors.apellidos.message}</p>}
+                {...register("reason", { required: "Por favor seleccione el motivo de la multa" })}
+              >
+                <option value="">Seleccione...</option>
+                {ticketTypes && ticketTypes.map((ticketType) => (
+                  <option key={ticketType.id} value={ticketType.description}>{ticketType.description}</option>
+                ))}
+              </select>
+              {errors.reason && <p className="form__error">{errors.reason.message}</p>}
+            </div>
+
+            <div className="btn__container justify-center mt-20">
+              <button type="submit" className="btn btn-primary align-center">Crear multa</button>
             </div>
           </div>
-
-          <div className="row">
-            <div className="input__container">
-              <label>Número cédula:</label>
-              <input
-                className="form__input-grey"
-                type="text"
-                {...register("idNumber", {
-                  required: "Número de cédula es requerido",
-                  pattern: { value: /^[0-9]{9}$/, message: "Número de cédula debe ser solo numérico y de 9 caracteres" }
-                })}
-              />
-              {errors.idNumber && <p className="form__error">{errors.idNumber.message}</p>}
-            </div>
-            <div className="input__container">
-              <label>Número de placa:</label>
-              <input
-                className="form__input-grey"
-                type="text"
-                {...register("placa", {
-                  required: "Número de placa es requerido",
-                  pattern: {
-                    value: /^[A-Z0-9-]+$/i,
-                    message: "Solo se permiten letras, números y guiones en el número de placa"
-                  }
-                })}
-              />
-              {errors.placa && <p className="form__error">{errors.placa.message}</p>}
-            </div>
-          </div>
-
-          <div className="input__container full-width">
-            <label>Multa por:</label>
-            <select
-              className="form__input-grey"
-              {...register("reason", { required: "Por favor seleccione el motivo de la multa" })}
-            >
-              <option value="">Seleccione...</option>
-              {ticketTypes && ticketTypes.map((ticketType) => (
-                <option key={ticketType.id} value={ticketType.description}>{ticketType.description}</option>
-              ))}
-            </select>
-            {errors.reason && <p className="form__error">{errors.reason.message}</p>}
-          </div>
-
-          <div className="btn__container justify-center mt-20">
-            <button type="submit" className="btn btn-primary align-center">Crear multa</button>
-          </div>
-        </div>
-      </form>
+        </form>)}
     </section>
   );
 };
+

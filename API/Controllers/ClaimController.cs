@@ -109,16 +109,16 @@ namespace API.Controllers
                 File = new FileDescription(fileName, fileStream),
                 PublicId = publicId,
                 Folder = "proy2_claims"
-            };  
+            };
 
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-            if ( uploadResult.StatusCode != System.Net.HttpStatusCode.OK)
+            if (uploadResult.StatusCode != System.Net.HttpStatusCode.OK)
             {
                 return BadRequest("Hubo un error al subir el archivo a Cloudinary.");
             }
 
-            
+
             var filePath = uploadResult.SecureUrl.ToString();
 
 
@@ -138,16 +138,16 @@ namespace API.Controllers
             _context.Claims.Add(claim);
             await _context.SaveChangesAsync();
 
-            _notification.JudgeNewClaimsNotification(judge.Email,ticketId,"Nuevo reclamo asignado",filePath);
+            _notification.JudgeNewClaimsNotification(judge.Email, ticketId, "Nuevo reclamo asignado", filePath);
 
-            var ticket=_context.Tickets.First(t=>t.Id==ticketId);
-            var oficial=_context.Users.First(o=>o.UserId==ticket.OfficerId);
+            var ticket = _context.Tickets.First(t => t.Id == ticketId);
+            var oficial = _context.Users.First(o => o.UserId == ticket.OfficerId);
 
-            _notification.OfficialDisputesNotification(oficial.Email,ticketId,"Se creo un nuevo reclamo");
+            _notification.OfficialDisputesNotification(oficial.Email, ticketId, "Se ha creado un nuevo reclamo");
 
-           
+
             return CreatedAtAction("GetClaim", new { id = claim.ClaimId }, claim);
-            
+
         }
 
 
@@ -167,11 +167,11 @@ namespace API.Controllers
             claim.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            if (updateClaimDTO.Status== "Sin lugar" || updateClaimDTO.Status=="Con lugar")
+            if (updateClaimDTO.Status == "Sin lugar" || updateClaimDTO.Status == "Con lugar")
             {
-                var ticket = _context.Tickets.First(t=>t.Id==claim.TicketId);
-                var user = _context.Users.First(u=>u.UserId==ticket.UserId);                
-                _notification.ClaimResolutionNotification(user.Email,ticket.Id,updateClaimDTO.Status);
+                var ticket = _context.Tickets.First(t => t.Id == claim.TicketId);
+                var user = _context.Users.First(u => u.UserId == ticket.UserId);
+                _notification.ClaimResolutionNotification(user.Email, ticket.Id, updateClaimDTO.Status);
             }
 
 
@@ -208,7 +208,7 @@ namespace API.Controllers
         [Required]
         public string TicketId { get; set; }
 
-  
+
     }
 
     public class UpdateClaimDTO

@@ -31,7 +31,7 @@ export const TicketUser = ({ id, date, reason, amount, status, onReclamar, isCla
                 <td>{id}</td>
                 <td>{date}</td>
                 <td>{reason}</td>
-                <td>{amount}</td>
+                <td>₡{amount}</td>
                 <td>{status}</td>
                 <td className='table__buttons'>
                     <button

@@ -1,7 +1,7 @@
 export const paymentCards = [
     {
         id: "1",
-        number: "1746294871639873",
+        number: "1846204816263551",
         name: "Juan Perez R",
         date: "12/26",
         ccv: "123",

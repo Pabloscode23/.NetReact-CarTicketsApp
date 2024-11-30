@@ -7,7 +7,7 @@ export const TicketAdmin = ({ id, date, reason, amount, status, onEdit, onDelete
             <td>{id}</td>
             <td>{date}</td>
             <td>{reason}</td>
-            <td>{amount}</td>
+            <td>₡{amount}</td>
             <td>{status}</td>
             <td className='table__buttons'>
                 <button style={{ padding: "5px 5px" }} onClick={onEdit}>

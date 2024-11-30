@@ -9,7 +9,7 @@ import { API_URL } from '../../../constants/Api';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
 import { showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 import { TicketsContext } from '../context/TicketsContext';
-
+import { formatDate } from '../../../utils/formatDates';
 export const OfficerTicketsPage = () => {
     const { tickets, setTickets, refetchTickets } = useContext(TicketsContext);
     const [filteredTickets, setFilteredTickets] = useState([]);
@@ -20,9 +20,7 @@ export const OfficerTicketsPage = () => {
     // Esta función asegura que se mantenga el valor original de amount
     const formatUserTicket = (tickets) => {
         return tickets.map(ticket => {
-            // Obtener amount de TicketsInfo si está disponible, o usar el valor original
-            const amount = TicketsInfo[ticket.description] || 0;
-            return { ...ticket, amount };  // Mantener el valor original de 'amount'
+            return { ...ticket };  // Mantener el valor original de 'amount'
         });
     };
 
@@ -122,9 +120,9 @@ export const OfficerTicketsPage = () => {
                             <TicketOfficer
                                 key={ticket.id}
                                 id={ticket.id}
-                                date={ticket.date}
+                                date={formatDate(ticket.date)}
                                 reason={ticket.description}
-                                amount={ticket.amount}
+                                amount={ticket.amount.toLocaleString()}
                                 status={ticket.status}
                                 onEdit={() => handleEdit(ticket)}
                             />

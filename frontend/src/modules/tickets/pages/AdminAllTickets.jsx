@@ -9,11 +9,13 @@ import { API_URL } from '../../../constants/Api';
 
 
 import { TicketAdmin } from '../components/TicketAdmin';
-import { AdminEditTicketModal } from '../../disputes/components/AdminEditTicketModal';
+
 import { TicketsContext } from '../context/TicketsContext';
 import { showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 import { faRotateRight } from '@fortawesome/free-solid-svg-icons';
-
+import { EditTicketModal } from '../../disputes/components/EditTicketModal';
+import { AdminEditTicketModal } from '../../disputes/components/AdminEditTicketModal';
+import { formatDate } from '../../../utils/formatDates';
 export const AdminAllTickets = () => {
     const { user } = useAuth();
     const { tickets, setTickets, refetchTickets } = useContext(TicketsContext);
@@ -149,7 +151,7 @@ export const AdminAllTickets = () => {
 
     return (
         <div className="container__tickets">
-            <h1 className="main__ticket-title">Catálogo de multas</h1>
+            <h1 className="main__ticket-title">Historial de multas</h1>
             <h2 className="main__ticket-subtitle">Aquí encuentra todas las multas presentes en el sistema</h2>
             {error && <p className="error-message">{error}</p>}
             <div style={{ marginBottom: "25px", width: "100%", display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
@@ -190,7 +192,7 @@ export const AdminAllTickets = () => {
                                 <TicketAdmin
                                     key={ticket.id}
                                     id={ticket.id}
-                                    date={ticket.date}
+                                    date={formatDate(ticket.date)}
                                     reason={ticket.description}
                                     amount={ticket.amount?.toLocaleString()}
                                     status={ticket.status}
@@ -203,6 +205,7 @@ export const AdminAllTickets = () => {
                 )}
                 <AdminEditTicketModal
                     isOpen={isModalOpen}
+                    id={tickets.id}
                     onClose={() => setIsModalOpen(false)}
                     ticket={selectedTicket}
                     onSave={handleSave}

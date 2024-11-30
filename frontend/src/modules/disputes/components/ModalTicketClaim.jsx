@@ -5,10 +5,11 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 import { API_URL } from '../../../constants/Api';
+import { Loader } from '../../../components/Loader';
 
-export const ModalTicketClaim = ({ onClose, ticket, isClaimed, refetchTickets, setTickets }) => {
+export const ModalTicketClaim = ({ setIsLoading, onClose, ticket, isClaimed, refetchTickets, setTickets }) => {
     const [selectedFile, setSelectedFile] = useState(null);
-    const [fileUploaded, setFileUploaded] = useState(false); // Estado para verificar si el archivo se subió exitosamente
+    const [fileUploaded, setFileUploaded] = useState(false); // Estado para verificar si el archivo se subió exitosamente // Nuevo estado
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -31,6 +32,9 @@ export const ModalTicketClaim = ({ onClose, ticket, isClaimed, refetchTickets, s
         formData.append('status', 'Pendiente');
 
         try {
+            setIsLoading(true);
+            onClose(true);
+
             const res = await axios.post(`${API_URL}/Claim`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
@@ -43,6 +47,8 @@ export const ModalTicketClaim = ({ onClose, ticket, isClaimed, refetchTickets, s
         } catch (error) {
             console.error('Error al crear el reclamo:', error);
             showErrorAlert('Error al crear el reclamo');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -86,9 +92,9 @@ export const ModalTicketClaim = ({ onClose, ticket, isClaimed, refetchTickets, s
             <div className="modal-content">
                 <button className="close-button" onClick={handleCloseWithoutApplying}>X</button>
                 <h2>Reclamar multa</h2>
-                <p>ID: {ticket.id}</p>
-                <p>Razón de la multa: {ticket.description}</p>
-                <p>Monto: {ticket.amount}</p>
+                <p><b>ID:</b> {ticket.id}</p>
+                <p><b>Razón de la multa:</b> {ticket.description}</p>
+                <p><b>Monto:</b> {ticket.amount}</p>
 
                 <input
                     type="file"
@@ -114,4 +120,6 @@ ModalTicketClaim.propTypes = {
     isClaimed: PropTypes.bool,
     refetchTickets: PropTypes.func.isRequired,
     setTickets: PropTypes.func.isRequired,
+    isLoading: PropTypes.bool.isRequired,
+    setIsLoading: PropTypes.func.isRequired,
 };

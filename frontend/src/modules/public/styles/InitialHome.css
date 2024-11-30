@@ -49,8 +49,8 @@
     transition: transform 0.3s ease;
     cursor: pointer;
     background-color: white;
-    height: 35vh;
-    width: 15vw;
+    height: 42vh;
+    width: 16vw;
 }
 
 .card__icon-container {

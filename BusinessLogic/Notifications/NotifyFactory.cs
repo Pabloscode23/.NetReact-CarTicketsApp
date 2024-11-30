@@ -37,7 +37,7 @@ namespace Notifications
         }
         public void PaymentSuccessNotification(string totalAmount, string recipient, string ticketId, string amount, string paymentMethod)
         {
-            string message = $"El pago final de {totalAmount} con el IVA incluido ha sido procesado exitosamente.\n\n" +
+            string message = $"El pago final de {totalAmount} ha sido procesado exitosamente.\n\n" +
                     $"Detalles de la multa:\n" +
                     $"- ID: {ticketId}\n" +
                     $"- Monto sin impuesto: {amount}\n" +
@@ -62,13 +62,12 @@ namespace Notifications
             Console.WriteLine("Notificación de reclamación enviada.");
         }
 
-         public void AutomaticUserNotification(string totalAmount, string recipient, string ticketId,string description,string date)
+        public void AutomaticUserNotification(string totalAmount, string plate, string recipient, string ticketId, string description, string date)
         {
-            string message = $"Se le notifica que se ha generado una multa por un monto de {totalAmount} con el IVA incluido.\n\n" +
+            string message = $"Se le notifica que se ha generado una multa por un monto de {totalAmount}.\n\n" +
                     $"Detalles de la multa:\n" +
                     $"- ID: {ticketId}\n" +
-                    $"- Número de placa: {ticketId}\n" +
-                    $"- Detalle: {description}\n" +
+                    $"- Número de placa: {plate}\n" +
                     $"- Fecha: {date}\n" +
                     $"- Monto: {totalAmount}\n\n";
 
@@ -86,8 +85,7 @@ namespace Notifications
             string message = $"Se le notifica el cambio de estado de su multa. \n\n" +
                     $"Detalles de la multa:\n" +
                     $"- ID: {ticketId}\n" +
-                    $"- Nuevo estado: {status}\n" +
-                    $"- Razon del cambio:{changeReason}\n\n";
+                    $"- Nuevo estado: {status}\n";
 
 
             Console.WriteLine("Mensaje de notificación antes de enviar el correo:");
@@ -98,7 +96,7 @@ namespace Notifications
             _notification.Send("Notificación enviada", message, recipient);
             Console.WriteLine("Notificación enviada con exito.");
         }
-        public void ClaimResolutionNotification(string recipient, string ticketId,string resolution)
+        public void ClaimResolutionNotification(string recipient, string ticketId, string resolution)
         {
             string message = $"Se le notifica que su multa ha sido: \n\n" +
                     $"Detalles de la multa:\n" +
@@ -114,25 +112,27 @@ namespace Notifications
             _notification.Send("Notificación enviada", message, recipient);
             Console.WriteLine("Notificación enviada con exito.");
         }
-        public async void JudgeNewClaimsNotification( string recipient, string ticketId, string description,string pdfUrl)
+        public async void JudgeNewClaimsNotification(string recipient, string ticketId, string description, string pdfUrl)
         {
-            string message = $"Se le asigno un nuevo reclamo: \n\n" +
+            string message = $"Se le ha asignado un nuevo reclamo: \n\n" +
                     $"Detalles de la multa:\n" +
                     $"- ID: {ticketId}\n" +
                     $"- Detalle: {description}\n";
-                    
+
             Console.WriteLine("Mensaje de notificación antes de enviar el correo:");
             Console.WriteLine(message); // Verifica el contenido del mensaje
             Console.WriteLine("Contenido del mensaje de correo:");
             Console.WriteLine(message);
 
-            using (var httpClient = new HttpClient()){
-           
+            using (var httpClient = new HttpClient())
+            {
+
                 var response = await httpClient.GetAsync(pdfUrl);
                 var pdfStream = await response.Content.ReadAsStreamAsync();
 
-                using (BinaryReader br = new BinaryReader(pdfStream)){
-                    await _notification.SendEmailWithPdfAsync("Notificación enviada", message, recipient,br.ReadBytes((int)pdfStream.Length));
+                using (BinaryReader br = new BinaryReader(pdfStream))
+                {
+                    await _notification.SendEmailWithPdfAsync("Notificación enviada", message, recipient, br.ReadBytes((int)pdfStream.Length));
                     Console.WriteLine("Notificación enviada con exito.");
                 }
             }
@@ -140,7 +140,7 @@ namespace Notifications
 
         public void OfficialDisputesNotification(string recipient, string ticketId, string description)
         {
-            string message = $"Se creo un nuevo reclamo por una multa creada por usted.\n\n" +
+            string message = $"Se ha creado un nuevo reclamo por una multa creada por usted.\n\n" +
                     $"Detalles de la multa:\n" +
                     $"- ID: {ticketId}\n" +
                     $"- Detalle: {description}\n";
@@ -154,14 +154,13 @@ namespace Notifications
             _notification.Send("Notificacion enviada", message, recipient);
             Console.WriteLine("Notificación enviada con exito.");
         }
-    
-        public void AutomaticTicketNotification(string totalAmount, string recipient, string ticketId,string date,string description)
+
+        public void AutomaticTicketNotification(string totalAmount, string plate, string recipient, string ticketId, string date, string description)
         {
-            string message = $"Se le notifica que se ha generado una multa automatica por un monto de {totalAmount} con el IVA incluido.\n\n" +
+            string message = $"Se le notifica que se ha generado una multa automática por un monto de {totalAmount}.\n\n" +
                     $"Detalles de la multa:\n" +
                     $"- ID: {ticketId}\n" +
-                    $"- Número de placa: {ticketId}\n" +
-                    $"- Detalle: {description}\n" +
+                    $"- Número de placa: {plate}\n" +
                     $"- Fecha y hora: {date}\n" +
                     $"- Monto: {totalAmount}\n\n";
 
@@ -174,7 +173,7 @@ namespace Notifications
             Console.WriteLine("Notificación enviada con exito.");
         }
 
-         public void UserClaimsNotification(string recipient, string ticketId, string description)
+        public void UserClaimsNotification(string recipient, string ticketId, string description)
         {
             string message = $"Se ha creado un nuevo reclamo: \n\n" +
                     $"Detalles de la multa:\n" +

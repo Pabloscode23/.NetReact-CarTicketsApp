@@ -7,9 +7,11 @@ import { useAuth } from '../../../hooks';
 import { API_URL } from '../../../constants/Api';
 import { showErrorAlert, showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 import { formatDate } from '../../../utils/formatDates';
+import { Loader } from '../../../components/Loader';
 
 export const JudgeResolveClaims = () => {
   const { user, fetchUser: refetch } = useAuth();
+  const [isLoading, setIsLoading] = useState(false); // Nuevo estado
 
   const [claims, setClaims] = useState([]);
   const [filteredClaims, setFilteredClaims] = useState([]);
@@ -18,6 +20,8 @@ export const JudgeResolveClaims = () => {
   // Función para aceptar reclamos
   const handleAccept = async (id, ticketId) => {
     try {
+      setIsLoading(true);
+
       await axios.put(`${API_URL}/Claim/${id}`, { status: 'Con lugar' });
       await axios.put(`${API_URL}/TicketDTO/${ticketId}/status`, { status: 'Absuelta' });
       showSuccessAlert('Reclamo aceptado exitosamente');
@@ -25,12 +29,16 @@ export const JudgeResolveClaims = () => {
     } catch (error) {
       console.error(error);
       showErrorAlert(`Error al aceptar el reclamo con ID ${id}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // Para denegar un reclamo
   const handleDeny = async (id, ticketId) => {
     try {
+      setIsLoading(true);
+
       await axios.put(`${API_URL}/Claim/${id}`, { status: 'Sin lugar' });
       await axios.put(`${API_URL}/TicketDTO/${ticketId}/status`, { status: 'En firme' });
       showSuccessAlert('Reclamo denegado exitosamente');
@@ -38,6 +46,8 @@ export const JudgeResolveClaims = () => {
     } catch (error) {
       console.error(error);
       showErrorAlert(`Error al denegar el reclamo con ID ${id}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -66,11 +76,12 @@ export const JudgeResolveClaims = () => {
 
   return (
     <div className="container__tickets">
-      <h1 className="main__ticket-title">Resolver Reclamos</h1>
+
+      <h1 className="main__ticket-title">Resolver reclamos</h1>
       <h2 className="main__ticket-subtitle">
         Aquí puedes resolver los reclamos y ver los documentos asociados
       </h2>
-      {/* Input de búsqueda */}
+
       <div className="search__container">
         <FontAwesomeIcon icon={faMagnifyingGlass} className="search__icon" />
         <input
@@ -81,73 +92,78 @@ export const JudgeResolveClaims = () => {
           onChange={(e) => setSearchTerm(e.target.value)} // Actualizar el estado
         />
       </div>
-      {/* Tabla de reclamos */}
-      {filteredClaims.length === 0 ? (
-        <div className="table__empty">No hay reclamos disponibles.</div>
-      ) : (
-        <table className="ticket-table">
-          <thead>
-            <tr className="table__head">
-              <th>ID Multa</th>
-              <th>Fecha</th>
-              <th>Tipo de multa</th>
-              <th>Estado</th>
-              <th>Documentos</th>
-              <th colSpan={2}>Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredClaims.sort((a, b) => {
-              return new Date(b.createdAt) - new Date(a.createdAt);
-            }).map((claim) => (
-              <tr key={claim.ticketId}>
-                <td>{claim.ticketId}</td>
-                <td>{formatDate(claim.createdAt)}</td>
-                <td>{claim.ticket?.description}</td>
-                <td>{claim.status}</td>
-                <td>
-                  <a
-                    className='btn-view-judge'
-                    href={claim.claimDocument}
-                    download={`Reclamo-Ticket-${claim.ticketId}.pdf`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Ver
-                  </a>
-                </td>
-                <div className='decision__btns'>
-                  <td>
-                    <div>
-                      <button
-                        className="accept__btn"
-                        onClick={() => handleAccept(claim.claimId, claim.ticketId)}
-                        disabled={claim.status !== "Pendiente"}
-                        style={buttonStyle(claim.status !== "Pendiente")}
-                      >
-                        Aceptar
-                      </button>
-                    </div>
-                  </td>
-                  <td>
-                    <div>
-                      <button
-                        className="deny__btn"
-                        onClick={() => handleDeny(claim.claimId, claim.ticketId)}
-                        disabled={claim.status !== "Pendiente"} // Deshabilitar si el estado no es "Pendiente"
-                        style={buttonStyle(claim.status !== "Pendiente")}
+      {isLoading ? (<Loader />) : (
 
-                      >
-                        Denegar
-                      </button>
-                    </div>
-                  </td>
-                </div>
+        filteredClaims.length === 0 ? (
+          <div className="table__empty">No hay reclamos disponibles.</div>
+        ) : (
+          <table className="ticket-table">
+            <thead>
+              <tr className="table__head">
+                <th>ID Multa</th>
+                <th>Fecha</th>
+                <th>Tipo de multa</th>
+                <th>Estado</th>
+                <th>Documentos</th>
+                <th colSpan={2}>Acción</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredClaims.sort((a, b) => {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+              }).map((claim) => (
+                <tr key={claim.ticketId}>
+                  <td>{claim.ticketId}</td>
+                  <td>{formatDate(claim.createdAt)}</td>
+                  <td>{claim.ticket?.description}</td>
+                  <td>{claim.status}</td>
+                  <td>
+                    <a
+                      className='btn-view-judge'
+                      href={claim.claimDocument}
+                      download={`Reclamo-Ticket-${claim.ticketId}.pdf`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Ver
+                    </a>
+                  </td>
+                  <div className='decision__btns'>
+                    <td>
+                      <div>
+                        <button
+                          className="accept__btn"
+                          onClick={() => handleAccept(claim.claimId, claim.ticketId)}
+                          disabled={claim.status !== "Pendiente"}
+                          style={buttonStyle(claim.status !== "Pendiente")}
+                        >
+                          Aceptar
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      <div>
+                        <button
+                          className="deny__btn"
+                          onClick={() => handleDeny(claim.claimId, claim.ticketId)}
+                          disabled={claim.status !== "Pendiente"} // Deshabilitar si el estado no es "Pendiente"
+                          style={buttonStyle(claim.status !== "Pendiente")}
+
+                        >
+                          Denegar
+                        </button>
+                      </div>
+                    </td>
+                  </div>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )
+
       )}
     </div>
+
   );
+
 };

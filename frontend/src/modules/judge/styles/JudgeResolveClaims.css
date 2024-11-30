@@ -1,70 +1,161 @@
-.ticket-table{
-    width: 80%;
-  } 
-
-.ticket-table tr .button-cell{
-  text-align: right;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
+.ticket-table {
+  width: 80%;
 }
 
-  .btn-view{
-    height: 35px;
-    width: 150px;
-    padding: 5px 10px;
-    background-color:rgb(51,117,105);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 200ms ease-in-out;
-  }
-  .aceptar{
-    height: 35px;
-    width: 100px;
-    padding: 5px 10px;
-    background-color:rgb(51,117,105);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 200ms ease-in-out;
-  }
-  .denegar-btn{
-    height: 35px;
-    width: 100px;
-    padding: 5px 10px;
-    background-color:rgb(51,117,105);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 200ms ease-in-out;
-  }
-  .ticket-table tr .ver-documento{
-    text-align: right;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-  }
-  .ticket-table tr .aceptar{
-    text-align: right;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-  }
-  .ticket-table tr .deneg{
-    text-align: right;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-  }
+.ticket-table tr .button-cell {
+  text-align: right;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
 
-  .btn-view a:hover {
-    color: #fff;
-  }
+.btn-view {
+  height: 35px;
+  width: 150px;
+  padding: 5px 10px;
+  background-color: rgb(51, 117, 105);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 200ms ease-in-out;
+}
+
+.aceptar {
+  height: 35px;
+  width: 100px;
+  padding: 5px 10px;
+  background-color: rgb(51, 117, 105);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 200ms ease-in-out;
+}
+
+.denegar-btn {
+  height: 35px;
+  width: 100px;
+  padding: 5px 10px;
+  background-color: rgb(51, 117, 105);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 200ms ease-in-out;
+}
+
+.ticket-table tr .ver-documento {
+  text-align: right;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.ticket-table tr .aceptar {
+  text-align: right;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.ticket-table tr .deneg {
+  text-align: right;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-view a:hover {
+  color: #fff;
+}
+
+.ticket-table-ticket-type {
+  width: 80%;
+  margin: 0 auto;
+  /* Center the table */
+  border-collapse: collapse;
+  table-layout: fixed;
+  /* Ensure equal column widths */
+}
+
+.ticket-table-ticket-type th,
+.ticket-table-ticket-type td {
+  text-align: center;
+  padding: 10px;
+  word-wrap: break-word;
+  /* Wrap text if it exceeds the column width */
+}
+
+.ticket-table-ticket-type th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.ticket-table-ticket-type tr:nth-child(even) {
+  background-color: white;
+  /* Alternate row coloring */
+}
+
+.button-cell-ticket-type {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-view-ticket-type,
+.aceptar-ticket-type,
+.denegar-btn-ticket-type {
+  height: 35px;
+  width: 120px;
+  /* Adjusted width for consistency */
+  padding: 5px 10px;
+  background-color: rgb(51, 117, 105);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  transition: 200ms ease-in-out;
+}
+
+.btn-view-ticket-type:hover,
+.aceptar-ticket-type:hover,
+.denegar-btn-ticket-type:hover {
+  background-color: rgb(40, 95, 85);
+  /* Darker shade on hover */
+}
+
+.ver-documento-ticket-type,
+.aceptar-ticket-type,
+.deneg-ticket-type {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.ticket-table-ticket-type th,
+.ticket-table-ticket-type td {
+  border: 1px solid #ddd;
+  /* Add borders to cells */
+}
+
+.ticket-table-ticket-type tr .button-cell-ticket-type a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.ticket-table-ticket-type tr .button-cell-ticket-type a:hover {
+  color: white;
+}
+
+.table__head-ticket-type {
+  color: var(--color-blue-dark);
+  font-weight: bold;
+}

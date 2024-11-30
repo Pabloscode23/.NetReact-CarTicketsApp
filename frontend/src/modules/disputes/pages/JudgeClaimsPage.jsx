@@ -20,14 +20,14 @@ export const JudgeClaimsPage = () => {
     const formatUserTicket = (tickets) => {
         return tickets.map(ticket => {
             // Obtener amount de TicketsInfo si está disponible, o usar el valor original
-            const amount = TicketsInfo[ticket.description] || 0;
-            return { ...ticket, amount };  // Mantener el valor original de 'amount'
+
+            return { ...ticket };  // Mantener el valor original de 'amount'
         });
     };
 
     useEffect(() => {
         if (tickets.length > 0) {
-            const nonPendingTickets = tickets.filter(ticket => ticket.status !== "Pendiente" && ticket.status !== "Pagada");
+            const nonPendingTickets = tickets.filter(ticket => ticket.status !== "Pendiente" && ticket.status !== "Pagada" && ticket.status !== "En disputa");
             const formattedTickets = formatUserTicket(nonPendingTickets);
             setFilteredTickets(formattedTickets);
         } else {
@@ -124,7 +124,7 @@ export const JudgeClaimsPage = () => {
                                 id={ticket.id}
                                 date={formatDate(ticket.date)}
                                 reason={ticket.description}
-                                amount={ticket.amount}
+                                amount={ticket.amount.toLocaleString()}
                                 status={ticket.status}
                                 onEdit={() => handleEdit(ticket)}
                             />
