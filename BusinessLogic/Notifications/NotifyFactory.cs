@@ -157,7 +157,7 @@ namespace Notifications
 
         public void AutomaticTicketNotification(string totalAmount, string plate, string recipient, string ticketId, string date, string description)
         {
-            string message = $"Se le notifica que se ha generado una multa automatica por un monto de {totalAmount}.\n\n" +
+            string message = $"Se le notifica que se ha generado una multa automática por un monto de {totalAmount}.\n\n" +
                     $"Detalles de la multa:\n" +
                     $"- ID: {ticketId}\n" +
                     $"- Número de placa: {plate}\n" +

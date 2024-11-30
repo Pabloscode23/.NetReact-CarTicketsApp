@@ -124,7 +124,7 @@ export const JudgeClaimsPage = () => {
                                 id={ticket.id}
                                 date={formatDate(ticket.date)}
                                 reason={ticket.description}
-                                amount={ticket.amount}
+                                amount={ticket.amount.toLocaleString()}
                                 status={ticket.status}
                                 onEdit={() => handleEdit(ticket)}
                             />

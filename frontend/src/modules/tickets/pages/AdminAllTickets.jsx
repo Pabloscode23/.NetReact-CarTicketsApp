@@ -15,7 +15,7 @@ import { showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 import { faRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { EditTicketModal } from '../../disputes/components/EditTicketModal';
 import { AdminEditTicketModal } from '../../disputes/components/AdminEditTicketModal';
-
+import { formatDate } from '../../../utils/formatDates';
 export const AdminAllTickets = () => {
     const { user } = useAuth();
     const { tickets, setTickets, refetchTickets } = useContext(TicketsContext);
@@ -192,7 +192,7 @@ export const AdminAllTickets = () => {
                                 <TicketAdmin
                                     key={ticket.id}
                                     id={ticket.id}
-                                    date={ticket.date}
+                                    date={formatDate(ticket.date)}
                                     reason={ticket.description}
                                     amount={ticket.amount?.toLocaleString()}
                                     status={ticket.status}

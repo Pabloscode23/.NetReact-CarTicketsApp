@@ -10,7 +10,7 @@ import { TicketsInfo } from '../../../constants/TicketsInfo';
 import { ModalTicketClaim } from '../../disputes/components/ModalTicketClaim';
 import { TicketsContext } from '../context/TicketsContext';
 import { Loader } from '../../../components/Loader';
-
+import { formatDate } from '../../../utils/formatDates';
 export const AllUserTicketsPage = () => {
     const { user } = useAuth();
     const { tickets, setTickets, refetchTickets } = useContext(TicketsContext);
@@ -107,7 +107,7 @@ export const AllUserTicketsPage = () => {
                                     <TicketUser
                                         key={ticket.id}
                                         id={ticket.id}
-                                        date={ticket.date}
+                                        date={formatDate(ticket.date)}
                                         reason={ticket.description}
                                         amount={ticket.amount.toLocaleString()}
                                         status={ticket.status}

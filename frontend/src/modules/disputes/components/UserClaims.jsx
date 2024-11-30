@@ -6,7 +6,7 @@ export const UserClaims = ({ id, date, reason, amount, status }) => {
             <td>{id}</td>
             <td>{date}</td>
             <td>{reason}</td>
-            <td>{amount}</td>
+            <td>₡{amount}</td>
             <td>{status}</td>
 
         </tr>

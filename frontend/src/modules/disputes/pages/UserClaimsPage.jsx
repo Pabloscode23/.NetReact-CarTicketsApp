@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useAuth } from "../../../hooks";
 import { API_URL } from "../../../constants/Api";
 import { TicketsInfo } from "../../../constants/TicketsInfo";
-
+import { formatDate } from "../../../utils/formatDates";
 export const UserClaimsPage = () => {
     const { user } = useAuth();
     const [claims, setClaims] = useState([]);
@@ -79,9 +79,9 @@ export const UserClaimsPage = () => {
                         {filteredClaims.map((ticket) => (
                             <UserClaims key={ticket.id}
                                 id={ticket.id}
-                                date={ticket.date}
+                                date={formatDate(ticket.date)}
                                 reason={ticket.description}
-                                amount={ticket.amount}
+                                amount={ticket.amount.toLocaleString()}
                                 status={ticket.status}
                             />
                         ))}

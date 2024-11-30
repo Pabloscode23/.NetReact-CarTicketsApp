@@ -9,7 +9,7 @@ import { API_URL } from '../../../constants/Api';
 import { TicketsInfo } from '../../../constants/TicketsInfo';
 import { showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 import { TicketsContext } from '../context/TicketsContext';
-
+import { formatDate } from '../../../utils/formatDates';
 export const OfficerTicketsPage = () => {
     const { tickets, setTickets, refetchTickets } = useContext(TicketsContext);
     const [filteredTickets, setFilteredTickets] = useState([]);
@@ -120,9 +120,9 @@ export const OfficerTicketsPage = () => {
                             <TicketOfficer
                                 key={ticket.id}
                                 id={ticket.id}
-                                date={ticket.date}
+                                date={formatDate(ticket.date)}
                                 reason={ticket.description}
-                                amount={ticket.amount}
+                                amount={ticket.amount.toLocaleString()}
                                 status={ticket.status}
                                 onEdit={() => handleEdit(ticket)}
                             />

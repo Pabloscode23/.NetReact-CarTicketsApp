@@ -102,7 +102,7 @@ const UploadImagePage = () => {
             showSuccessAlert('Multa creada automáticamente por exceso de velocidad.');
             setTimeout(() => {
                 navigate('/', { replace: true });
-            }, 5000);
+            }, 3000);
             console.log('Multa creada:', response.data);
         } catch (error) {
             console.error('Error al crear la multa:', error.response?.data || error.message);
