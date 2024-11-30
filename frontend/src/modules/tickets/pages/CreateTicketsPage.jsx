@@ -116,8 +116,8 @@ export const CreateTicketsPage = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="formCreate flex-center flex-column border-grey p-40"
         >
-          <h1 className="form__header-center main-title">Crear Multa</h1>
-          <p className="text-left">Aquí el oficial de tránsito podrá crear la multa.</p>
+          <h1 className="form__header-center main-title">Crear multa</h1>
+          <h2 className="main__ticket-subtitle">Aquí el oficial de tránsito podrá crear la multa.</h2>
 
           <div className="form__content">
             <div className="row">

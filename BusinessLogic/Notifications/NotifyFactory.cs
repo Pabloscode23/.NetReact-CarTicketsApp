@@ -85,8 +85,7 @@ namespace Notifications
             string message = $"Se le notifica el cambio de estado de su multa. \n\n" +
                     $"Detalles de la multa:\n" +
                     $"- ID: {ticketId}\n" +
-                    $"- Nuevo estado: {status}\n" +
-                    $"- Razon del cambio:{changeReason}\n\n";
+                    $"- Nuevo estado: {status}\n";
 
 
             Console.WriteLine("Mensaje de notificación antes de enviar el correo:");

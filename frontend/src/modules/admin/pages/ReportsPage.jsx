@@ -28,13 +28,14 @@ export const ReportsPage = () => {
         }).finally(() => {
             setEmail('');
             setReportType('');
+            setLoading(false);
         });
     }
 
     return (
-        <div className="report-generation-container">
-            <h1>Generación de Informes</h1>
-            <p>Seleccione el tipo de informe que desea generar</p>
+        <div className=" report-generation-container ">
+            <h1 className="main__ticket-title">Generación de informes</h1>
+            <h2 className="main__ticket-subtitle">Seleccione el tipo de informe que desea generar</h2>
 
             <div className="form-section">
                 <label htmlFor="report-type">Seleccione un tipo de informe</label>
@@ -46,9 +47,9 @@ export const ReportsPage = () => {
                 </select>
             </div>
 
-            <div className="email-section">
-                <input className="email-inp" onChange={(e) => setEmail(e.target.value)} type="email" value={email} id="email" placeholder="Ingrese la dirección de correo" />
-                <button onClick={sendReport} className="report-btn">Enviar Informe</button>
+            <div className="email-section table__buttons">
+                <input className="email-inp" onChange={(e) => setEmail(e.target.value)} type="email" value={email} id="email" placeholder="Ingrese la dirección de correo electrónico" />
+                <button onClick={sendReport} style={{ padding: "10px 10px" }}>Enviar informe</button>
             </div>
             {
                 loading && <div className="loader">

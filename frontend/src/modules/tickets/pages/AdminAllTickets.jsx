@@ -14,6 +14,7 @@ import { TicketsContext } from '../context/TicketsContext';
 import { showSuccessAlert } from '../../../constants/Swal/SwalFunctions';
 import { faRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { EditTicketModal } from '../../disputes/components/EditTicketModal';
+import { AdminEditTicketModal } from '../../disputes/components/AdminEditTicketModal';
 
 export const AdminAllTickets = () => {
     const { user } = useAuth();
@@ -202,7 +203,7 @@ export const AdminAllTickets = () => {
                         </tbody>
                     </table>
                 )}
-                <EditTicketModal
+                <AdminEditTicketModal
                     isOpen={isModalOpen}
                     id={tickets.id}
                     onClose={() => setIsModalOpen(false)}

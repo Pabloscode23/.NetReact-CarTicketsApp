@@ -147,7 +147,7 @@ const UploadImagePage = () => {
 
     return (
         <div className="upload-image">
-            <h1 className="upload-image__title">Cargar imagen para detectar placa y crear multa</h1>
+            <h1 className="upload-image__title">Cargar imagen para detectar placa<br /> y crear multa</h1>
             <form className="upload-image__form" onSubmit={handleSubmit}>
                 <div className="upload-image__field">
                     <label className="upload-image__label">Subir imagen</label>
