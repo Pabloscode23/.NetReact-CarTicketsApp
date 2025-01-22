@@ -19,7 +19,7 @@
 .modal-content-paymentModal {
     background-color: var(--color-blue-lighter);
     padding: 20px;
-    width: 400px;
+    width: 450px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     display: flex;
